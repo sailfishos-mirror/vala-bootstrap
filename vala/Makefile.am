@@ -164,9 +164,12 @@ libvalacore_la_VALASOURCES = \
 	$(NULL)
 
 libvalacore_la_SOURCES = \
-	vala.vala.stamp \
 	$(libvalacore_la_VALASOURCES:.vala=.c) \
 	$(NULL)
+
+if ENABLE_BUILD_FROM_VALA
+libvalacore_la_SOURCES += vala.vala.stamp
+endif
 
 valaincludedir = $(includedir)/vala@PACKAGE_SUFFIX@
 

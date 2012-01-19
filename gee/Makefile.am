@@ -4,8 +4,7 @@ AM_CPPFLAGS = \
 	$(COVERAGE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(NULL)
-
-BUILT_SOURCES = gee.vala.stamp
+BUILT_SOURCES =
 
 noinst_LTLIBRARIES = \
 	libgee.la
@@ -22,11 +21,17 @@ libgee_la_VALASOURCES = \
 	map.vala \
 	set.vala \
 	$(NULL)
+EXTRA_DIST = $(libgee_la_VALASOURCES)
 
 libgee_la_SOURCES = \
-	gee.vala.stamp \
 	$(libgee_la_VALASOURCES:.vala=.c) \
 	$(NULL)
+
+if ENABLE_BUILD_FROM_VALA
+BUILT_SOURCES += gee.vala.stamp
+libgee_la_SOURCES += gee.vala.stamp 
+EXTRA_DIST += gee.vapi gee.vala.stamp
+endif
 
 geeincludedir = $(includedir)/vala@PACKAGE_SUFFIX@
 
@@ -42,8 +47,6 @@ libgee_la_LIBADD = \
 	$(COVERAGE_LIBS) \
 	$(GLIB_LIBS) \
 	$(NULL)
-
-EXTRA_DIST = $(libgee_la_VALASOURCES) gee.vapi gee.vala.stamp
 
 MAINTAINERCLEANFILES = \
 	gee.vapi \

@@ -67,9 +67,12 @@ libvalaccode_la_VALASOURCES = \
 	$(NULL)
 
 libvalaccode_la_SOURCES = \
-	ccode.vala.stamp \
 	$(libvalaccode_la_VALASOURCES:.vala=.c) \
 	$(NULL)
+
+if ENABLE_BUILD_FROM_VALA
+libvalaccode_la_SOURCES += ccode.vala.stamp
+endif
 
 ccodeincludedir = $(includedir)/vala@PACKAGE_SUFFIX@
 

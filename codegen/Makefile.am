@@ -57,9 +57,12 @@ libvala_la_VALASOURCES = \
 	$(NULL)
 
 libvala@PACKAGE_SUFFIX@_la_SOURCES = \
-	codegen.vala.stamp \
 	$(libvala_la_VALASOURCES:.vala=.c) \
 	$(NULL)
+
+if ENABLE_BUILD_FROM_VALA
+libvala@PACKAGE_SUFFIX@_la_SOURCES += codegen.vala.stamp
+endif
 
 codegenincludedir = $(includedir)/vala@PACKAGE_SUFFIX@
 

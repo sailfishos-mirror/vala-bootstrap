@@ -31,7 +31,12 @@ if test "$YACC" = :; then
 	AC_MSG_ERROR([bison not found but required])
 fi
 
-AC_PATH_PROG(VALAC, valac, valac)
+AC_ARG_ENABLE(build-from-vala, AS_HELP_STRING([--disable-build-from-vala], [Never invoke valac]), enable_build_from_vala=$enableval, enable_build_from_vala=yes)
+AM_CONDITIONAL(ENABLE_BUILD_FROM_VALA, test x$enable_build_from_vala = xyes)
+
+if test x$enable_build_from_vala = xyes; then
+   AC_PATH_PROG(VALAC, valac, valac)
+fi
 AC_SUBST(VALAC)
 
 VALAFLAGS="$VALAFLAGS --disable-version-header"

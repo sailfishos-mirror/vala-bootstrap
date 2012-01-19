@@ -21,9 +21,12 @@ valac_VALASOURCES = \
 	$(NULL)
 
 valac_SOURCES = \
-	valac.vala.stamp \
 	$(valac_VALASOURCES:.vala=.c) \
 	$(NULL)
+
+if ENABLE_BUILD_FROM_VALA
+valac_SOURCES += valac.vala.stamp
+endif
 
 valac.vala.stamp: $(valac_VALASOURCES)
 	$(VALA_V)$(VALAC) $(COVERAGE_VALAFLAGS) $(VALAFLAGS) -C --vapidir $(srcdir)/../vapi --pkg gobject-2.0 --vapidir $(srcdir)/../gee --pkg gee --vapidir $(srcdir)/../ccode --pkg ccode --vapidir $(srcdir)/../vala --pkg vala --vapidir $(srcdir)/../codegen --pkg codegen --pkg config $^

@@ -27,18 +27,24 @@ vapigen_VALASOURCES = \
 	$(NULL)
 
 vapigen_SOURCES = \
-	vapigen.vala.stamp \
 	$(vapigen_VALASOURCES:.vala=.c) \
 	$(NULL)
+
+if ENABLE_BUILD_FROM_VALA
+vapigen_SOURCES += vapigen.vala.stamp
+endif
 
 vapicheck_VALASOURCES = \
 	valavapicheck.vala \
 	$(NULL)
 
 vapicheck_SOURCES = \
-	vapicheck.vala.stamp \
 	$(vapicheck_VALASOURCES:.vala=.c) \
 	$(NULL)
+
+if ENABLE_BUILD_FROM_VALA
+vapicheck_SOURCES += vapicheck.vala.stamp
+endif
 
 vapigen.vala.stamp: $(vapigen_VALASOURCES)
 	$(VALA_V)$(VALAC) $(VALAFLAGS) -C --vapidir $(srcdir)/../vapi --vapidir $(srcdir)/../gee --pkg gee --vapidir $(srcdir)/../ccode --pkg ccode --vapidir $(srcdir)/../vala --pkg vala --vapidir $(srcdir)/../gobject-introspection --pkg gidl --pkg config $^
