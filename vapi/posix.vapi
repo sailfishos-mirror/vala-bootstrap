@@ -484,6 +484,8 @@ namespace Posix {
 	[CCode (cheader_filename = "arpa/inet.h")]
 	unowned string inet_ntop (int af, void* src, uint8[] dst);
 	[CCode (cheader_filename = "arpa/inet.h")]
+	public int inet_pton (int af, string src, void* dst);
+	[CCode (cheader_filename = "arpa/inet.h")]
 	public uint32 htonl (uint32 hostlong);
 	[CCode (cheader_filename = "arpa/inet.h")]
 	public uint32 ntohl (uint32 netlong);
@@ -789,6 +791,20 @@ namespace Posix {
 	[CCode (cheader_filename = "math.h")]
 	public float scalbf (float x, float n);
 
+    [CCode (cheader_filename = "netdb.h")]
+    public const int NI_NAMEREQD;
+    [CCode (cheader_filename = "netdb.h")]
+    public const int NI_DGRAM;
+    [CCode (cheader_filename = "netdb.h")]
+    public const int NI_NOFQDN;
+    [CCode (cheader_filename = "netdb.h")]
+    public const int NI_NUMERICHOST;
+    [CCode (cheader_filename = "netdb.h")]
+    public const int NI_NUMERICSERV;
+
+    [CCode (cheader_filename = "netdb.h,sys/socket.h")]
+    public int getnameinfo (SockAddr sa, socklen_t salen, char[] node, char[] service, int flags);
+
 	[CCode (cheader_filename = "poll.h", cname = "struct pollfd")]
 	public struct pollfd {
 		public int fd;
@@ -1037,6 +1053,7 @@ namespace Posix {
 		int              sa_flags;
 	}
 
+	[SimpleType]
 	[CCode (cname = "sigval_t", cheader_filename = "signal.h")]
 	public struct sigval_t {
 		int   sival_int;
@@ -1083,6 +1100,8 @@ namespace Posix {
 	public int sigismember (sigset_t sigset, int __signo);
 	[CCode (cheader_filename = "signal.h")]
 	public int sigprocmask (int how, sigset_t sigset, sigset_t oset);
+	[CCode (cheader_filename = "signal.h")]
+	public int sigqueue (pid_t pid, int signum, sigval_t val);
 	[CCode (cheader_filename = "signal.h")]
 	public int sigsuspend (sigset_t sigset);
 	[CCode (cheader_filename = "signal.h")]
@@ -1134,6 +1153,9 @@ namespace Posix {
 	public int mkostemp (string template, int flags);
 
 	[CCode (cheader_filename = "stdlib.h")]
+	public string? realpath (string path, uint8[]? resolved_path = null);
+
+	[CCode (cheader_filename = "stdlib.h")]
 	public int posix_openpt (int flags);
 	[CCode (cheader_filename = "stdlib.h")]
 	public int grantpt (int fd);
@@ -1175,7 +1197,7 @@ namespace Posix {
 	[CCode (cheader_filename = "string.h")]
 	public unowned string strcat (string s1, string s2);
 	[CCode (cheader_filename = "string.h")]
-	public unowned string strchr (string s, int c);
+	public unowned string? strchr (string s, int c);
 	[CCode (cheader_filename = "string.h")]
 	public int strcmp (string s1, string s2);
 	[CCode (cheader_filename = "string.h")]
@@ -1185,7 +1207,7 @@ namespace Posix {
 	[CCode (cheader_filename = "string.h")]
 	public size_t strcspn (string s1, string s2);
 	[CCode (cheader_filename = "string.h")]
-	public unowned string strdup (string s1);
+	public string strdup (string s1);
 	[CCode (cheader_filename = "string.h")]
 	public unowned string strerror (int errnum);
 	[CCode (cheader_filename = "string.h")]
@@ -1199,19 +1221,22 @@ namespace Posix {
 	[CCode (cheader_filename = "string.h")]
 	public unowned string strncpy (string s1, string s2, size_t n);
 	[CCode (cheader_filename = "string.h")]
-	public unowned string strpbrk (string s1, string s2);
+	public unowned string? strpbrk (string s1, string s2);
 	[CCode (cheader_filename = "string.h")]
-	public unowned string strrchr (string s, int c);
+	public unowned string? strrchr (string s, int c);
 	[CCode (cheader_filename = "string.h")]
 	public size_t strspn (string s1, string s2);
 	[CCode (cheader_filename = "string.h")]
-	public unowned string strstr (string s1, string s2);
+	public unowned string? strstr (string s1, string s2);
 	[CCode (cheader_filename = "string.h")]
-	public unowned string strtok (string s1, string s2);
+	public unowned string? strtok (string s1, string s2);
 	[CCode (cheader_filename = "string.h")]
-	public unowned string strtok_r (string s, string sep, out string lasts);
+	public unowned string? strtok_r (string? s, string sep, out unowned string lasts);
 	[CCode (cheader_filename = "string.h")]
 	public size_t strxfrm (string s1, string s2, size_t n);
+
+	[CCode (cheader_filename = "strings.h")]
+	public int ffs (int i);
 
 	[CCode (cheader_filename = "stropts.h")]
 	public const int I_PUSH;
@@ -1463,10 +1488,8 @@ namespace Posix {
 	[CCode (cheader_filename = "sys/socket.h")]
 	public int socketpair (int domain, int type, int protocol, [CCode (array_length = false)] int[] sv);
 
-    [SimpleType]
-    [IntegerType]
     [CCode (cname = "socklen_t", cheader_filename = "sys/socket.h", default_value = "0")]
-    public struct socklen_t {
+    public struct socklen_t : int {
     }
 
 	[SimpleType]
@@ -1475,8 +1498,16 @@ namespace Posix {
 		public uint32 s_addr;
 	}
 
+	[CCode (cname = "struct in6_addr", cheader_filename = "sys/socket.h", destroy_function = "")]
+	public struct In6Addr {
+		public uchar[] s6_addr[16];
+	}
+
 	[CCode (cname = "struct sockaddr", cheader_filename = "sys/socket.h", destroy_function = "")]
 	public struct SockAddr {
+        public int sa_family;
+        [CCode (array_length = false)]
+        public char[] data;
 	}
 
 	[CCode (cname = "struct sockaddr_in", cheader_filename = "netinet/in.h", destroy_function = "")]
@@ -1484,6 +1515,15 @@ namespace Posix {
 		public int sin_family;
 		public uint16 sin_port;
 		public InAddr sin_addr;
+	}
+
+	[CCode (cname = "struct sockaddr_in6", cheader_filename = "netinet/in.h", destroy_function = "")]
+	public struct SockAddrIn6 {
+		public int sin6_family;
+		public uint16 sin6_port;
+		public uint32 sin6_flowinfo;
+		public In6Addr sin6_addr;
+		public uint32 sin6_scope_id;
 	}
 
 	[CCode (cheader_filename = "sys/stat.h")]
@@ -1562,8 +1602,11 @@ namespace Posix {
 		public gid_t st_gid;
 		public dev_t st_rdev;
 		public size_t st_size;
+		public timespec st_atim;
 		public time_t st_atime;
+		public timespec st_mtim;
 		public time_t st_mtime;
+		public timespec st_ctim;
 		public time_t st_ctime;
 		public blksize_t st_blksize;
 		public blkcnt_t st_blocks;
@@ -1583,6 +1626,11 @@ namespace Posix {
 	public int mkdir (string path, mode_t mode);
 	[CCode (cheader_filename = "sys/types.h,sys/stat.h,fcntl.h,unistd.h")]
 	public pid_t mknod (string pathname, mode_t mode, dev_t dev);
+
+	[CCode (cheader_filename = "sys/stat.h")]
+	public int utimensat (int dirfd, string pathname, [CCode (array_length = false)] timespec[] times, int flags = 0);
+	[CCode (cheader_filename = "sys/stat.h")]
+	public int futimens (int fd, [CCode (array_length = false)] timespec[] times);
 
 	[CCode (cheader_filename = "sys/wait.h")]
 	public pid_t wait (out int status);
@@ -1624,6 +1672,11 @@ namespace Posix {
 		public fsfilcnt_t f_ffree;
 		public fsfilcnt_t f_favail;
 	}
+
+	[CCode (cheader_filename = "sys/statvfs.h", cname = "statvfs")]
+	public int statvfs_exec (string path, out statvfs buf);
+	[CCode (cheader_filename = "sys/statvfs.h")]
+	public int fstatvfs (int fs, out statvfs buf);
 
 	[SimpleType]
 	[IntegerType (rank = 9)]
@@ -1686,7 +1739,7 @@ namespace Posix {
 		public clock_t ();
 	}
 
-	[CCode (cheader_filename = "time.h")]
+	[CCode (cname = "struct tm", cheader_filename = "time.h", has_type_id = false)]
 	public struct tm {
 		public int tm_sec;
 		public int tm_min;
@@ -1704,6 +1757,16 @@ namespace Posix {
 		public time_t tv_sec;
 		public long tv_nsec;
 	}
+
+    [CCode (array_length = false, cheader_filename = "time.h")]
+	public string[] tzname;
+	[CCode (cheader_filename = "time.h")]
+	public const long timezone;
+	[CCode (cheader_filename = "time.h")]
+	public const int daylight;
+
+	[CCode (cheader_filename = "time.h")]
+	public void tzset ();
 
 	[SimpleType]
 	[IntegerType]
@@ -1744,6 +1807,10 @@ namespace Posix {
 	public int execl (string path, params string[] arg);
 	[CCode (cheader_filename = "unistd.h")]
 	public int execlp (string path, params string[] arg);
+	[CCode (cheader_filename = "unistd.h")]
+	public int execv (string path, [CCode (array_length = false, null_terminated = true)] string[] arg);
+	[CCode (cheader_filename = "unistd.h")]
+	public int execvp (string path, [CCode (array_length = false, null_terminated = true)] string[] arg);
 	[CCode (cheader_filename = "unistd.h")]
 	public int pipe ([CCode (array_length = false, null_terminated = false)] int[] pipefd);
 	[CCode (cheader_filename = "unistd.h")]
@@ -1997,7 +2064,7 @@ namespace Posix {
 	}
 
 	[CCode (cheader_filename = "termios.h")]
-	public int tcgetattr (int fd, termios termios_p);
+	public int tcgetattr (int fd, out termios termios_p);
 	[CCode (cheader_filename = "termios.h")]
 	public int tcsetattr (int fd, int optional_actions, termios termios_p);
 	[CCode (cheader_filename = "termios.h")]
@@ -2009,17 +2076,17 @@ namespace Posix {
 	[CCode (cheader_filename = "termios.h")]
 	public int tcflow (int fd, int action);
 	[CCode (cheader_filename = "termios.h")]
-	public void cfmakeraw (termios termios_p);
+	public void cfmakeraw (ref termios termios_p);
 	[CCode (cheader_filename = "termios.h")]
 	public speed_t cfgetispeed (termios termios_p);
 	[CCode (cheader_filename = "termios.h")]
 	public speed_t cfgetospeed (termios termios_p);
 	[CCode (cheader_filename = "termios.h")]
-	public int cfsetispeed (termios termios_p, speed_t speed);
+	public int cfsetispeed (ref termios termios_p, speed_t speed);
 	[CCode (cheader_filename = "termios.h")]
-	public int cfsetospeed (termios termios_p, speed_t speed);
+	public int cfsetospeed (ref termios termios_p, speed_t speed);
 	[CCode (cheader_filename = "termios.h")]
-	public int cfsetspeed (termios termios, speed_t speed);
+	public int cfsetspeed (ref termios termios, speed_t speed);
 
 	//c_iflag
 	[CCode (cheader_filename = "termios.h")]
@@ -2258,17 +2325,17 @@ namespace Posix {
 	}
 
 	[CCode (cheader_filename = "sys/select.h")]
-	public int select (int nfds, fd_set? readfds, fd_set? writefds, fd_set? exceptfds, timeval timeout);
+	public int select (int nfds, fd_set* readfds, fd_set* writefds, fd_set* exceptfds, timeval timeout);
 	[CCode (cheader_filename = "sys/select.h")]
-	public void FD_CLR (int fd, fd_set @set);
+	public void FD_CLR (int fd, ref fd_set @set);
 	[CCode (cheader_filename = "sys/select.h")]
 	public int  FD_ISSET (int fd, fd_set @set);
 	[CCode (cheader_filename = "sys/select.h")]
-	public void FD_SET (int fd, fd_set @set);
+	public void FD_SET (int fd, ref fd_set @set);
 	[CCode (cheader_filename = "sys/select.h")]
-	public void FD_ZERO (fd_set @set);
+	public void FD_ZERO (out fd_set @set);
 	[CCode (cheader_filename = "sys/select.h")]
-	public int pselect (int nfds, fd_set? readfds, fd_set? writefds, fd_set? exceptfds, timespec timeout, sigset_t sigmask);
+	public int pselect (int nfds, fd_set* readfds, fd_set* writefds, fd_set* exceptfds, timespec timeout, sigset_t sigmask);
 
 	// sys/mman.h - Posix mmap(), munmap(), mprotect()
 	[CCode (cheader_filename = "sys/mman.h")]

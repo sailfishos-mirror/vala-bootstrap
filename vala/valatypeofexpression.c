@@ -1026,6 +1026,9 @@ typedef struct _ValaReferenceTypeClass ValaReferenceTypeClass;
 typedef struct _ValaObjectType ValaObjectType;
 typedef struct _ValaObjectTypeClass ValaObjectTypeClass;
 
+#define VALA_TYPE_PROFILE (vala_profile_get_type ())
+#define _vala_iterable_unref0(var) ((var == NULL) ? NULL : (var = (vala_iterable_unref (var), NULL)))
+
 struct _ValaCodeNode {
 	GTypeInstance parent_instance;
 	volatile int ref_count;
@@ -1207,6 +1210,12 @@ struct _ValaSemanticAnalyzerClass {
 	ValaCodeVisitorClass parent_class;
 };
 
+typedef enum  {
+	VALA_PROFILE_POSIX,
+	VALA_PROFILE_GOBJECT,
+	VALA_PROFILE_DOVA
+} ValaProfile;
+
 
 static gpointer vala_typeof_expression_parent_class = NULL;
 
@@ -1363,6 +1372,11 @@ GType vala_struct_value_type_get_type (void) G_GNUC_CONST;
 GType vala_reference_type_get_type (void) G_GNUC_CONST;
 GType vala_object_type_get_type (void) G_GNUC_CONST;
 void vala_expression_set_value_type (ValaExpression* self, ValaDataType* value);
+GType vala_profile_get_type (void) G_GNUC_CONST;
+ValaProfile vala_code_context_get_profile (ValaCodeContext* self);
+ValaList* vala_data_type_get_type_arguments (ValaDataType* self);
+void vala_report_warning (ValaSourceReference* source, const gchar* message);
+ValaSourceReference* vala_code_node_get_source_reference (ValaCodeNode* self);
 static void vala_typeof_expression_real_emit (ValaCodeNode* base, ValaCodeGenerator* codegen);
 void vala_code_node_set_parent_node (ValaCodeNode* self, ValaCodeNode* value);
 static void vala_typeof_expression_finalize (ValaCodeNode* obj);
@@ -1462,8 +1476,13 @@ static gboolean vala_typeof_expression_real_check (ValaCodeNode* base, ValaCodeC
 	ValaSemanticAnalyzer* _tmp8_;
 	ValaSemanticAnalyzer* _tmp9_;
 	ValaDataType* _tmp10_;
-	gboolean _tmp11_;
-	gboolean _tmp12_;
+	gboolean _tmp11_ = FALSE;
+	ValaCodeContext* _tmp12_;
+	ValaProfile _tmp13_;
+	ValaProfile _tmp14_;
+	gboolean _tmp21_;
+	gboolean _tmp25_;
+	gboolean _tmp26_;
 	self = (ValaTypeofExpression*) base;
 	g_return_val_if_fail (context != NULL, FALSE);
 	_tmp0_ = vala_code_node_get_checked ((ValaCodeNode*) self);
@@ -1486,9 +1505,40 @@ static gboolean vala_typeof_expression_real_check (ValaCodeNode* base, ValaCodeC
 	_tmp9_ = _tmp8_;
 	_tmp10_ = _tmp9_->type_type;
 	vala_expression_set_value_type ((ValaExpression*) self, _tmp10_);
-	_tmp11_ = vala_code_node_get_error ((ValaCodeNode*) self);
-	_tmp12_ = _tmp11_;
-	result = !_tmp12_;
+	_tmp12_ = context;
+	_tmp13_ = vala_code_context_get_profile (_tmp12_);
+	_tmp14_ = _tmp13_;
+	if (_tmp14_ == VALA_PROFILE_GOBJECT) {
+		ValaDataType* _tmp15_;
+		ValaDataType* _tmp16_;
+		ValaList* _tmp17_ = NULL;
+		ValaList* _tmp18_;
+		gint _tmp19_;
+		gint _tmp20_;
+		_tmp15_ = vala_typeof_expression_get_type_reference (self);
+		_tmp16_ = _tmp15_;
+		_tmp17_ = vala_data_type_get_type_arguments (_tmp16_);
+		_tmp18_ = _tmp17_;
+		_tmp19_ = vala_collection_get_size ((ValaCollection*) _tmp18_);
+		_tmp20_ = _tmp19_;
+		_tmp11_ = _tmp20_ > 0;
+		_vala_iterable_unref0 (_tmp18_);
+	} else {
+		_tmp11_ = FALSE;
+	}
+	_tmp21_ = _tmp11_;
+	if (_tmp21_) {
+		ValaDataType* _tmp22_;
+		ValaSourceReference* _tmp23_;
+		ValaSourceReference* _tmp24_;
+		_tmp22_ = self->priv->_data_type;
+		_tmp23_ = vala_code_node_get_source_reference ((ValaCodeNode*) _tmp22_);
+		_tmp24_ = _tmp23_;
+		vala_report_warning (_tmp24_, "Type argument list without effect");
+	}
+	_tmp25_ = vala_code_node_get_error ((ValaCodeNode*) self);
+	_tmp26_ = _tmp25_;
+	result = !_tmp26_;
 	return result;
 }
 

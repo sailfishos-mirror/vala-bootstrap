@@ -458,8 +458,7 @@ static void vala_ccode_control_flow_module_visit_string_switch_statement (ValaCC
 	ValaSwitchSection* default_section;
 	gint n;
 	ValaSwitchSection* _tmp203_;
-	ValaCCodeFunction* _tmp217_;
-	ValaCCodeFunction* _tmp218_;
+	gint _tmp216_;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (stmt != NULL);
 	_tmp0_ = stmt;
@@ -996,7 +995,8 @@ static void vala_ccode_control_flow_module_visit_string_switch_statement (ValaCC
 		ValaCCodeFunction* _tmp211_;
 		ValaCCodeFunction* _tmp212_;
 		ValaSwitchSection* _tmp213_;
-		gint _tmp214_;
+		ValaCCodeFunction* _tmp214_;
+		ValaCCodeFunction* _tmp215_;
 		_tmp204_ = n;
 		if (_tmp204_ > 0) {
 			ValaCCodeFunction* _tmp205_;
@@ -1016,18 +1016,18 @@ static void vala_ccode_control_flow_module_visit_string_switch_statement (ValaCC
 		vala_ccode_function_add_default (_tmp212_);
 		_tmp213_ = default_section;
 		vala_code_node_emit ((ValaCodeNode*) _tmp213_, (ValaCodeGenerator*) self);
-		_tmp214_ = n;
-		if (_tmp214_ > 0) {
-			ValaCCodeFunction* _tmp215_;
-			ValaCCodeFunction* _tmp216_;
-			_tmp215_ = vala_ccode_base_module_get_ccode ((ValaCCodeBaseModule*) self);
-			_tmp216_ = _tmp215_;
-			vala_ccode_function_close (_tmp216_);
-		}
+		_tmp214_ = vala_ccode_base_module_get_ccode ((ValaCCodeBaseModule*) self);
+		_tmp215_ = _tmp214_;
+		vala_ccode_function_close (_tmp215_);
 	}
-	_tmp217_ = vala_ccode_base_module_get_ccode ((ValaCCodeBaseModule*) self);
-	_tmp218_ = _tmp217_;
-	vala_ccode_function_close (_tmp218_);
+	_tmp216_ = n;
+	if (_tmp216_ > 0) {
+		ValaCCodeFunction* _tmp217_;
+		ValaCCodeFunction* _tmp218_;
+		_tmp217_ = vala_ccode_base_module_get_ccode ((ValaCCodeBaseModule*) self);
+		_tmp218_ = _tmp217_;
+		vala_ccode_function_close (_tmp218_);
+	}
 	_vala_code_node_unref0 (default_section);
 	_vala_ccode_node_unref0 (ccond);
 	_vala_ccode_node_unref0 (cquark);

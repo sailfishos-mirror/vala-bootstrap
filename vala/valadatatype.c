@@ -2878,17 +2878,67 @@ gboolean vala_data_type_is_array (ValaDataType* self) {
 
 static gboolean vala_data_type_real_is_accessible (ValaDataType* self, ValaSymbol* sym) {
 	gboolean result = FALSE;
-	ValaTypeSymbol* _tmp0_;
+	ValaTypeSymbol* _tmp13_;
 	g_return_val_if_fail (sym != NULL, FALSE);
-	_tmp0_ = self->priv->_data_type;
-	if (_tmp0_ != NULL) {
-		ValaTypeSymbol* _tmp1_;
-		ValaSymbol* _tmp2_;
-		gboolean _tmp3_ = FALSE;
-		_tmp1_ = self->priv->_data_type;
-		_tmp2_ = sym;
-		_tmp3_ = vala_symbol_is_accessible ((ValaSymbol*) _tmp1_, _tmp2_);
-		result = _tmp3_;
+	{
+		ValaList* _tmp0_ = NULL;
+		ValaList* _type_arg_list;
+		ValaList* _tmp1_;
+		gint _tmp2_;
+		gint _tmp3_;
+		gint _type_arg_size;
+		gint _type_arg_index;
+		_tmp0_ = vala_data_type_get_type_arguments (self);
+		_type_arg_list = _tmp0_;
+		_tmp1_ = _type_arg_list;
+		_tmp2_ = vala_collection_get_size ((ValaCollection*) _tmp1_);
+		_tmp3_ = _tmp2_;
+		_type_arg_size = _tmp3_;
+		_type_arg_index = -1;
+		while (TRUE) {
+			gint _tmp4_;
+			gint _tmp5_;
+			gint _tmp6_;
+			ValaList* _tmp7_;
+			gint _tmp8_;
+			gpointer _tmp9_ = NULL;
+			ValaDataType* type_arg;
+			ValaDataType* _tmp10_;
+			ValaSymbol* _tmp11_;
+			gboolean _tmp12_ = FALSE;
+			_tmp4_ = _type_arg_index;
+			_type_arg_index = _tmp4_ + 1;
+			_tmp5_ = _type_arg_index;
+			_tmp6_ = _type_arg_size;
+			if (!(_tmp5_ < _tmp6_)) {
+				break;
+			}
+			_tmp7_ = _type_arg_list;
+			_tmp8_ = _type_arg_index;
+			_tmp9_ = vala_list_get (_tmp7_, _tmp8_);
+			type_arg = (ValaDataType*) _tmp9_;
+			_tmp10_ = type_arg;
+			_tmp11_ = sym;
+			_tmp12_ = vala_data_type_is_accessible (_tmp10_, _tmp11_);
+			if (!_tmp12_) {
+				result = FALSE;
+				_vala_code_node_unref0 (type_arg);
+				_vala_iterable_unref0 (_type_arg_list);
+				return result;
+			}
+			_vala_code_node_unref0 (type_arg);
+		}
+		_vala_iterable_unref0 (_type_arg_list);
+	}
+	_tmp13_ = self->priv->_data_type;
+	if (_tmp13_ != NULL) {
+		ValaTypeSymbol* _tmp14_;
+		ValaSymbol* _tmp15_;
+		gboolean _tmp16_ = FALSE;
+		_tmp14_ = self->priv->_data_type;
+		_tmp15_ = sym;
+		_tmp16_ = vala_symbol_is_accessible ((ValaSymbol*) _tmp14_, _tmp15_);
+		result = _tmp16_;
 		return result;
 	}
 	result = TRUE;

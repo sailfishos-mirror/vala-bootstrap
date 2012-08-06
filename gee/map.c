@@ -68,6 +68,16 @@ typedef struct _ValaCollectionClass ValaCollectionClass;
 
 typedef struct _ValaSet ValaSet;
 typedef struct _ValaSetClass ValaSetClass;
+
+#define VALA_TYPE_MAP_ITERATOR (vala_map_iterator_get_type ())
+#define VALA_MAP_ITERATOR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), VALA_TYPE_MAP_ITERATOR, ValaMapIterator))
+#define VALA_MAP_ITERATOR_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), VALA_TYPE_MAP_ITERATOR, ValaMapIteratorClass))
+#define VALA_IS_MAP_ITERATOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), VALA_TYPE_MAP_ITERATOR))
+#define VALA_IS_MAP_ITERATOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), VALA_TYPE_MAP_ITERATOR))
+#define VALA_MAP_ITERATOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), VALA_TYPE_MAP_ITERATOR, ValaMapIteratorClass))
+
+typedef struct _ValaMapIterator ValaMapIterator;
+typedef struct _ValaMapIteratorClass ValaMapIteratorClass;
 typedef struct _ValaParamSpecMap ValaParamSpecMap;
 
 struct _ValaMap {
@@ -86,6 +96,7 @@ struct _ValaMapClass {
 	void (*set) (ValaMap* self, gconstpointer key, gconstpointer value);
 	gboolean (*remove) (ValaMap* self, gconstpointer key);
 	void (*clear) (ValaMap* self);
+	ValaMapIterator* (*map_iterator) (ValaMap* self);
 	gint (*get_size) (ValaMap* self);
 };
 
@@ -121,6 +132,13 @@ gpointer vala_value_get_iterable (const GValue* value);
 GType vala_iterable_get_type (void) G_GNUC_CONST;
 GType vala_collection_get_type (void) G_GNUC_CONST;
 GType vala_set_get_type (void) G_GNUC_CONST;
+gpointer vala_map_iterator_ref (gpointer instance);
+void vala_map_iterator_unref (gpointer instance);
+GParamSpec* vala_param_spec_map_iterator (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
+void vala_value_set_map_iterator (GValue* value, gpointer v_object);
+void vala_value_take_map_iterator (GValue* value, gpointer v_object);
+gpointer vala_value_get_map_iterator (const GValue* value);
+GType vala_map_iterator_get_type (void) G_GNUC_CONST;
 #define VALA_MAP_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), VALA_TYPE_MAP, ValaMapPrivate))
 enum  {
 	VALA_MAP_DUMMY_PROPERTY
@@ -139,6 +157,8 @@ gboolean vala_map_remove (ValaMap* self, gconstpointer key);
 static gboolean vala_map_real_remove (ValaMap* self, gconstpointer key);
 void vala_map_clear (ValaMap* self);
 static void vala_map_real_clear (ValaMap* self);
+ValaMapIterator* vala_map_map_iterator (ValaMap* self);
+static ValaMapIterator* vala_map_real_map_iterator (ValaMap* self);
 ValaMap* vala_map_construct (GType object_type, GType k_type, GBoxedCopyFunc k_dup_func, GDestroyNotify k_destroy_func, GType v_type, GBoxedCopyFunc v_dup_func, GDestroyNotify v_destroy_func);
 gint vala_map_get_size (ValaMap* self);
 static void vala_map_finalize (ValaMap* obj);
@@ -267,6 +287,25 @@ static void vala_map_real_clear (ValaMap* self) {
 void vala_map_clear (ValaMap* self) {
 	g_return_if_fail (self != NULL);
 	VALA_MAP_GET_CLASS (self)->clear (self);
+}
+
+
+/**
+ * Returns a Iterator that can be used for simple iteration over a
+ * map.
+ *
+ * @return a Iterator that can be used for simple iteration over a
+ *         map
+ */
+static ValaMapIterator* vala_map_real_map_iterator (ValaMap* self) {
+	g_critical ("Type `%s' does not implement abstract method `vala_map_map_iterator'", g_type_name (G_TYPE_FROM_INSTANCE (self)));
+	return NULL;
+}
+
+
+ValaMapIterator* vala_map_map_iterator (ValaMap* self) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_MAP_GET_CLASS (self)->map_iterator (self);
 }
 
 
@@ -410,6 +449,7 @@ static void vala_map_class_init (ValaMapClass * klass) {
 	VALA_MAP_CLASS (klass)->set = vala_map_real_set;
 	VALA_MAP_CLASS (klass)->remove = vala_map_real_remove;
 	VALA_MAP_CLASS (klass)->clear = vala_map_real_clear;
+	VALA_MAP_CLASS (klass)->map_iterator = vala_map_real_map_iterator;
 }
 
 

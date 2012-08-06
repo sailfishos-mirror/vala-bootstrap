@@ -1028,8 +1028,7 @@ namespace Linux {
     [CCode (cheader_filename = "execinfo.h")]
     public int backtrace (void* buffer, int size);
 
-    [CCode (cheader_filename = "execinfo.h")]
-    [CCode (array_length = false)]
+    [CCode (cheader_filename = "execinfo.h", array_length = false)]
     public string[] backtrace_symbols (void* buffer, int size);
 
     [CCode (cheader_filename = "execinfo.h")]
@@ -1283,6 +1282,7 @@ namespace Linux {
 
         [CCode (cname = "struct ifreq", has_type_id = false, cheader_filename = "netinet/in.h,linux/if.h", destroy_function = "")]
         public struct IfReq {
+            [CCode (array_length = false)]
             public char[] ifr_name;
             public Posix.SockAddr ifr_addr;
             public Posix.SockAddr ifr_dstaddr;
@@ -1322,12 +1322,12 @@ namespace Linux {
                 public unowned IfAddrs? ifa_next;
                 public string ifa_name;
                 public uint ifa_flags;
-                public Posix.SockAddr* ifa_addr;
-                public Posix.SockAddr* ifa_netmask;
+                public Posix.SockAddr? ifa_addr;
+                public Posix.SockAddr? ifa_netmask;
                 [CCode (cname = "ifa_ifu.ifu_broadaddr")]
-                public Posix.SockAddr* ifa_ifu_broadaddr;
+                public Posix.SockAddr? ifa_ifu_broadaddr;
                 [CCode (cname = "ifa_ifu.ifu_dstaddr")]
-                public Posix.SockAddr* ifa_ifu_dstaddr;
+                public Posix.SockAddr? ifa_ifu_dstaddr;
                 public void* ifa_data;
         }
 
@@ -3151,11 +3151,24 @@ namespace Linux {
     [CCode (cprefix = "", lower_case_cprefix = "")]
     namespace Rtc {
 
+        [CCode (cname = "struct rtc_time", cheader_filename = "linux/rtc.h", has_type_id = false)]
+        public struct Time {
+            public int tm_sec;
+            public int tm_min;
+            public int tm_hour;
+            public int tm_mday;
+            public int tm_mon;
+            public int tm_year;
+            public int tm_wday;
+            public int tm_yday;
+            public int tm_isdst;
+        }
+
         [CCode (cname = "struct rtc_wkalrm", has_type_id = false, cheader_filename = "linux/rtc.h")]
         public struct WakeAlarm {
             public char enabled;
             public char pending;
-            public Posix.tm time;
+            public Linux.Rtc.Time time;
         }
 
         [CCode (cheader_filename = "linux/rtc.h,sys/ioctl.h")]
@@ -3406,7 +3419,6 @@ namespace Linux {
         public const int TIOCM_RNG;
         [CCode (cheader_filename = "termios.h")]
         public const int TIOCM_DSR;
-        [CCode (cheader_filename = "termios.h")]
         [CCode (cheader_filename = "termios.h")]
         public const int TIOCM_OUT1;
         [CCode (cheader_filename = "termios.h")]

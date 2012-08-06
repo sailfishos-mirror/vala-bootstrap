@@ -66,6 +66,9 @@ namespace GLib {
 		public Quark qname ();
 		public Type parent ();
 
+		public void* get_qdata (Quark quark);
+		public void set_qdata (Quark quark, void* data);
+
 		public void query (out TypeQuery query);
 
 		public TypeClass class_ref ();
@@ -298,7 +301,7 @@ namespace GLib {
 		INVERT_BOOLEAN
 	}
 
-	public delegate bool BindingTransformFunc (GLib.Binding binding, GLib.Value source_value, GLib.Value target_value);
+	public delegate bool BindingTransformFunc (GLib.Binding binding, GLib.Value source_value, ref GLib.Value target_value);
 
 	public class Binding : GLib.Object {
 		public weak GLib.Object source { get; }
@@ -324,6 +327,7 @@ namespace GLib {
 
 		public static Object @new (Type type, ...);
 		public static Object newv (Type type, [CCode (array_length_pos = 1.9)] Parameter[] parameters);
+		public static Object new_valist (Type type, string? firstprop, va_list var_args);
 
 		[CCode (cname = "G_TYPE_FROM_INSTANCE")]
 		public Type get_type ();
@@ -373,6 +377,13 @@ namespace GLib {
 
 		[CCode (cname = "g_object_bind_property_with_closures")]
 		public unowned GLib.Binding bind_property (string source_property, GLib.Object target, string target_property, GLib.BindingFlags flags, [CCode (type = "GClosure*")] owned GLib.BindingTransformFunc? transform_to = null, [CCode (type = "GClosure*")] owned GLib.BindingTransformFunc? transform_from = null);
+	}
+
+	[CCode (destroy_function = "g_weak_ref_clear")]
+	public struct WeakRef {
+		public WeakRef (GLib.Object object);
+		public GLib.Object? get ();
+		public void set (GLib.Object object);
 	}
 
 	[CCode (instance_pos = 0)]
@@ -428,7 +439,7 @@ namespace GLib {
 	}
 
 	[CCode (has_target = false)]
-	public delegate void ValueTransform (Value src_value, out Value dest_value);
+	public delegate void ValueTransform (Value src_value, ref Value dest_value);
 
 	[CCode (copy_function = "g_value_copy", destroy_function = "g_value_unset", type_id = "G_TYPE_VALUE", marshaller_type_name = "BOXED", get_value_function = "g_value_get_boxed", set_value_function = "g_value_set_boxed", take_value_function = "g_value_take_boxed", type_signature = "v")]
 	public struct Value {
@@ -457,6 +468,8 @@ namespace GLib {
 		public bool get_boolean ();
 		public void set_char (char v_char);
 		public char get_char ();
+		public void set_schar (int8 v_char);
+		public int8 get_schar ();
 		public void set_uchar (uchar v_uchar);
 		public uchar get_uchar ();
 		public void set_int (int v_int);

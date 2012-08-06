@@ -12,7 +12,7 @@ BUILT_SOURCES = \
 noinst_PROGRAMS = \
 	$(NULL)
 
-TESTS_ENVIRONMENT = EXEEXT=$(EXEEXT) $(srcdir)/testrunner.sh
+TESTS_ENVIRONMENT = EXEEXT=$(EXEEXT) CFLAGS='$(CFLAGS)' CPPFLAGS='$(CPPFLAGS)' LDFLAGS='$(LDFLAGS)' $(srcdir)/testrunner.sh
 
 TESTS = \
 	basic-types/integers.vala \
@@ -20,6 +20,7 @@ TESTS = \
 	basic-types/strings.vala \
 	basic-types/arrays.vala \
 	basic-types/pointers.vala \
+	basic-types/sizeof.vala \
 	basic-types/bug591552.vala \
 	basic-types/bug595751.vala \
 	basic-types/bug596637.vala \
@@ -42,6 +43,7 @@ TESTS = \
 	methods/bug613483.vala \
 	methods/bug620673.vala \
 	methods/bug622570.vala \
+	methods/bug639054.vala \
 	methods/bug642899.vala \
 	methods/bug646345.vala \
 	methods/bug648320.vala \
@@ -57,6 +59,7 @@ TESTS = \
 	control-flow/switch.vala \
 	control-flow/sideeffects.vala \
 	control-flow/bug652549.vala \
+	control-flow/bug665904.vala \
 	enums/enums.vala \
 	structs/structs.vala \
 	structs/gvalue.vala \
@@ -80,6 +83,8 @@ TESTS = \
 	structs/bug658048.vala \
 	structs/bug660426.vala \
 	structs/bug661945.vala \
+	structs/bug667890.vala \
+	structs/bug669580.vala \
 	delegates/delegates.vala \
 	delegates/bug539166.vala \
 	delegates/bug595610.vala \
@@ -119,6 +124,7 @@ TESTS = \
 	objects/bug654702.vala \
 	objects/bug663134.vala \
 	objects/bug664529.vala \
+	objects/bug667668.vala \
 	errors/errors.vala \
 	errors/bug567181.vala \
 	errors/bug579101.vala \
@@ -163,7 +169,7 @@ TESTS = \
 	$(NULL)
 
 check-TESTS: $(TESTS)
-	@EXEEXT=$(EXEEXT) $(srcdir)/testrunner.sh $(TESTS)
+	@EXEEXT=$(EXEEXT) EXEEXT=$(EXEEXT) CFLAGS='$(CFLAGS)' CPPFLAGS='$(CPPFLAGS)' LDFLAGS='$(LDFLAGS)' $(srcdir)/testrunner.sh $(TESTS)
 
 EXTRA_DIST = \
 	testrunner.sh \

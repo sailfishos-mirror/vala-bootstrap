@@ -1,3 +1,34 @@
+Vala 0.16.1
+===========
+
+ * Bug fixes and binding updates.
+
+Vala 0.16.0
+===========
+
+ * Add udisks2 bindings.
+ * Bug fixes and binding updates.
+
+Vala 0.15.2
+===========
+
+ * Switch poppler-glib bindings to .gir.
+ * Many bug fixes and binding updates.
+
+Vala 0.15.1
+===========
+
+ * Support arrays with nullable elements.
+ * Add <doc> support to .gir reader and writer.
+ * Switch clutter-gtk-1.0 bindings to .gir.
+ * Switch gio-2.0 bindings to .gir.
+ * Add cogl-pango-1.0 bindings.
+ * Add gdl-3.0 bindings.
+ * Add libnl-3.0 bindings.
+ * Add packagekit-glib2 bindings.
+ * Add xtst bindings.
+ * Many bug fixes and binding updates.
+
 Vala 0.15.0
 ===========
 

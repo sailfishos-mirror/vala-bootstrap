@@ -1207,6 +1207,17 @@ typedef struct _ValaCodeWriterPrivate ValaCodeWriterPrivate;
 
 #define VALA_TYPE_CODE_WRITER_TYPE (vala_code_writer_type_get_type ())
 typedef struct _ValaCommentPrivate ValaCommentPrivate;
+
+#define VALA_TYPE_GIR_COMMENT (vala_gir_comment_get_type ())
+#define VALA_GIR_COMMENT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), VALA_TYPE_GIR_COMMENT, ValaGirComment))
+#define VALA_GIR_COMMENT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), VALA_TYPE_GIR_COMMENT, ValaGirCommentClass))
+#define VALA_IS_GIR_COMMENT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), VALA_TYPE_GIR_COMMENT))
+#define VALA_IS_GIR_COMMENT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), VALA_TYPE_GIR_COMMENT))
+#define VALA_GIR_COMMENT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), VALA_TYPE_GIR_COMMENT, ValaGirCommentClass))
+
+typedef struct _ValaGirComment ValaGirComment;
+typedef struct _ValaGirCommentClass ValaGirCommentClass;
+typedef struct _ValaGirCommentPrivate ValaGirCommentPrivate;
 typedef struct _ValaConditionalExpressionPrivate ValaConditionalExpressionPrivate;
 typedef struct _ValaConstantPrivate ValaConstantPrivate;
 typedef struct _ValaConstructorPrivate ValaConstructorPrivate;
@@ -2194,8 +2205,15 @@ struct _ValaComment {
 struct _ValaCommentClass {
 	GTypeClass parent_class;
 	void (*finalize) (ValaComment *self);
-	const gchar* (*get_content) (ValaComment* self);
-	void (*set_content) (ValaComment* self, const gchar* value);
+};
+
+struct _ValaGirComment {
+	ValaComment parent_instance;
+	ValaGirCommentPrivate * priv;
+};
+
+struct _ValaGirCommentClass {
+	ValaCommentClass parent_class;
 };
 
 struct _ValaConditionalExpression {
@@ -4121,6 +4139,13 @@ const gchar* vala_comment_get_content (ValaComment* self);
 void vala_comment_set_content (ValaComment* self, const gchar* value);
 ValaSourceReference* vala_comment_get_source_reference (ValaComment* self);
 void vala_comment_set_source_reference (ValaComment* self, ValaSourceReference* value);
+GType vala_gir_comment_get_type (void) G_GNUC_CONST;
+ValaMapIterator* vala_gir_comment_parameter_iterator (ValaGirComment* self);
+ValaGirComment* vala_gir_comment_new (const gchar* comment, ValaSourceReference* _source_reference);
+ValaGirComment* vala_gir_comment_construct (GType object_type, const gchar* comment, ValaSourceReference* _source_reference);
+ValaComment* vala_gir_comment_get_content_for_parameter (ValaGirComment* self, const gchar* name);
+ValaComment* vala_gir_comment_get_return_content (ValaGirComment* self);
+void vala_gir_comment_set_return_content (ValaGirComment* self, ValaComment* value);
 ValaConditionalExpression* vala_conditional_expression_new (ValaExpression* cond, ValaExpression* true_expr, ValaExpression* false_expr, ValaSourceReference* source);
 ValaConditionalExpression* vala_conditional_expression_construct (GType object_type, ValaExpression* cond, ValaExpression* true_expr, ValaExpression* false_expr, ValaSourceReference* source);
 ValaExpression* vala_conditional_expression_get_condition (ValaConditionalExpression* self);
@@ -4702,7 +4727,7 @@ ValaParameter* vala_property_accessor_get_value_parameter (ValaPropertyAccessor*
 void vala_property_accessor_set_value_parameter (ValaPropertyAccessor* self, ValaParameter* value);
 ValaProperty* vala_property_new (const gchar* name, ValaDataType* property_type, ValaPropertyAccessor* get_accessor, ValaPropertyAccessor* set_accessor, ValaSourceReference* source_reference, ValaComment* comment);
 ValaProperty* vala_property_construct (GType object_type, const gchar* name, ValaDataType* property_type, ValaPropertyAccessor* get_accessor, ValaPropertyAccessor* set_accessor, ValaSourceReference* source_reference, ValaComment* comment);
-gboolean vala_property_equals (ValaProperty* self, ValaProperty* prop2);
+gboolean vala_property_compatible (ValaProperty* self, ValaProperty* base_property, gchar** invalid_match);
 ValaDataType* vala_property_get_property_type (ValaProperty* self);
 void vala_property_set_property_type (ValaProperty* self, ValaDataType* value);
 ValaPropertyAccessor* vala_property_get_get_accessor (ValaProperty* self);

@@ -43,10 +43,10 @@ namespace Gst {
 		public bool state_dirty;
 		[CCode (has_construct_function = false, type = "GstElement*")]
 		public Bin (string? name);
-		public bool add (owned Gst.Element element);
+		public bool add (Gst.Element element);
 		[NoWrapper]
 		public virtual bool add_element (Gst.Element element);
-		public void add_many (params owned Gst.Element[] elements);
+		public void add_many (params Gst.Element[] elements);
 		public Gst.Pad? find_unconnected_pad (Gst.PadDirection direction);
 		public Gst.Pad? find_unlinked_pad (Gst.PadDirection direction);
 		public Gst.Element? get_by_interface (GLib.Type iface);
@@ -411,7 +411,7 @@ namespace Gst {
 		[CCode (has_construct_function = false)]
 		protected Element ();
 		public void abort_state ();
-		public bool add_pad (owned Gst.Pad pad);
+		public bool add_pad (Gst.Pad pad);
 		[CCode (cname = "gst_element_class_add_pad_template")]
 		public class void add_pad_template (Gst.PadTemplate templ);
 		public virtual Gst.StateChangeReturn change_state (Gst.StateChange transition);
@@ -453,6 +453,7 @@ namespace Gst {
 		public bool link_pads_full (string srcpadname, Gst.Element dest, string destpadname, Gst.PadLinkCheck flags);
 		public void lost_state ();
 		public void lost_state_full (bool new_base_time);
+		[CCode (returns_floating_reference = true)]
 		public static Gst.Element? make_from_uri (Gst.URIType type, string uri, string? elementname);
 		public void message_full (Gst.MessageType type, GLib.Quark domain, int code, owned string? text, owned string? debug, string file, string function, int line);
 		public bool post_message (owned Gst.Message message);
@@ -1473,7 +1474,7 @@ namespace Gst {
 		[CCode (cname = "gst_type_find_suggest_simple")]
 		public void suggest_simple (uint probability, string media_type, string fieldname);
 	}
-	[CCode (cheader_filename = "gst/gst.h")]
+	[CCode (cheader_filename = "gst/gst.h", type_id = "GST_TYPE_TYPE_FIND_FACTORY")]
 	public class TypeFindFactory : Gst.PluginFeature {
 		public weak Gst.Caps caps;
 		public weak string extensions;
@@ -2949,9 +2950,9 @@ namespace Gst {
 	public static unowned GLib.ParamSpec param_spec_fraction (string name, string nick, string blurb, int min_num, int min_denom, int max_num, int max_denom, int default_num, int default_denom, GLib.ParamFlags flags);
 	[CCode (cheader_filename = "gst/gst.h")]
 	public static unowned GLib.ParamSpec param_spec_mini_object (string name, string nick, string blurb, GLib.Type object_type, GLib.ParamFlags flags);
-	[CCode (cheader_filename = "gst/gst.h")]
+	[CCode (cheader_filename = "gst/gst.h", returns_floating_reference = true)]
 	public static Gst.Element? parse_bin_from_description (string bin_description, bool ghost_unlinked_pads) throws GLib.Error;
-	[CCode (cheader_filename = "gst/gst.h")]
+	[CCode (cheader_filename = "gst/gst.h", returns_floating_reference = true)]
 	public static Gst.Element? parse_bin_from_description_full (string bin_description, bool ghost_unlinked_pads, Gst.ParseContext? context, Gst.ParseFlags flags) throws GLib.Error;
 	[CCode (cheader_filename = "gst/gst.h")]
 	public static GLib.Quark parse_error_quark ();

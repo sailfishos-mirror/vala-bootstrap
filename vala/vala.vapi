@@ -731,7 +731,7 @@ namespace Vala {
 	[CCode (cheader_filename = "vala.h")]
 	public class Comment {
 		public Comment (string comment, Vala.SourceReference _source_reference);
-		public virtual string content { get; set; }
+		public string content { get; set; }
 		public Vala.SourceReference source_reference { get; set; }
 	}
 	[CCode (cheader_filename = "vala.h")]
@@ -1121,6 +1121,13 @@ namespace Vala {
 		public override Vala.DataType copy ();
 		public override Vala.Symbol? get_member (string member_name);
 		public override string to_qualified_string (Vala.Scope? scope = null);
+	}
+	[CCode (cheader_filename = "vala.h")]
+	public class GirComment : Vala.Comment {
+		public GirComment (string? comment, Vala.SourceReference _source_reference);
+		public Vala.Comment? get_content_for_parameter (string name);
+		public Vala.MapIterator<string,Vala.Comment> parameter_iterator ();
+		public Vala.Comment? return_content { get; set; }
 	}
 	[CCode (cheader_filename = "vala.h")]
 	public class GirParser : Vala.CodeVisitor {
@@ -1603,7 +1610,7 @@ namespace Vala {
 		public override void accept (Vala.CodeVisitor visitor);
 		public override void accept_children (Vala.CodeVisitor visitor);
 		public override bool check (Vala.CodeContext context);
-		public bool equals (Vala.Property prop2);
+		public bool compatible (Vala.Property base_property, out string? invalid_match);
 		public override void replace_type (Vala.DataType old_type, Vala.DataType new_type);
 		public Vala.Property base_interface_property { get; }
 		public Vala.Property base_property { get; }
@@ -1839,6 +1846,7 @@ namespace Vala {
 		public override void accept_children (Vala.CodeVisitor visitor);
 		public override bool check (Vala.CodeContext context);
 		public override void emit (Vala.CodeGenerator codegen);
+		public override bool is_constant ();
 		public override bool is_pure ();
 		public override void replace_type (Vala.DataType old_type, Vala.DataType new_type);
 		public Vala.DataType type_reference { get; set; }

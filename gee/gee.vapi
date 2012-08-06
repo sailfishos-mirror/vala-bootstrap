@@ -35,6 +35,7 @@ namespace Vala {
 		public override V @get (K key);
 		public override Vala.Set<K> get_keys ();
 		public override Vala.Collection<V> get_values ();
+		public override Vala.MapIterator<K,V> map_iterator ();
 		public override bool remove (K key);
 		public override void @set (K key, V value);
 		public GLib.EqualFunc key_equal_func { set; }
@@ -84,9 +85,17 @@ namespace Vala {
 		public abstract V @get (K key);
 		public abstract Vala.Set<K> get_keys ();
 		public abstract Vala.Collection<V> get_values ();
+		public abstract Vala.MapIterator<K,V> map_iterator ();
 		public abstract bool remove (K key);
 		public abstract void @set (K key, V value);
 		public abstract int size { get; }
+	}
+	[CCode (cheader_filename = "valagee.h")]
+	public abstract class MapIterator<K,V> {
+		public MapIterator ();
+		public abstract K get_key ();
+		public abstract V get_value ();
+		public abstract bool next ();
 	}
 	[CCode (cheader_filename = "valagee.h")]
 	public abstract class Set<G> : Vala.Collection<G> {

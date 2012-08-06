@@ -706,7 +706,7 @@ namespace Gtk {
 		public void set_focus_on_click (bool focus_on_click);
 		public void set_image (Gtk.Widget image);
 		public void set_image_position (Gtk.PositionType position);
-		public void set_label (string label);
+		public void set_label (string? label);
 		public void set_relief (Gtk.ReliefStyle newstyle);
 		public void set_use_stock (bool use_stock);
 		public void set_use_underline (bool use_underline);
@@ -1320,7 +1320,7 @@ namespace Gtk {
 		public static unowned GLib.ParamSpec class_list_child_properties (GLib.ObjectClass cclass, uint n_properties);
 		[NoWrapper]
 		public virtual unowned string composite_name (Gtk.Widget child);
-		public virtual void forall (Gtk.Callback callback);
+		public void forall (Gtk.Callback callback);
 		[CCode (vfunc_name = "forall")]
 		public virtual void forall_internal (bool include_internal, Gtk.Callback callback);
 		public void @foreach (Gtk.Callback callback);
@@ -1967,7 +1967,7 @@ namespace Gtk {
 		public bool snap_edge_set { get; set; }
 		public virtual signal void child_attached (Gtk.Widget child);
 	}
-	[CCode (cheader_filename = "gtk/gtk.h")]
+	[CCode (cheader_filename = "gtk/gtk.h,gtk/gtkimmodule.h")]
 	public class IMContext : GLib.Object {
 		[CCode (has_construct_function = false)]
 		protected IMContext ();
@@ -2087,10 +2087,10 @@ namespace Gtk {
 		public unowned string get_example_icon_name ();
 		public static unowned Gtk.IconTheme get_for_screen (Gdk.Screen screen);
 		public int get_icon_sizes (string icon_name);
-		public void get_search_path (string path, int n_elements);
+		public void get_search_path (out string[] path);
 		public bool has_icon (string icon_name);
 		public GLib.List<string> list_contexts ();
-		public GLib.List<string> list_icons (string context);
+		public GLib.List<string> list_icons (string? context);
 		public Gdk.Pixbuf? load_icon (string icon_name, int size, Gtk.IconLookupFlags flags) throws GLib.Error;
 		public Gtk.IconInfo lookup_by_gicon (GLib.Icon icon, int size, Gtk.IconLookupFlags flags);
 		public Gtk.IconInfo lookup_icon (string icon_name, int size, Gtk.IconLookupFlags flags);
@@ -4253,7 +4253,7 @@ namespace Gtk {
 		public void add (Gdk.Atom target, uint flags, uint info);
 		public void add_image_targets (uint info, bool writable);
 		public void add_rich_text_targets (uint info, bool deserializable, Gtk.TextBuffer buffer);
-		public void add_table (Gtk.TargetEntry[] targets, uint ntargets);
+		public void add_table (Gtk.TargetEntry[] targets);
 		public void add_text_targets (uint info);
 		public void add_uri_targets (uint info);
 		public bool find (Gdk.Atom target, uint info);
@@ -4475,7 +4475,7 @@ namespace Gtk {
 		public weak Gtk.TextTagTable table;
 		public weak Gtk.TextAttributes values;
 		[CCode (has_construct_function = false)]
-		public TextTag (string name);
+		public TextTag (string? name = null);
 		public int get_priority ();
 		public void set_priority (int priority);
 		[NoAccessorMethod]
@@ -6031,7 +6031,7 @@ namespace Gtk {
 		[HasEmitter]
 		public signal void delete_text (int start_pos, int end_pos);
 		[HasEmitter]
-		public signal void insert_text (string text, int length, void* position);
+		public signal void insert_text (string text, int length, ref int position);
 	}
 	[CCode (cheader_filename = "gtk/gtk.h")]
 	public interface FileChooser : Gtk.Widget {
@@ -6267,7 +6267,7 @@ namespace Gtk {
 		public int width;
 		public int height;
 	}
-	[CCode (cheader_filename = "gtk/gtk.h")]
+	[CCode (cheader_filename = "gtk/gtk.h,gtk/gtkimmodule.h")]
 	public struct IMContextInfo {
 		public weak string context_id;
 		public weak string context_name;
@@ -7425,7 +7425,7 @@ namespace Gtk {
 	[CCode (cheader_filename = "gtk/gtk.h")]
 	public delegate int AssistantPageFunc (int current_page);
 	[CCode (cheader_filename = "gtk/gtk.h")]
-	public delegate void BuilderConnectFunc (Gtk.Builder builder, GLib.Object object, string signal_name, string handler_name, GLib.Object connect_object, GLib.ConnectFlags flags);
+	public delegate void BuilderConnectFunc (Gtk.Builder builder, GLib.Object object, string signal_name, string handler_name, GLib.Object? connect_object, GLib.ConnectFlags flags);
 	[CCode (cheader_filename = "gtk/gtk.h")]
 	public delegate string CalendarDetailFunc (Gtk.Calendar calendar, uint year, uint month, uint day);
 	[CCode (cheader_filename = "gtk/gtk.h")]
@@ -8271,7 +8271,7 @@ namespace Gtk {
 	[CCode (cheader_filename = "gtk/gtk.h")]
 	public static unowned Gtk.Widget test_find_widget (Gtk.Widget widget, string label_pattern, GLib.Type widget_type);
 	[CCode (cheader_filename = "gtk/gtk.h")]
-	public static void test_init (int argcp, out unowned string argvp);
+	public static void test_init ([CCode (array_length_pos = 0.9)] ref unowned string[] argvp, ...);
 	[CCode (cheader_filename = "gtk/gtk.h")]
 	public static unowned GLib.Type[] test_list_all_types (uint n_types);
 	[CCode (cheader_filename = "gtk/gtk.h")]

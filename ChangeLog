@@ -1,3 +1,900 @@
+2012-06-23  Jürg Billeter  <j@bitron.ch>
+
+	Release 0.16.1
+
+	codegen: Fix memory leak accessing automatic property with owned getter
+	Fixes bug 678630.
+
+2012-06-23  Evan Nemerson  <evan@coeus-group.com>
+
+	glib-2.0: make GLib.Pid inherit from int
+	Partially fixes bug 678420.
+
+	gdk-3.0: Gdk.EventKey does not have a GType
+	Fixes bug 678217.
+
+	bindings: update GIR-based bindings
+
+2012-06-23  Jürg Billeter  <j@bitron.ch>
+
+	codegen: Fix .begin on async methods returning structs
+
+	gtk+-3.0: Fix gtk_entry_get_text_area bindings
+
+2012-06-23  Michal Hruby  <michal.mhr@gmail.com>
+
+	girwriter: Use transfer-ownership=none for InitiallyUnowned based constructors
+
+2012-06-23  Alberto Ruiz  <alberto.ruiz@canonical.com>
+
+	bindings: Add gir_namespace and gir_version to dbus-glib-1.vapi
+
+2012-06-23  Evan Nemerson  <evan@coeus-group.com>
+
+	gtk+-2.0, gtk+-3.0: include necessary headers for IMContext(Info) types
+	Fixes bug 635664.
+
+2012-06-23  Robert Ancell  <robert.ancell@canonical.com>
+
+	gtk+-3.0: Gtk.Scrollbar constructor allows null adjustment
+	Fixes bug 669516.
+
+2012-06-23  David King  <amigadave@amigadave.com>
+
+	gtk+-2.0, gtk+-3.0: fix Gtk.test_init
+	Fixes bug 669767.
+
+2012-06-23  Jesse van den Kieboom  <jesse.vandenkieboom@epfl.ch>
+
+	Added is_out annotation for StyleContext.lookup_color
+	Fixes bug 675403.
+
+2012-06-23  Evan Nemerson  <evan@coeus-group.com>
+
+	gtk+-3.0: hide SelectionData.get_data_with_length length parameter
+	Fixes bug 676849.
+
+	gtk+-3.0: add information to generate 2d0e7f49
+
+	dbus-glib-1: add dbus_g_connection_open binding
+	Fixes bug 622043.
+
+2012-06-23  Alexander Kurtz  <kurtz.alex@googlemail.com>
+
+	x11: Enable some fields which were previously commented out.
+	https://bugzilla.gnome.org/show_bug.cgi?id=669374
+
+2012-06-23  Evan Nemerson  <evan@coeus-group.com>
+
+	gstreamer-0.10: correct type id of Gst.TypeFindFactory
+	Partially fixes bug 675364.
+
+2012-06-23  Richard Schwarting  <aquarichy@gmail.com>
+
+	libxml-2.0: add missing cnames to some Doc fields
+	Fixes bug 677354.
+
+2012-06-23  Evan Nemerson  <evan@coeus-group.com>
+
+	gdk-3.0: mark Gdk.Atom as derived from uint
+
+2012-06-23  Richard Schwarting  <aquarichy@gmail.com>
+
+	libxml-2.0: add SaveCtxt bindings
+	Partially fixes bug 677355.
+
+2012-06-23  Jürg Billeter  <j@bitron.ch>
+
+	codegen: Fix assertion failure on empty string switch statement
+	Fixes bug 677205.
+
+	GVariant: Fix memory leak when boxing and unboxing variants
+	Fixes bug 674201.
+
+	gnome-keyring-1: Fix gnome_keyring_item_get_info_sync binding
+	Fixes bug 677256.
+
+	codegen: Fix infinite recursion when using lambda in destructor
+	Fixes bug 677261.
+
+	glib-2.0: Fix typo in FileSeek attribute
+
+2012-06-23  Evan Nemerson  <evan@coeus-group.com>
+
+	glib-2.0: set FileSeek cname to "int"
+
+2012-06-23  Jürg Billeter  <j@bitron.ch>
+
+	glib-2.0: Include glib/gstdio.h when using DirUtils or Stat
+
+2012-06-23  Alexander Larsson  <alexl@redhat.com>
+
+	Update clutter vapi to final Clutter 1.10.
+
+2012-06-23  Evan Nemerson  <evan@coeus-group.com>
+
+	gdk-3.0, libsoup-2.4, poppler-glib, rest-0.7, vte-2.90: update
+
+2012-06-23  Michal Hruby  <michal.mhr@gmail.com>
+
+	glib-2.0: Add a few Source methods
+
+2012-06-23  Jürg Billeter  <j@bitron.ch>
+
+	codegen: Fix capturing element variable of foreach without iterator
+
+	Support virtual interface signals
+	Fixes bug 676802.
+
+2012-06-23  Marc-André Lureau  <marcandre.lureau@gmail.com>
+
+	glib-2.0: annotate nullable GLib.Uri arguments and return values
+	g_uri_*() functions can take null values, return null as a normal
+	operation, ex: parse_scheme() returns null when no scheme...
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=676609
+
+2012-06-23  Evan Nemerson  <evan@coeus-group.com>
+
+	posix: add statvfs and fstatvfs function bindings
+	statvfs is called statvfs_exec since just using statvfs would conflict
+	with the existing statvfs type.
+
+2012-06-23  Colin Walters  <walters@verbum.org>
+
+	build: Note that we don't support srcdir != builddir
+
+2012-06-23  Evan Nemerson  <evan@coeus-group.com>
+
+	gtk+-2.0, gtk+-3.0: make TextTag constructor's parameter nullable
+
+2012-06-23  Philip Flarsheim  <philip.flarsheim@gmail.com>
+
+	glib-2.0: add Hmac bindings
+	Fixes bug 670243.
+
+2012-06-23  Evan Nemerson  <evan@coeus-group.com>
+
+	gobject-2.0: add Type.{get,set}_qdata methods
+	Fixes bug 673392.
+
+	rest-0.7: update to git master
+	Fixes bug 670488.
+
+	gsl: correct MultifitLinearWorkspace construct/free C names
+	Fixes bug 670838.
+
+2012-06-23  Jesus Menendez-Castellano  <jesus.menendez.castellano@gmail.com>
+
+	posix: add execv(p) and sigqueue methods, make sigval_t a simple type
+	Fixes bug 673391.
+
+2012-06-23  Christian Persch  <chpe@gnome.org>
+
+	Use correct variable name to add vapigen directories
+	Fixes bug 675097.
+
+2012-06-23  Jürg Billeter  <j@bitron.ch>
+
+	glib-2.0: Update GUnicodeScript and GUnicodeBreakType bindings
+	Fixes bug 674660.
+
+2012-06-23  Robert Ancell  <robert.ancell@canonical.com>
+
+	posix: Add stat fields for high precision access/modification/status change timestamps (POSIX.1-2008)
+
+	posix: Add utimensat and futimens bindings
+
+2012-06-23  Jürg Billeter  <j@bitron.ch>
+
+	posix: Add ffs binding
+
+2012-06-23  Luca Bruno  <lucabru@src.gnome.org>
+
+	gtk+-2.0, gtk+-3.0: Fix TargetList.add_table binding
+	Based on patch by Axel FILMORE.
+
+	Fixes bug 673117.
+
+2012-05-17  Alexander Larsson  <alexl@redhat.com>
+
+	Add direct vfunc accessors for Widget.get_preferred_height/width
+	These are available as get_preferred_height_internal and get_preferred_width_internal
+	similarly to the existing get_preferred_height_for_width_internal and
+	get_preferred_width_for_height_internal methods.
+	(cherry picked from commit 2d0e7f49c2b14946a0c16e024c14bef333e43c59)
+
+2012-03-26  Jürg Billeter  <j@bitron.ch>
+
+	Release 0.16.0
+
+	glib-2.0: Add g_dir_make_tmp binding
+	Fixes bug 672846.
+
+2012-03-21  Jürg Billeter  <j@bitron.ch>
+
+	codegen: Fix delegate target C name for static fields
+	Fixes bug 671110.
+
+2012-03-17  Jürg Billeter  <j@bitron.ch>
+
+	glib-2.0: Hide Thread constructors when targeting GLib < 2.32
+	Fixes bug 672284.
+
+2012-03-11  Alberto Ruiz  <alberto.ruiz@canonical.com>
+
+	glib-2.0: Adds PREFIX_ERROR_POSITION to GLib.MarkupParseFlags
+
+2012-03-11  Alberto Ruiz  <aruiz@gnome.org>
+
+	glib-2.0: Adds GLib.MarkupParseContext.get_user_data ()
+	Fixes bug #671749
+
+2012-03-09  Jürg Billeter  <j@bitron.ch>
+
+	Add udisks2 bindings
+
+2012-03-09  Luca Bruno  <lucabru@src.gnome.org>
+
+	gtk+-3.0: Fix autogeneration of ColorButton.get_rgba
+	Apologies for approving commit 51044a92ed44776e6.
+
+	gio-2.0: Mark TlsCertificate as a concrete class
+	Keep the class concrete for backward compatibility.
+
+	Fixes bug 671459.
+
+2012-03-06  Robert Ancell  <robert.ancell@canonical.com>
+
+	gtk+-3.0: Fix output parameter of Gtk.ColorButton.get_rgba
+	Fixes bug 669386.
+
+2012-03-06  Luca Bruno  <lucabru@src.gnome.org>
+
+	glib-2.0: Add generic to ThreadPool.set_sort_function callback
+	Thanks to Paul Jakma for the patch.
+
+	Fixes bug 670205.
+
+2012-03-06  Aaron Andersen  <aaron@fosslib.net>
+
+	posix: Fix several string functions
+	Fixes bug 671309.
+
+2012-03-06  Luca Bruno  <lucabru@src.gnome.org>
+
+	gtk+-2.0, gtk+-3.0: Unset virtual to Container.forall
+	Fixes bug 671394.
+
+2012-02-25  Jürg Billeter  <j@bitron.ch>
+
+	Release 0.15.2
+
+	gtk+-3.0: Add Widget.get_preferred_width_for_height_internal
+
+2012-02-24  Jens Georg  <mail@jensge.org>
+
+	libsoup2.4: Fix arguments for MessageHeaders.get_range
+	https://bugzilla.gnome.org/show_bug.cgi?id=670602
+
+2012-02-23  Jürg Billeter  <j@bitron.ch>
+
+	gdk-3.0: Fix gdk_window_destroy binding again
+
+2012-02-21  Stefano Debenedetti  <ste@demaledetti.net>
+
+	posix: Add SockAddrIn6, In6Addr and inet_pton
+	Fixes bug 670492.
+
+2012-02-17  Luca Bruno  <lucabru@src.gnome.org>
+
+	glib-2.0: Make SourceFuncs a struct
+	Thanks to Paula Jakma for the patch.
+
+	Fixes bug 669756.
+
+2012-02-13  Evan Nemerson  <evan@coeus-group.com>
+
+	glib-2.0: add g_thread_new and g_thread_try_new bindings
+
+2012-02-12  Evan Nemerson  <evan@coeus-group.com>
+
+	gtk+-3.0: update to 3.3.15
+
+2012-02-11  Luca Bruno  <lucabru@src.gnome.org>
+
+	gio-2.0: Include gunixfdlist.h for UnixFDList
+
+2012-02-11  Jens Georg  <mail@jensge.org>
+
+	gstreamer-0.10: Add returns_floatin_reference to Element.make_from_uri
+	https://bugzilla.gnome.org/show_bug.cgi?id=669166
+
+2012-02-10  Luca Bruno  <lucabru@src.gnome.org>
+
+	codegen: Allow usage of gtype structs inheriting non-gtype struct
+	The behavior of type_id is different, but get/set/take/marshaller aren't
+	as specific as type_id. Therefore this patch enhances without breaking.
+
+	Fixes bug 669604.
+
+2012-02-10  Evan Nemerson  <evan@coeus-group.com>
+
+	glib-2.0: add some missing deprecation information
+
+2012-02-09  Luca Bruno  <lucabru@src.gnome.org>
+
+	gio-2.0: send_message_with_reply.out_serial is not out in vala
+	Fixes a regression introduced by the switch to GIR.
+
+	Support initializer list for structs that have a base type
+	Fixes bug 669580.
+
+2012-02-08  Jesse van den Kieboom  <jesse.vandenkieboom@epfl.ch>
+
+	Added bindings for Object.new_valist
+	https://bugzilla.gnome.org/show_bug.cgi?id=669654
+
+	Added bindings for HashTable<K,V>.foreach_remove
+	https://bugzilla.gnome.org/show_bug.cgi?id=669653
+
+	Added error when not exporting any namespaces for GIR
+	https://bugzilla.gnome.org/show_bug.cgi?id=669551
+
+2012-02-07  Luca Bruno  <lucabru@src.gnome.org>
+
+	gdk-pixbuf-2.0: Fix regression against PixbufSaveFunc
+	The regression was introduced by the switch to gir.
+
+	Fixes bug 669518.
+
+2012-02-06  Luca Bruno  <lucabru@src.gnome.org>
+
+	codegen: Fix C warning when passing lambda free functions
+	Fixes bug 663651.
+
+2012-02-06  Alexander Kurtz  <kurtz.alex@googlemail.com>
+
+	sdl: Make AudioSpec a struct, then fix Audio.open(), load() and mix()
+	Fixes bug 669279.
+
+2012-02-06  Luca Bruno  <lucabru@src.gnome.org>
+
+	codegen: Add support for delegate_target_cname in CCode
+
+2012-02-05  Philip Withnall  <philip@tecnocode.co.uk>
+
+	vapi: Add glib-unix.h functions to glib-2.0.vapi
+	To bind the things in glib-unix.h. Creating a separate glib-unix-2.0.vapi is
+	unneccessary because these functions are present in libglib-2.0.so itself,
+	rather than a separate library. They just require the glib-unix.h header to
+	be included.
+
+	Closes: https://bugzilla.gnome.org/show_bug.cgi?id=667894
+
+2012-02-05  Ryan Lortie  <desrt@desrt.ca>
+
+	glib: add .data to StringBuilder
+	To do the same thing as string.data, but without the strlen() (since we
+	already know this from the GString's length field).
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=669313
+
+2012-02-03  Ryan Lortie  <desrt@desrt.ca>
+
+	gtk+-3.0: some updates
+	 - complete the move of the app-menu and menubar properties into
+	   GtkApplication
+
+	 - add GtkActionable interface and its implementations
+
+	 - add gtk_menu_(bar_)new_from_model() APIs
+
+	 - drop a premature add of gtk_window_setup_persistent_state()
+
+2012-02-02  Alexander Kurtz  <kurtz.alex@googlemail.com>
+
+	glib-2.0: Mark OptionEntry.arg_description as nullable
+	Fixes bug 669241.
+
+	glib-2.0: AsyncQueue.try_pop() and timed_pop() may return null
+	Fixes bug 669242.
+
+2012-02-01  Luca Bruno  <lucabru@src.gnome.org>
+
+	clutter-1.0: Add Box.layout_manager to not break code using old clutter
+	The Box.layout_manager property has been removed in commit 81cade2a
+	and broke code using old clutter versions.
+
+2012-02-01  Nathan Phillip Brink  <binki@gentoo.org>
+
+	tests: Honor CFLAGS, LDFLAGS, and CPPFLAGS
+	Fixes bug 664606.
+
+2012-02-01  Jens Georg  <mail@jensge.org>
+
+	gstreamer-0.10: Add returns_floating_reference to gst_parse_bin_*
+	https://bugzilla.gnome.org/show_bug.cgi?id=669060
+
+2012-02-01  Evan Nemerson  <evan@coeus-group.com>
+
+	libsoup-2.4: add type arguments for datalist arguments to form funcs
+
+	x11: add GIR name for XID
+
+	Add gir-bindings and gidl-bindings Makefile targets in vapi/
+
+	poppler-glib: switch to GIR
+
+	clutter-1.0: update bindings
+
+	girparser: support changing names of virtual methods without wrappers
+	Fixes bug 668991.
+
+	codegen: support virtual functions with vfunc_name but no invokers
+	Partially fixes 668991.
+
+2012-01-31  Luca Bruno  <lucabru@src.gnome.org>
+
+	gtk+-2.0, gtk+-3.0: Mark Button.set_label parameter as nullable
+	Fixes bug 669058.
+
+2012-01-29  Luca Bruno  <lucabru@src.gnome.org>
+
+	cogl-1.0: Use a static method instead of a constructor for Cogl.Path
+	The Cogl.Path constructor never worked, use a static method instead.
+
+	codegen: Fix getting NoAccessorMethod properties of real struct type
+
+	libpeas-1.0: Fix ExtensionSetForeachFunc binding
+	Fixes bug 660362.
+
+2012-01-28  Luca Bruno  <lucabru@src.gnome.org>
+
+	gtk+-3.0: Mark WidgetPath.iter_has_region.flags as out
+	Fixes bug 668854.
+
+2012-01-26  Jürg Billeter  <j@bitron.ch>
+
+	Release 0.15.1
+
+	Consider GLib.Object?[] compatible to GLib.Object[]
+	Fixes bug 667600.
+
+	Update .gitignore
+
+	Add missing file
+
+2012-01-26  Florian Brosch  <flo.brosch@gmail.com>
+
+	Check type of default arguments
+
+	Report warning for type arguments in type check expressions
+
+	Report warning for type arguments in typeof expressions
+
+	girwriter: Add <doc> support
+
+	girparser: Add support for comments
+
+	Do not allow overriding content property in Comment class
+
+	gee: Add MapIterator
+
+2012-01-26  Luca Bruno  <lucabru@src.gnome.org>
+
+	cogl-1.0: Cogl.get_viewport parameter has no array length
+
+2012-01-26  Jürg Billeter  <j@bitron.ch>
+
+	Add packagekit-glib2 bindings
+
+2012-01-24  Jürg Billeter  <j@bitron.ch>
+
+	Fix possibly unassigned parameter
+
+2012-01-24  Ryan Lortie  <desrt@desrt.ca>
+
+	codegen: Do not use g_object_class_override_property
+	Instead, always install our own new property with what we believe the
+	correct type is.  This avoids a problem with libgee providing properties
+	on some classes that implement two interfaces having the same property
+	name with different types.
+
+	Fixes bug 666728.
+
+2012-01-24  Luca Bruno  <lucabru@src.gnome.org>
+
+	Allow specialization of generic properties
+	Fixes bug 667668.
+
+2012-01-23  Colin Walters  <walters@verbum.org>
+
+	vapigen: Use install-data-hook for .pc file symbolic link
+	The $(pkgconfigdir) may not have been created when we're just in
+	the install-exec phase.
+
+2012-01-23  Luca Bruno  <lucabru@src.gnome.org>
+
+	codegen: Use NULL as default C value for nullable structs
+	Fixes bug 665904.
+
+	codegen: MemberAccess already refers to base property
+	Fixes bug 667803.
+
+	Initialize the variable directly when assigning a struct creation
+	Some structs like WeakRef or potentially Mutex can't use temporary
+	variables during initialization.
+
+2012-01-22  Alexander Kurtz  <kurtz.alex@googlemail.com>
+
+	Add xtst bindings
+	Fixes bug 647465.
+
+2012-01-22  Evan Nemerson  <evan@coeus-group.com>
+
+	posix: don't use owned for resolved_path argument
+
+2012-01-22  Luca Bruno  <lucabru@src.gnome.org>
+
+	posix: add realpath binding
+	Fixes bug 655020.
+
+2012-01-22  Rico Tzschichholz  <ricotz@t-online.de>
+
+	Add some missing files to EXTRA_DIST
+
+2012-01-22  Evan Nemerson  <evan@coeus-group.com>
+
+	glib-2.0, gobject-2.0: add new symbols from 2.32
+
+	gio-2.0: update to 2.31.12
+
+	gtk+-3.0: make ThemingEngine.register_property.parse_func nullable
+	Fixes bug 666906.
+
+	gdk-2.0: use uint8[] for Bitmap and Pixmap.create_from_data data
+	Fixes bug 646339.
+
+2012-01-22  Nicolas Bruguier  <nicolas.bruguier@supersonicimagine.fr>
+
+	pixman-1: Fix pixman Region[16/32] and add Fixed from double/int funcs
+	Fixes bug 641962.
+
+2012-01-22  Alexander Kurtz  <kurtz.alex@googlemail.com>
+
+	x11: add several type definitions from X.h
+	Fixes bug 647464.
+
+2012-01-21  Florian Brosch  <flo.brosch@gmail.com>
+
+	tag sizeof as constant
+
+2012-01-21  Evan Nemerson  <evan@coeus-group.com>
+
+	Makefile.vapigen: use *_FILES instead of *_GIR
+	The more generic variable name is more appropriate since there may be
+	one or more custom vala file in addition to the GIR.
+
+	Add autotools vapigen integration for upstream bindings
+	Fixes bug 649526.
+
+2012-01-20  Evan Nemerson  <evan@coeus-group.com>
+
+	mx-1.0: various fixes for Image.set_from_buffer/data methods
+	Fixes bug 668318.
+
+2012-01-19  Evan Nemerson  <evan@coeus-group.com>
+
+	codegen: support free_function_address_of annotation
+
+	glib-2.0: add GByteArray bindings
+
+2012-01-18  Michael 'Mickey' Lauer  <mickey@vanille-media.de>
+
+	linux: change IfAddrs structure to be more useful in conjunction with getnameinfo()
+
+	posix: fix socklen_t and its usage in getnameinfo
+	Acked-by: Luca Bruno <lethalman88@gmail.com>
+
+2012-01-18  Luca Bruno  <lucabru@src.gnome.org>
+
+	codegen: Reintroduce memory leak when using generics in interfaces
+	The bug was present in older Vala versions. Reintroducing it to avoid
+	breaking old code, until a proper fix is found.
+
+	See bug 666480.
+
+2012-01-17  Florian Brosch  <flo.brosch@gmail.com>
+
+	Check left parameter of is
+
+2012-01-17  Evan Nemerson  <evan@coeus-group.com>
+
+	Add gdl-3.0 bindings
+
+	clutter-gtk-1.0: switch to GIR
+
+	Add cogl-pango-1.0 bindings
+
+	gio-2.0: re-add custom delegates for ActionEntry callbacks
+
+2012-01-14  Luca Bruno  <lucabru@src.gnome.org>
+
+	Check accessibility of type arguments
+
+2012-01-13  Luca Bruno  <lucabru@src.gnome.org>
+
+	codegen: Fix type check for vfunc returning SimpleType structs
+	Fixes bug 667890.
+
+2012-01-13  Philip Withnall  <philip@tecnocode.co.uk>
+
+	readline: Make the parameter of VcpFunc be nullable
+	Fixes bug 667893.
+
+2012-01-13  Fabian Deutsch  <fabian.deutsch@gmx.de>
+
+	avahi-client: deprecated wrapper methods which throw errors
+	First step towards fixing 665375.
+
+2012-01-12  Evan Nemerson  <evan@coeus-group.com>
+
+	gio-2.0: don't hide UnixSocketAddressType in gio-2.0
+
+2012-01-12  Luca Bruno  <lucabru@src.gnome.org>
+
+	gio-2.0: Ultimate fixes
+
+	gio-2.0: Fix some regressions intruduced by the GIR switch
+
+2012-01-12  Evan Nemerson  <evan@coeus-group.com>
+
+	gio-2.0: remove obsolete gio-2.0 GIDL data
+
+	libgdata, libpeas-1.0, libwnck-3.0, pangocairo, rest-0.7: update
+
+	girwriter: do not emit a package as a dependency of itself
+
+	atk, gdk-3.0, gdk-pixbuf-2.0, gtksourceview-3.0, mx-1.0: update
+
+	libsoup-2.4: update to 2.37.3
+
+	gio-2.0: switch to GIR
+
+2012-01-09  Fabian Deutsch  <fabian.deutsch@gmx.de>
+
+	gtk+-2.0, gtk+-3.0: Mark BuilderConnectFunc.connect_object as nullable
+	Fixes bug 667524.
+
+2012-01-07  Luca Bruno  <lucabru@src.gnome.org>
+
+	codegen: Don't copy array parameters when captured
+	Also allow uncopiable compact classes to be captured.
+
+	Fixes bug 639054.
+
+2012-01-07  Evan Nemerson  <evan@coeus-group.com>
+
+	webkit-1.0: update to 1.6.1
+
+2012-01-07  Michael 'Mickey' Lauer  <mickey@vanille-media.de>
+
+	posix: add getnameinfo(3) and assorted constants
+
+	posix: add members for SockAddr struct
+
+2012-01-07  Evan Nemerson  <evan@coeus-group.com>
+
+	clutter-1.0: add keysyms
+	Fixes bug 628103.
+
+	clutter-1.0: update to 1.9.2
+
+2012-01-06  Ryan Lortie  <desrt@desrt.ca>
+
+	gtk+-3.0: add gtk_window_setup_persistent_state()
+
+2012-01-06  Marc-André Lureau  <marcandre.lureau@gmail.com>
+
+	gio-2.0: add a few nullable from Menu
+	https://bugzilla.gnome.org/show_bug.cgi?id=667431
+
+	gio-2.0: add a few nullable from GSimpleAction
+	https://bugzilla.gnome.org/show_bug.cgi?id=667428
+
+2012-01-06  Ryan Lortie  <desrt@desrt.ca>
+
+	glib-2.0.vapi: add new GHashTable API
+	g_hash_table_add() and g_hash_table_contains() were just added to GLib
+	so add them here.
+
+	It's now possible to say 'if (key in table) { }'.
+
+	gio-2.0.vapi: some action related updates
+
+2012-01-05  Marc-André Lureau  <marcandre.lureau@gmail.com>
+
+	Set correct default value for Pango.Weight
+	https://bugzilla.gnome.org/show_bug.cgi?id=662974
+
+	gidl parse default_value for enums
+	It can be useful for correct default value in properties
+
+	https://bugzilla.gnome.org/show_bug.cgi?id=662974
+
+2012-01-05  Luca Bruno  <lucabru@src.gnome.org>
+
+	girparser: Only reparent static methods within the same GIR
+
+2012-01-05  Zeeshan Ali (Khattak)  <zeeshanak@gnome.org>
+
+	gtk+-3.0: Correct binding for GtkSpinButton::input.new_value
+	Fixes bug 667329.
+
+2012-01-04  Luca Bruno  <lucabru@src.gnome.org>
+
+	gtk+-3.0: Mark ThemingEngine.has_region.flags as out parameter
+	Fixes bug 667208.
+
+2011-12-25  Aaron Andersen  <aaron@fosslib.net>
+
+	codegen: Generate _dup() and _free() for structs in the posix profile
+	Fixes bug 665815.
+
+2011-12-25  Jacques-Pascal Deplaix  <jp.deplaix@gmail.com>
+
+	glib-2.0: Fix some issues for the experimental non-null checks
+	Fixes bug 651841.
+
+2011-12-25  Marc-André Lureau  <marcandre.lureau@gmail.com>
+
+	clutter-1.0: Make State.set_key.source_state_name parameter nullable
+	Fixes bug 661018.
+
+2011-12-25  Luca Bruno  <lucabru@src.gnome.org>
+
+	clutter-1.0: Regenerate bindings from debian sid GIR
+
+2011-12-24  Michael 'Mickey' Lauer  <mickey@vanille-media.de>
+
+	posix: add tzset(3) and assorted constants
+
+2011-12-23  Evan Nemerson  <evan@coeus-group.com>
+
+	gtk+-2.0, gtk+-3.0: make IconTheme.list_icons.context nullable
+
+2011-12-23  Philip Withnall  <philip@tecnocode.co.uk>
+
+	glib-2.0, gio-2.0: Fix some nullable types in ContentType, Icon, HashTable
+	Fixes bug 666699.
+
+2011-12-23  Olaf  <yggtrash@googlemail.com>
+
+	x11: Set array_length to false for ModifierKeymap.modifiermap
+	Fixes bug 666099.
+
+2011-12-22  Luca Bruno  <lucabru@src.gnome.org>
+
+	gdk-3.0: Drop the abstract keyword from the Cursor class
+	Vala does not allow creating new Cursor if the class is abstract.
+	As it doesn't affect its usage at all, drop the keyword
+	instead of breaking the backward compatibility.
+
+	Fixes bug 665624.
+
+	girparser: Allow specifying abstract metadata for classes
+
+	cogl-1.0: Use cogl-pango/cogl-pango.h header for pango symbols
+	Fixes bug 665953.
+
+2011-12-22  Jens Georg  <mail@jensge.org>
+
+	gstreamer-0.10: Fix several ownership transfer when adding children
+	gst_bin_add, gst_bin_add_many and gst_element_add_pad only transfer
+	ownership if the reference is floating, otherwise increasing the
+	refcount. The reference is added by gst_object_set_parent.
+
+	Fixes bug 666358.
+
+2011-12-22  Zeeshan Ali (Khattak)  <zeeshanak@gnome.org>
+
+	gtk+-2.0, gtk+-3.0: Make Editable.insert_text.position be a ref parameter
+	Fixes bug 666021.
+
+2011-12-22  Timo Kluck  <tkluck@infty.nl>
+
+	gobject-2.0: Fix ValueTransform and BindingTransformFunc
+	The destination GValue is already being initialized by the caller.
+
+	Fixes bug 665966.
+
+2011-12-21  Jürg Billeter  <j@bitron.ch>
+
+	gtk+-3.0: Update to 3.3.6
+
+	gio-2.0: Update to 2.31.6
+
+2011-12-21  Luca Bruno  <lucabru@src.gnome.org>
+
+	gio-2.0: Make AsyncInitable.init_async virtual instead of abstract
+	Fixes bug 666348.
+
+2011-12-20  Simon Busch  <morphis@gravedo.de>
+
+	linux: Add bindings for rtc_time and fix the Rtc.WakeAlarm.time field
+
+	posix: Fix termios and fd_set related functions
+
+2011-12-20  Luca Bruno  <lucabru@src.gnome.org>
+
+	Revert "posix: Mark several termios and fd_set parameters as ref"
+	This reverts commit 7b34e0ca7dc5d6cef5b75e8d8f7dc2723050df0d.
+
+2011-12-20  Ryan Lortie  <desrt@desrt.ca>
+
+	gtk3 vapi: GtkApplication additions
+
+	gio vapi: GApplication, Menus, ActionGroup updates
+
+2011-12-18  Jürg Billeter  <j@bitron.ch>
+
+	codegen: Fix external fields
+
+2011-12-17  Klaus Kurzmann  <mok@fluxnetz.de>
+
+	libnl-3.0: add bindings
+
+2011-12-16  Evan Nemerson  <evan@coeus-group.com>
+
+	gtk+-2.0, gtk+-3.0: fix IconTheme.get_search_path argument type
+
+2011-12-16  Jürg Billeter  <j@bitron.ch>
+
+	gtk+-3.0: Improve Dialog.get_content_area binding
+	gtk_dialog_get_content_area always returns a pointer to GtkBox.
+
+2011-12-15  Jürg Billeter  <j@bitron.ch>
+
+	Do not install vala.m4 with --disable-unversioned
+	This avoids file conflicts with parallel installations.
+
+2011-12-11  Simon Busch  <morphis@gravedo.de>
+
+	posix: Mark several termios and fd_set parameters as ref
+
+	GVariant: Close the switch statement in the generated to_string() of enums
+
+	posix: Set the C name of Posix.tm to "struct tm"
+
+2011-12-10  Aaron Andersen  <aaron@fosslib.net>
+
+	Support creation of arrays with nullable elements
+	Partially fixes bug 571486.
+
+2011-12-09  Jürg Billeter  <j@bitron.ch>
+
+	Report error on duplicate attributes
+
+	gtk+-3.0: Fix gtk_widgets_compute_expand bindings
+	Based on patch by Alexander Larsson.
+
+	Fixes bug 665860.
+
+2011-12-09  Luca Bruno  <lucabru@src.gnome.org>
+
+	girparser: Fix criticals on calculate_common_prefix
+
+2011-12-08  Simon Busch  <morphis@gravedo.de>
+
+	alsa: Fix default value of a Mixer.register() parameter
+
+	linux: Squash declaration of multiple CCode into a single CCode attribute
+
+2011-12-07  Simon Busch  <morphis@gravedo.de>
+
+	linux: Set array_length=false for IfReq.ifr_name
+
 2011-12-05  Jürg Billeter  <j@bitron.ch>
 
 	Release 0.15.0

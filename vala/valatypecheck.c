@@ -154,6 +154,9 @@ typedef struct _ValaSourceReferenceClass ValaSourceReferenceClass;
 typedef struct _ValaTypeSymbol ValaTypeSymbol;
 typedef struct _ValaTypeSymbolClass ValaTypeSymbolClass;
 
+#define VALA_TYPE_PROFILE (vala_profile_get_type ())
+#define _vala_iterable_unref0(var) ((var == NULL) ? NULL : (var = (vala_iterable_unref (var), NULL)))
+
 #define VALA_TYPE_SEMANTIC_ANALYZER (vala_semantic_analyzer_get_type ())
 #define VALA_SEMANTIC_ANALYZER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), VALA_TYPE_SEMANTIC_ANALYZER, ValaSemanticAnalyzer))
 #define VALA_SEMANTIC_ANALYZER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), VALA_TYPE_SEMANTIC_ANALYZER, ValaSemanticAnalyzerClass))
@@ -1073,6 +1076,12 @@ struct _ValaTypeCheckPrivate {
 	ValaDataType* _data_type;
 };
 
+typedef enum  {
+	VALA_PROFILE_POSIX,
+	VALA_PROFILE_GOBJECT,
+	VALA_PROFILE_DOVA
+} ValaProfile;
+
 struct _ValaCodeVisitor {
 	GTypeInstance parent_instance;
 	volatile int ref_count;
@@ -1272,9 +1281,16 @@ gboolean vala_code_node_get_checked (ValaCodeNode* self);
 gboolean vala_code_node_get_error (ValaCodeNode* self);
 void vala_code_node_set_checked (ValaCodeNode* self, gboolean value);
 gboolean vala_code_node_check (ValaCodeNode* self, ValaCodeContext* context);
+ValaDataType* vala_expression_get_value_type (ValaExpression* self);
+void vala_report_error (ValaSourceReference* source, const gchar* message);
+ValaSourceReference* vala_code_node_get_source_reference (ValaCodeNode* self);
+void vala_code_node_set_error (ValaCodeNode* self, gboolean value);
 GType vala_typesymbol_get_type (void) G_GNUC_CONST;
 ValaTypeSymbol* vala_data_type_get_data_type (ValaDataType* self);
-void vala_code_node_set_error (ValaCodeNode* self, gboolean value);
+GType vala_profile_get_type (void) G_GNUC_CONST;
+ValaProfile vala_code_context_get_profile (ValaCodeContext* self);
+ValaList* vala_data_type_get_type_arguments (ValaDataType* self);
+void vala_report_warning (ValaSourceReference* source, const gchar* message);
 GType vala_semantic_analyzer_get_type (void) G_GNUC_CONST;
 ValaSemanticAnalyzer* vala_code_context_get_analyzer (ValaCodeContext* self);
 gpointer vala_source_file_ref (gpointer instance);
@@ -1506,16 +1522,25 @@ static gboolean vala_typecheck_real_check (ValaCodeNode* base, ValaCodeContext* 
 	ValaDataType* _tmp7_;
 	ValaDataType* _tmp8_;
 	ValaCodeContext* _tmp9_;
-	ValaDataType* _tmp10_;
-	ValaDataType* _tmp11_;
-	ValaTypeSymbol* _tmp12_;
-	ValaTypeSymbol* _tmp13_;
-	ValaCodeContext* _tmp14_;
-	ValaSemanticAnalyzer* _tmp15_;
-	ValaSemanticAnalyzer* _tmp16_;
-	ValaDataType* _tmp17_;
-	gboolean _tmp18_;
-	gboolean _tmp19_;
+	ValaExpression* _tmp10_;
+	ValaExpression* _tmp11_;
+	ValaDataType* _tmp12_;
+	ValaDataType* _tmp13_;
+	ValaDataType* _tmp18_;
+	ValaDataType* _tmp19_;
+	ValaTypeSymbol* _tmp20_;
+	ValaTypeSymbol* _tmp21_;
+	gboolean _tmp22_ = FALSE;
+	ValaCodeContext* _tmp23_;
+	ValaProfile _tmp24_;
+	ValaProfile _tmp25_;
+	gboolean _tmp32_;
+	ValaCodeContext* _tmp36_;
+	ValaSemanticAnalyzer* _tmp37_;
+	ValaSemanticAnalyzer* _tmp38_;
+	ValaDataType* _tmp39_;
+	gboolean _tmp40_;
+	gboolean _tmp41_;
 	self = (ValaTypeCheck*) base;
 	g_return_val_if_fail (context != NULL, FALSE);
 	_tmp0_ = vala_code_node_get_checked ((ValaCodeNode*) self);
@@ -1537,23 +1562,72 @@ static gboolean vala_typecheck_real_check (ValaCodeNode* base, ValaCodeContext* 
 	_tmp8_ = _tmp7_;
 	_tmp9_ = context;
 	vala_code_node_check ((ValaCodeNode*) _tmp8_, _tmp9_);
-	_tmp10_ = vala_typecheck_get_type_reference (self);
+	_tmp10_ = vala_typecheck_get_expression (self);
 	_tmp11_ = _tmp10_;
-	_tmp12_ = vala_data_type_get_data_type (_tmp11_);
+	_tmp12_ = vala_expression_get_value_type (_tmp11_);
 	_tmp13_ = _tmp12_;
 	if (_tmp13_ == NULL) {
+		ValaExpression* _tmp14_;
+		ValaExpression* _tmp15_;
+		ValaSourceReference* _tmp16_;
+		ValaSourceReference* _tmp17_;
+		_tmp14_ = vala_typecheck_get_expression (self);
+		_tmp15_ = _tmp14_;
+		_tmp16_ = vala_code_node_get_source_reference ((ValaCodeNode*) _tmp15_);
+		_tmp17_ = _tmp16_;
+		vala_report_error (_tmp17_, "invalid left operand");
 		vala_code_node_set_error ((ValaCodeNode*) self, TRUE);
 		result = FALSE;
 		return result;
 	}
-	_tmp14_ = context;
-	_tmp15_ = vala_code_context_get_analyzer (_tmp14_);
-	_tmp16_ = _tmp15_;
-	_tmp17_ = _tmp16_->bool_type;
-	vala_expression_set_value_type ((ValaExpression*) self, _tmp17_);
-	_tmp18_ = vala_code_node_get_error ((ValaCodeNode*) self);
+	_tmp18_ = vala_typecheck_get_type_reference (self);
 	_tmp19_ = _tmp18_;
-	result = !_tmp19_;
+	_tmp20_ = vala_data_type_get_data_type (_tmp19_);
+	_tmp21_ = _tmp20_;
+	if (_tmp21_ == NULL) {
+		vala_code_node_set_error ((ValaCodeNode*) self, TRUE);
+		result = FALSE;
+		return result;
+	}
+	_tmp23_ = context;
+	_tmp24_ = vala_code_context_get_profile (_tmp23_);
+	_tmp25_ = _tmp24_;
+	if (_tmp25_ == VALA_PROFILE_GOBJECT) {
+		ValaDataType* _tmp26_;
+		ValaDataType* _tmp27_;
+		ValaList* _tmp28_ = NULL;
+		ValaList* _tmp29_;
+		gint _tmp30_;
+		gint _tmp31_;
+		_tmp26_ = vala_typecheck_get_type_reference (self);
+		_tmp27_ = _tmp26_;
+		_tmp28_ = vala_data_type_get_type_arguments (_tmp27_);
+		_tmp29_ = _tmp28_;
+		_tmp30_ = vala_collection_get_size ((ValaCollection*) _tmp29_);
+		_tmp31_ = _tmp30_;
+		_tmp22_ = _tmp31_ > 0;
+		_vala_iterable_unref0 (_tmp29_);
+	} else {
+		_tmp22_ = FALSE;
+	}
+	_tmp32_ = _tmp22_;
+	if (_tmp32_) {
+		ValaDataType* _tmp33_;
+		ValaSourceReference* _tmp34_;
+		ValaSourceReference* _tmp35_;
+		_tmp33_ = self->priv->_data_type;
+		_tmp34_ = vala_code_node_get_source_reference ((ValaCodeNode*) _tmp33_);
+		_tmp35_ = _tmp34_;
+		vala_report_warning (_tmp35_, "Type argument list has no effect");
+	}
+	_tmp36_ = context;
+	_tmp37_ = vala_code_context_get_analyzer (_tmp36_);
+	_tmp38_ = _tmp37_;
+	_tmp39_ = _tmp38_->bool_type;
+	vala_expression_set_value_type ((ValaExpression*) self, _tmp39_);
+	_tmp40_ = vala_code_node_get_error ((ValaCodeNode*) self);
+	_tmp41_ = _tmp40_;
+	result = !_tmp41_;
 	return result;
 }
 

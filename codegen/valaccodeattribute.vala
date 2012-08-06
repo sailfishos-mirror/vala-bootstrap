@@ -255,6 +255,24 @@ public class Vala.CCodeAttribute : AttributeCache {
 		}
 	}
 
+	public bool free_function_address_of {
+		get {
+			if (_free_function_address_of == null) {
+				if (ccode != null && ccode.has_argument ("free_function_address_of")) {
+					_free_function_address_of = ccode.get_bool ("free_function_address_of");
+				} else {
+					var cl = (Class) sym;
+					if (cl.base_class != null) {
+						_free_function_address_of = CCodeBaseModule.get_ccode_free_function_address_of (cl.base_class);
+					} else {
+						_free_function_address_of = false;
+					}
+				}
+			}
+			return _free_function_address_of;
+		}
+	}
+
 	public string type_id {
 		get {
 			if (_type_id == null) {
@@ -436,6 +454,20 @@ public class Vala.CCodeAttribute : AttributeCache {
 		}
 	}
 
+	public string delegate_target_name {
+		get {
+			if (_delegate_target_name == null) {
+				if (ccode != null) {
+					_delegate_target_name = ccode.get_string ("delegate_target_cname");
+				}
+				if (_delegate_target_name == null) {
+					_delegate_target_name = "%s_target".printf (name);
+				}
+			}
+			return _delegate_target_name;
+		}
+	}
+
 	public bool array_length { get; private set; }
 	public string? array_length_type { get; private set; }
 	public bool array_null_terminated { get; private set; }
@@ -464,6 +496,7 @@ public class Vala.CCodeAttribute : AttributeCache {
 	private bool destroy_function_set;
 	private string? _free_function;
 	private bool free_function_set;
+	private bool? _free_function_address_of;
 	private string _type_id;
 	private string _marshaller_type_name;
 	private string _get_value_function;
@@ -477,6 +510,7 @@ public class Vala.CCodeAttribute : AttributeCache {
 	private string _finish_vfunc_name;
 	private string _finish_real_name;
 	private string _real_name;
+	private string _delegate_target_name;
 
 	private static int dynamic_method_id;
 
@@ -576,6 +610,8 @@ public class Vala.CCodeAttribute : AttributeCache {
 				} else {
 					return "%s%s".printf (CCodeBaseModule.get_ccode_prefix (sym.parent_symbol), sym.name);
 				}
+			} else if (sym is LocalVariable || sym is Parameter) {
+				return sym.name;
 			} else {
 				return "%s%s".printf (CCodeBaseModule.get_ccode_prefix (sym.parent_symbol), sym.name);
 			}
@@ -894,8 +930,12 @@ public class Vala.CCodeAttribute : AttributeCache {
 			} else if (sym is Struct) {
 				var st = (Struct) sym;
 				var base_st = st.base_struct;
-				if (base_st != null) {
-					return CCodeBaseModule.get_ccode_marshaller_type_name (base_st);
+				while (base_st != null) {
+					if (CCodeBaseModule.get_ccode_has_type_id (base_st)) {
+						return CCodeBaseModule.get_ccode_marshaller_type_name (base_st);
+					} else {
+						base_st = base_st.base_struct;
+					}
 				}
 				if (st.is_simple_type ()) {
 					Report.error (st.source_reference, "The type `%s` doesn't declare a marshaller type name".printf (st.get_full_name ()));
@@ -970,8 +1010,12 @@ public class Vala.CCodeAttribute : AttributeCache {
 		} else if (sym is Struct) {
 			var st = (Struct) sym;
 			var base_st = st.base_struct;
-			if (base_st != null) {
-				return CCodeBaseModule.get_ccode_get_value_function (base_st);
+			while (base_st != null) {
+				if (CCodeBaseModule.get_ccode_has_type_id (base_st)) {
+					return CCodeBaseModule.get_ccode_get_value_function (base_st);
+				} else {
+					base_st = base_st.base_struct;
+				}
 			}
 			if (st.is_simple_type ()) {
 				Report.error (st.source_reference, "The type `%s` doesn't declare a GValue get function".printf (st.get_full_name ()));
@@ -1024,8 +1068,12 @@ public class Vala.CCodeAttribute : AttributeCache {
 		} else if (sym is Struct) {
 			var st = (Struct) sym;
 			var base_st = st.base_struct;
-			if (base_st != null) {
-				return CCodeBaseModule.get_ccode_set_value_function (base_st);
+			while (base_st != null) {
+				if (CCodeBaseModule.get_ccode_has_type_id (base_st)) {
+					return CCodeBaseModule.get_ccode_set_value_function (base_st);
+				} else {
+					base_st = base_st.base_struct;
+				}
 			}
 			if (st.is_simple_type ()) {
 				Report.error (st.source_reference, "The type `%s` doesn't declare a GValue set function".printf (st.get_full_name ()));
@@ -1078,8 +1126,12 @@ public class Vala.CCodeAttribute : AttributeCache {
 		} else if (sym is Struct) {
 			var st = (Struct) sym;
 			var base_st = st.base_struct;
-			if (base_st != null) {
-				return CCodeBaseModule.get_ccode_take_value_function (base_st);
+			while (base_st != null) {
+				if (CCodeBaseModule.get_ccode_has_type_id (base_st)) {
+					return CCodeBaseModule.get_ccode_take_value_function (base_st);
+				} else {
+					base_st = base_st.base_struct;
+				}
 			}
 			if (st.is_simple_type ()) {
 				Report.error (st.source_reference, "The type `%s` doesn't declare a GValue take function".printf (st.get_full_name ()));

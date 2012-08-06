@@ -58,7 +58,7 @@ public class Vala.GAsyncModule : GSignalModule {
 			} else if (param.variable_type is DelegateType) {
 				var deleg_type = (DelegateType) param.variable_type;
 				if (deleg_type.delegate_symbol.has_target) {
-					data.add_field ("gpointer", get_delegate_target_cname (get_variable_cname (param.name)));
+					data.add_field ("gpointer", get_ccode_delegate_target_name (param));
 					if (!is_unowned_delegate) {
 						data.add_field ("GDestroyNotify", get_delegate_target_destroy_notify_cname (get_variable_cname (param.name)));
 					}
@@ -107,12 +107,12 @@ public class Vala.GAsyncModule : GSignalModule {
 
 		foreach (Parameter param in m.get_parameters ()) {
 			if (param.direction != ParameterDirection.OUT) {
-				bool is_unowned_delegate = param.variable_type is DelegateType && !param.variable_type.value_owned;
-
 				var param_type = param.variable_type.copy ();
-				param_type.value_owned = true;
+				if (!param_type.value_owned) {
+					param_type.value_owned = !no_implicit_copy (param_type);
+				}
 
-				if (requires_destroy (param_type) && !is_unowned_delegate) {
+				if (requires_destroy (param_type)) {
 					// do not try to access closure blocks
 					bool old_captured = param.captured;
 					param.captured = false;
@@ -255,17 +255,17 @@ public class Vala.GAsyncModule : GSignalModule {
 		emit_context.push_symbol (m);
 		foreach (Parameter param in m.get_parameters ()) {
 			if (param.direction != ParameterDirection.OUT) {
-				bool is_unowned_delegate = param.variable_type is DelegateType && !param.variable_type.value_owned;
-
 				var param_type = param.variable_type.copy ();
-				param_type.value_owned = true;
+				if (!param_type.value_owned) {
+					param_type.value_owned = !no_implicit_copy (param_type);
+				}
 
 				// create copy if necessary as variables in async methods may need to be kept alive
 				var old_captured = param.captured;
 				param.captured = false;
 				current_method.coroutine = false;
 				var value = load_parameter (param);
-				if (requires_copy (param_type) && !param.variable_type.value_owned && !is_unowned_delegate)  {
+				if (requires_copy (param_type) && !param.variable_type.value_owned) {
 					value = copy_value (value, param);
 				}
 				current_method.coroutine = true;

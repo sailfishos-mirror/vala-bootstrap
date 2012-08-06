@@ -16,6 +16,7 @@ libgee_la_VALASOURCES = \
 	hashmap.vala \
 	hashset.vala \
 	iterable.vala \
+	mapiterator.vala \
 	iterator.vala \
 	list.vala \
 	map.vala \

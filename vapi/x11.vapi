@@ -1,6 +1,7 @@
 /* x11.vapi
  *
  * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2011  Alexander Kurtz
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,8 +17,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  *
- * Author:
+ * Authors:
  * 	Jürg Billeter <j@bitron.ch>
+ * 	Alexander Kurtz <kurtz.alex@googlemail.com>
  */
 
 [CCode (gir_namespace = "xlib", gir_version = "2.0", cprefix = "", lower_case_cprefix = "", cheader_filename = "X11/Xlib.h,X11/Xatom.h,X11/Xutil.h,X11/Xregion.h")]
@@ -313,6 +315,7 @@ namespace X {
 		// The server's max # of keys per modifier
 		public int max_keypermod;
 		// An 8 by max_keypermod array of modifiers
+		[CCode (array_length = false)]
 		public uchar[] modifiermap;
 	}
 
@@ -342,6 +345,7 @@ namespace X {
 	public struct Status {
 	}
 
+	[GIR (name = "XID")]
 	[SimpleType]
 	[IntegerType (rank = 9)]
 	[CCode (cname = "XID", type_id = "G_TYPE_INT",
@@ -384,6 +388,48 @@ namespace X {
 	public struct Pixmap : Drawable	{
 	}
 
+	[SimpleType]
+	[IntegerType (rank = 9)]
+	[CCode (cname = "Mask")]
+	public struct Mask {
+	}
+
+	[SimpleType]
+	[IntegerType (rank = 9)]
+	[CCode (cname = "VisualID")]
+	public struct VisualID {
+	}
+
+	[SimpleType]
+	[IntegerType (rank = 9)]
+	[CCode (cname = "Time")]
+	public struct Time {
+	}
+
+	[SimpleType]
+	[IntegerType (rank = 9)]
+	[CCode (cname = "Cursor")]
+	public struct Cursor {
+	}
+
+	[SimpleType]
+	[IntegerType (rank = 9)]
+	[CCode (cname = "GContext")]
+	public struct GContext {
+	}
+
+	[SimpleType]
+	[IntegerType (rank = 9)]
+	[CCode (cname = "KeySym")]
+	public struct KeySym {
+	}
+
+	[SimpleType]
+	[IntegerType (rank = 9)]
+	[CCode (cname = "KeyCode")]
+	public struct KeyCode {
+	}
+
 	[CCode (ref_function = "", unref_function = "")]
 	[Compact]
 	public class Visual {
@@ -411,9 +457,9 @@ namespace X {
 
 	[CCode (cname = "XSetWindowAttributes")]
 	public struct SetWindowAttributes {
-		// public Pixmap background_pixmap;	/* background or None or ParentRelative */
+		public Pixmap background_pixmap;	/* background or None or ParentRelative */
 		public ulong background_pixel;	/* background pixel */
-		// public Pixmap border_pixmap;	/* border of the window */
+		public Pixmap border_pixmap;	/* border of the window */
 		public ulong border_pixel;	/* border pixel value */
 		public int bit_gravity;		/* one of bit gravity values */
 		public int win_gravity;		/* one of the window gravity values */
@@ -424,8 +470,8 @@ namespace X {
 		public long event_mask;		/* set of events that should be saved */
 		public long do_not_propagate_mask;	/* set of events that should not propagate */
 		public bool override_redirect;	/* boolean value for override-redirect */
-		// public Colormap colormap;		/* color map to be associated with window */
-		// public Cursor cursor;		/* cursor to be displayed (or None) */
+		public Colormap colormap;		/* color map to be associated with window */
+		public Cursor cursor;		/* cursor to be displayed (or None) */
 	}
 
 	[CCode(cname = "XWindowAttributes",
@@ -446,14 +492,14 @@ namespace X {
 		public ulong backing_planes;/* planes to be preserved if possible */
 		public ulong backing_pixel;/* value to be used when restoring planes */
 		public bool save_under;		/* boolean, should bits under be saved? */
-		// public Colormap colormap;		/* color map to be associated with window */
+		public Colormap colormap;		/* color map to be associated with window */
 		public bool map_installed;		/* boolean, is color map currently installed*/
 		public int map_state;		/* IsUnmapped, IsUnviewable, IsViewable */
 		public long all_event_masks;	/* set of events all people have interest in*/
 		public long your_event_mask;	/* my event mask */
 		public long do_not_propagate_mask; /* set of events that should not propagate */
 		public bool override_redirect;	/* boolean value for override-redirect */
-		// public Screen screen;		/* back pointer to correct screen */
+		public Screen screen;		/* back pointer to correct screen */
 	}
 
 	[CCode (cname = "CopyFromParent")]

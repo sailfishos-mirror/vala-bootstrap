@@ -1391,6 +1391,8 @@ public class Vala.GIdlParser : CodeVisitor {
 					if (eval (nv[1]) == "1") {
 						en.set_attribute ("Deprecated", true);
 					}
+				} else if (nv[0] == "default_value") {
+					en.set_attribute_string ("CCode", "default_value", eval (nv[1]));
 				} else if (nv[0] == "replacement") {
 					en.set_attribute_string ("Deprecated", "replacement", eval (nv[1]));
 				} else if (nv[0] == "deprecated_since") {
@@ -2258,6 +2260,8 @@ public class Vala.GIdlParser : CodeVisitor {
 					m.set_attribute_string ("CCode", "array_length_type", eval (nv[1]));
 				} else if (nv[0] == "type_name") {
 					m.return_type = return_type = parse_type_from_string (eval (nv[1]), return_type.value_owned);
+				} else if (nv[0] == "ctype") {
+					m.set_attribute_string ("CCode", "type", eval (nv[1]));
 				} else if (nv[0] == "type_arguments") {
 					parse_type_arguments_from_string (return_type, eval (nv[1]));
 				} else if (nv[0] == "deprecated") {

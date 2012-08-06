@@ -28,6 +28,8 @@ dist_vapi_DATA = \
 	clutter-json-1.0.vapi \
 	cogl-1.0.vapi \
 	cogl-1.0.deps \
+	cogl-pango-1.0.vapi \
+	cogl-pango-1.0.deps \
 	curses.vapi \
 	dbus-glib-1.vapi \
 	enchant.vapi \
@@ -47,6 +49,8 @@ dist_vapi_DATA = \
 	gdk-x11-3.0.vapi \
 	gdl-1.0.deps \
 	gdl-1.0.vapi \
+	gdl-3.0.deps \
+	gdl-3.0.vapi \
 	gdu.deps \
 	gdu.vapi \
 	gdu-gtk.deps \
@@ -155,6 +159,8 @@ dist_vapi_DATA = \
 	libnl-1.vapi \
 	libnl-2.0.deps \
 	libnl-2.0.vapi \
+	libnl-3.0.deps \
+	libnl-3.0.vapi \
 	libnotify.deps \
 	libnotify.vapi \
 	liboobs-1.vapi \
@@ -223,6 +229,8 @@ dist_vapi_DATA = \
 	tracker-indexer-module-1.0.vapi \
 	twitter-glib-1.0.deps \
 	twitter-glib-1.0.vapi \
+	udisks2.deps \
+	udisks2.vapi \
 	unique-1.0.deps \
 	unique-1.0.vapi \
 	v4l2.vapi \
@@ -235,6 +243,8 @@ dist_vapi_DATA = \
 	webkit-1.0.vapi \
 	x11.vapi \
 	xcb.vapi \
+	xtst.vapi \
+	xtst.deps \
 	zlib.vapi \
 	$(NULL)
 
@@ -242,7 +252,96 @@ dist_noinst_DATA = \
 	config.vapi \
 	$(NULL)
 
-BINDINGS = atk clutter-1.0 clutter-gtk-0.10 clutter-gtk-1.0 cogl-1.0 gconf-2.0 gdk-2.0 gdk-3.0 gdk-pixbuf-2.0 gdk-x11-2.0 gdk-x11-3.0 gdl-1.0 gdu gdu-gtk gedit-2.20 gedit gio-2.0 gio-unix-2.0 gnome-desktop-2.0 gnome-keyring-1 gnome-vfs-2.0 goocanvas gstreamer-0.10 gstreamer-app-0.10 gstreamer-audio-0.10 gstreamer-base-0.10 gstreamer-cdda-0.10 gstreamer-check-0.10 gstreamer-controller-0.10 gstreamer-dataprotocol-0.10 gstreamer-fft-0.10 gstreamer-interfaces-0.10 gstreamer-net-0.10 gstreamer-netbuffer-0.10 gstreamer-pbutils-0.10 gstreamer-riff-0.10 gstreamer-rtp-0.10 gstreamer-rtsp-0.10 gstreamer-sdp-0.10 gstreamer-tag-0.10 gstreamer-video-0.10 gtk+-2.0 gtk+-3.0 gtksourceview-2.0 gtksourceview-3.0 gudev-1.0 hildon-1 hildon-fm-2 json-glib-1.0 libepc-1.0 libgda-4.0 libgda-report-4.0 libgdata libglade-2.0 libgnome-2.0 libgnome-menu libgnomeui-2.0 libgsf-1 libnotify liboobs-1 libpeas-1.0 librsvg-2.0 libsexy libsoup-2.2 libsoup-2.4 libwnck-1.0 loudmouth-1.0 mx-1.0 pango pangocairo poppler-glib purple rest-0.6 rest-extras-0.6 rest-0.7 tracker-indexer-module-1.0 twitter-glib-1.0 unique-1.0 vte vte-2.90 webkit-1.0
+GIDL_BINDINGS = \
+	clutter-gtk-1.0 \
+	cogl-1.0 \
+	gconf-2.0 \
+	gdk-2.0 \
+	gdk-x11-2.0 \
+	gdk-x11-3.0 \
+	gdl-1.0 \
+	gdu \
+	gdk-gtk \
+	gedit-2.20 \
+	gnome-desktop-2.0 \
+	gnome-keyring-1 \
+	gnome-vfs-2.0 \
+	goocanvas \
+	gstreamer-0.10 \
+	gstreamer-app-0.10 \
+	gstreamer-audio-0.10 \
+	gstreamer-base-0.10 \
+	gstreamer-cdda-0.10 \
+	gstreamer-check-0.10 \
+	gstreamer-controller-0.10 \
+	gstreamer-dataprotocol-0.10 \
+	gstreamer-fft-0.10 \
+	gstreamer-interfaces-0.10 \
+	gstreamer-net-0.10 \
+	gstreamer-netbuffer-0.10 \
+	gstreamer-pbutils-0.10 \
+	gstreamer-riff-0.10 \
+	gstreamer-rtp-0.10 \
+	gstreamer-rtsp-0.10 \
+	gstreamer-sdp-0.10 \
+	gstreamer-tag-0.10 \
+	gstreamer-video-0.10 \
+	gtk+-2.0 \
+	gtk+-3.0 \
+	gtksourceview-2.0 \
+	hildon-1 \
+	hildon-fm-2 \
+	libepc-1.0 \
+	libgda-4.0 \
+	libgda-report-4.0 \
+	libglade-2.0 \
+	libgnome-2.0 \
+	libgnome-menu \
+	libgnomeui-2.0 \
+	libgsf-1 \
+	libnotify \
+	liboobs-1 \
+	librsvg-2.0 \
+	libsexy \
+	libsoup-2.2 \
+	loudmouth-1.0 \
+	pango \
+	purple \
+	rest-0.6 \
+	rest-extras-0.6 \
+	tracker-indexer-module-1.0 \
+	twitter-glib-1.0 \
+	unique-1.0 \
+	vte \
+	webkit-1.0 \
+	$(NULL)
+
+GIR_BINDINGS = \
+	atk \
+	clutter-1.0 \
+	cogl-pango \
+	gdk-3.0 \
+	gdk-pixbuf-2.0 \
+	gdl-3.0 \
+	gedit \
+	gio-2.0 \
+	gtksourceview-3.0 \
+	gudev-1.0 \
+	json-glib-1.0 \
+	libgdata \
+	libpeas-1.0 \
+	libsoup-2.4 \
+	libwnck-3.0 \
+	mx-1.0 \
+	packagekit-glib2 \
+	pangocairo \
+	poppler-glib \
+	rest-0.7 \
+	udisks2 \
+	vte-2.90 \
+	$(NULL)
+
+BINDINGS = $(GIR_BINDINGS) $(GIDL_BINDINGS)
 
 VAPIGEN = $(top_builddir)/vapigen/vapigen
 VAPIGENFLAGS = --vapidir $(srcdir)
@@ -254,7 +353,11 @@ GEDIT_GIRDIR=$$($(PKG_CONFIG) gedit --variable=prefix)/share/gedit/gir-1.0
 
 .PHONY: all-bindings $(BINDINGS)
 
-all-bindings: $(BINDINGS)
+gir-bindings: $(GIR_BINDINGS)
+
+gidl-bindings: $(GIDL_BINDINGS)
+
+all-bindings: gir-bindings gidl-bindings
 
 atk:
 	$(GENVAPI) --library $(srcdir)/atk --metadatadir $(METADATADIR) $(METADATADIR)/Atk-1.0-custom.vala $(GIRDIR)/Atk-1.0.gir
@@ -266,10 +369,13 @@ clutter-gtk-0.10:
 	$(GENVAPI) --library $(srcdir)/clutter-gtk-0.10 $(PACKAGESDIR)/clutter-gtk-0.10/clutter-gtk-0.10.gi
 
 clutter-gtk-1.0:
-	$(GENVAPI) --library $(srcdir)/clutter-gtk-1.0 $(PACKAGESDIR)/clutter-gtk-1.0/clutter-gtk-1.0.gi
+	$(GENVAPI) --library $(srcdir)/clutter-gtk-1.0 --metadatadir $(METADATADIR) $(METADATADIR)/GtkClutter-1.0-custom.vala --pkg clutter-1.0 --pkg gtk+-3.0 --pkg cogl-pango-1.0 $(GIRDIR)/GtkClutter-1.0.gir
 
 cogl-1.0:
 	$(GENVAPI) --library $(srcdir)/cogl-1.0 $(PACKAGESDIR)/cogl-1.0/cogl-1.0-custom.vala $(PACKAGESDIR)/cogl-1.0/cogl-1.0.gi
+
+cogl-pango-1.0:
+	$(GENVAPI) --library $(srcdir)/cogl-pango-1.0 --metadatadir $(METADATADIR) --pkg cogl-1.0 --pkg pango $(GIRDIR)/CoglPango-1.0.gir
 
 gconf-2.0:
 	$(GENVAPI) --library $(srcdir)/gconf-2.0 $(PACKAGESDIR)/gconf-2.0/gconf-2.0.gi
@@ -292,6 +398,9 @@ gdk-x11-3.0:
 gdl-1.0:
 	$(GENVAPI) --library $(srcdir)/gdl-1.0 $(PACKAGESDIR)/gdl-1.0/gdl-1.0-custom.vala $(PACKAGESDIR)/gdl-1.0/gdl-1.0.gi
 
+gdl-3.0:
+	$(GENVAPI) --library $(srcdir)/gdl-3.0 --pkg gio-2.0 --pkg gtk+-3.0 --metadatadir $(METADATADIR) $(GIRDIR)/Gdl-3.gir
+
 gdu:
 	$(GENVAPI) --library $(srcdir)/gdu $(PACKAGESDIR)/gdu/gdu.gi
 
@@ -305,7 +414,7 @@ gedit:
 	$(GENVAPI) --library $(srcdir)/gedit --metadatadir $(METADATADIR) $(GEDIT_GIRDIR)/Gedit-3.0.gir
 
 gio-2.0:
-	$(GENVAPI) --library $(srcdir)/gio-2.0 $(PACKAGESDIR)/gio-2.0/gio-2.0-custom.vala $(PACKAGESDIR)/gio-2.0/gio-2.0.gi
+	$(GENVAPI) --library $(srcdir)/gio-2.0 --metadatadir $(METADATADIR) $(METADATADIR)/Gio-2.0-custom.vala $(GIRDIR)/Gio-2.0.gir
 
 gio-unix-2.0:
 	$(GENVAPI) --library $(srcdir)/gio-unix-2.0 $(PACKAGESDIR)/gio-unix-2.0/gio-unix-2.0-custom.vala $(PACKAGESDIR)/gio-unix-2.0/gio-unix-2.0.gi
@@ -437,7 +546,7 @@ liboobs-1:
 	$(GENVAPI) --library $(srcdir)/liboobs-1 $(PACKAGESDIR)/liboobs-1/liboobs-1.gi
 
 libpeas-1.0:
-	$(GENVAPI) --library $(srcdir)/libpeas-1.0 --metadatadir $(METADATADIR) $(GIRDIR)/Peas-1.0.gir
+	$(GENVAPI) --library $(srcdir)/libpeas-1.0 --pkg gio-2.0 --metadatadir $(METADATADIR) $(GIRDIR)/Peas-1.0.gir
 
 librsvg-2.0:
 	$(GENVAPI) --library $(srcdir)/librsvg-2.0 $(PACKAGESDIR)/librsvg-2.0/librsvg-2.0.gi
@@ -463,6 +572,9 @@ loudmouth-1.0:
 mx-1.0:
 	$(GENVAPI) --library $(srcdir)/mx-1.0 --metadatadir $(METADATADIR) $(METADATADIR)/Mx-1.0-custom.vala $(GIRDIR)/Mx-1.0.gir
 
+packagekit-glib2:
+	$(GENVAPI) --library $(srcdir)/packagekit-glib2 --metadatadir $(METADATADIR) --pkg gio-2.0 $(GIRDIR)/PackageKitGlib-1.0.gir
+
 pango:
 	$(GENVAPI) --library $(srcdir)/pango $(PACKAGESDIR)/pango/pango-custom.vala $(PACKAGESDIR)/pango/pango.gi
 
@@ -470,7 +582,7 @@ pangocairo:
 	$(GENVAPI) --library $(srcdir)/pangocairo --metadatadir $(METADATADIR) $(GIRDIR)/PangoCairo-1.0.gir
 
 poppler-glib:
-	$(GENVAPI) --library $(srcdir)/poppler-glib $(PACKAGESDIR)/poppler-glib/poppler-glib.gi
+	$(GENVAPI) --library $(srcdir)/poppler-glib --metadatadir $(METADATADIR) $(GIRDIR)/Poppler-0.18.gir
 
 purple:
 	$(GENVAPI) --library $(srcdir)/purple $(PACKAGESDIR)/purple/purple-custom.vala $(PACKAGESDIR)/purple/purple.gi
@@ -482,13 +594,16 @@ rest-extras-0.6:
 	$(GENVAPI) --library $(srcdir)/rest-extras-0.6 $(PACKAGESDIR)/rest-extras-0.6/rest-extras-0.6-custom.vala $(PACKAGESDIR)/rest-extras-0.6/rest-extras-0.6.gi
 
 rest-0.7:
-	$(GENVAPI) --library $(srcdir)/rest-0.7 --metadatadir $(METADATADIR) $(GIRDIR)/Rest-0.7.gir
+	$(GENVAPI) --library $(srcdir)/rest-0.7 --metadatadir $(METADATADIR) --pkg gio-2.0 $(GIRDIR)/Rest-0.7.gir
 
 tracker-indexer-module-1.0:
 	$(GENVAPI) --library $(srcdir)/tracker-indexer-module-1.0 $(PACKAGESDIR)/tracker-indexer-module-1.0/tracker-indexer-module-1.0-custom.vala $(PACKAGESDIR)/tracker-indexer-module-1.0/tracker-indexer-module-1.0.gi
 
 twitter-glib-1.0:
 	$(GENVAPI) --library $(srcdir)/twitter-glib-1.0 $(PACKAGESDIR)/twitter-glib-1.0/twitter-glib-1.0.gi
+
+udisks2:
+	$(GENVAPI) --library $(srcdir)/udisks2 --metadatadir $(METADATADIR) --pkg gio-2.0 $(GIRDIR)/UDisks-2.0.gir
 
 unique-1.0:
 	$(GENVAPI) --library $(srcdir)/unique-1.0 $(PACKAGESDIR)/unique-1.0/unique-1.0.gi

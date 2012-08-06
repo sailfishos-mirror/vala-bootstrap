@@ -64,6 +64,23 @@ struct _ValaGIRWriter {
 
 struct _ValaGIRWriterClass {
 	ValaCodeVisitorClass parent_class;
+	gchar* (*get_interface_comment) (ValaGIRWriter* self, ValaInterface* iface);
+	gchar* (*get_struct_comment) (ValaGIRWriter* self, ValaStruct* st);
+	gchar* (*get_enum_comment) (ValaGIRWriter* self, ValaEnum* en);
+	gchar* (*get_class_comment) (ValaGIRWriter* self, ValaClass* c);
+	gchar* (*get_error_code_comment) (ValaGIRWriter* self, ValaErrorCode* ecode);
+	gchar* (*get_enum_value_comment) (ValaGIRWriter* self, ValaEnumValue* ev);
+	gchar* (*get_constant_comment) (ValaGIRWriter* self, ValaConstant* c);
+	gchar* (*get_error_domain_comment) (ValaGIRWriter* self, ValaErrorDomain* edomain);
+	gchar* (*get_field_comment) (ValaGIRWriter* self, ValaField* f);
+	gchar* (*get_delegate_comment) (ValaGIRWriter* self, ValaDelegate* cb);
+	gchar* (*get_method_comment) (ValaGIRWriter* self, ValaMethod* m);
+	gchar* (*get_property_comment) (ValaGIRWriter* self, ValaProperty* prop);
+	gchar* (*get_delegate_return_comment) (ValaGIRWriter* self, ValaDelegate* cb);
+	gchar* (*get_signal_return_comment) (ValaGIRWriter* self, ValaSignal* sig);
+	gchar* (*get_method_return_comment) (ValaGIRWriter* self, ValaMethod* m);
+	gchar* (*get_signal_comment) (ValaGIRWriter* self, ValaSignal* sig);
+	gchar* (*get_parameter_comment) (ValaGIRWriter* self, ValaParameter* param);
 };
 
 struct _ValaGIRWriterGIRNamespace {
@@ -84,6 +101,7 @@ struct _ValaGIRWriterPrivate {
 	ValaArrayList* deferred;
 	gint indent;
 	ValaTypeSymbol* gobject_type;
+	ValaTypeSymbol* ginitiallyunowned_type;
 	ValaArrayList* externals;
 	gint enum_value;
 };
@@ -102,10 +120,45 @@ enum  {
 	VALA_GIR_WRITER_DUMMY_PROPERTY
 };
 static gboolean vala_gir_writer_gir_namespace_equal (ValaGIRWriterGIRNamespace *self, ValaGIRWriterGIRNamespace* g);
+gchar* vala_gir_writer_get_interface_comment (ValaGIRWriter* self, ValaInterface* iface);
+static gchar* vala_gir_writer_real_get_interface_comment (ValaGIRWriter* self, ValaInterface* iface);
+gchar* vala_gir_writer_get_struct_comment (ValaGIRWriter* self, ValaStruct* st);
+static gchar* vala_gir_writer_real_get_struct_comment (ValaGIRWriter* self, ValaStruct* st);
+gchar* vala_gir_writer_get_enum_comment (ValaGIRWriter* self, ValaEnum* en);
+static gchar* vala_gir_writer_real_get_enum_comment (ValaGIRWriter* self, ValaEnum* en);
+gchar* vala_gir_writer_get_class_comment (ValaGIRWriter* self, ValaClass* c);
+static gchar* vala_gir_writer_real_get_class_comment (ValaGIRWriter* self, ValaClass* c);
+gchar* vala_gir_writer_get_error_code_comment (ValaGIRWriter* self, ValaErrorCode* ecode);
+static gchar* vala_gir_writer_real_get_error_code_comment (ValaGIRWriter* self, ValaErrorCode* ecode);
+gchar* vala_gir_writer_get_enum_value_comment (ValaGIRWriter* self, ValaEnumValue* ev);
+static gchar* vala_gir_writer_real_get_enum_value_comment (ValaGIRWriter* self, ValaEnumValue* ev);
+gchar* vala_gir_writer_get_constant_comment (ValaGIRWriter* self, ValaConstant* c);
+static gchar* vala_gir_writer_real_get_constant_comment (ValaGIRWriter* self, ValaConstant* c);
+gchar* vala_gir_writer_get_error_domain_comment (ValaGIRWriter* self, ValaErrorDomain* edomain);
+static gchar* vala_gir_writer_real_get_error_domain_comment (ValaGIRWriter* self, ValaErrorDomain* edomain);
+gchar* vala_gir_writer_get_field_comment (ValaGIRWriter* self, ValaField* f);
+static gchar* vala_gir_writer_real_get_field_comment (ValaGIRWriter* self, ValaField* f);
+gchar* vala_gir_writer_get_delegate_comment (ValaGIRWriter* self, ValaDelegate* cb);
+static gchar* vala_gir_writer_real_get_delegate_comment (ValaGIRWriter* self, ValaDelegate* cb);
+gchar* vala_gir_writer_get_method_comment (ValaGIRWriter* self, ValaMethod* m);
+static gchar* vala_gir_writer_real_get_method_comment (ValaGIRWriter* self, ValaMethod* m);
+gchar* vala_gir_writer_get_property_comment (ValaGIRWriter* self, ValaProperty* prop);
+static gchar* vala_gir_writer_real_get_property_comment (ValaGIRWriter* self, ValaProperty* prop);
+gchar* vala_gir_writer_get_delegate_return_comment (ValaGIRWriter* self, ValaDelegate* cb);
+static gchar* vala_gir_writer_real_get_delegate_return_comment (ValaGIRWriter* self, ValaDelegate* cb);
+gchar* vala_gir_writer_get_signal_return_comment (ValaGIRWriter* self, ValaSignal* sig);
+static gchar* vala_gir_writer_real_get_signal_return_comment (ValaGIRWriter* self, ValaSignal* sig);
+gchar* vala_gir_writer_get_method_return_comment (ValaGIRWriter* self, ValaMethod* m);
+static gchar* vala_gir_writer_real_get_method_return_comment (ValaGIRWriter* self, ValaMethod* m);
+gchar* vala_gir_writer_get_signal_comment (ValaGIRWriter* self, ValaSignal* sig);
+static gchar* vala_gir_writer_real_get_signal_comment (ValaGIRWriter* self, ValaSignal* sig);
+gchar* vala_gir_writer_get_parameter_comment (ValaGIRWriter* self, ValaParameter* param);
+static gchar* vala_gir_writer_real_get_parameter_comment (ValaGIRWriter* self, ValaParameter* param);
 void vala_gir_writer_write_includes (ValaGIRWriter* self);
 static void vala_gir_writer_write_indent_stream (ValaGIRWriter* self);
 void vala_gir_writer_write_file (ValaGIRWriter* self, ValaCodeContext* context, const gchar* directory, const gchar* gir_namespace, const gchar* gir_version, const gchar* package);
 static void vala_gir_writer_write_package (ValaGIRWriter* self, const gchar* package);
+static void vala_gir_writer_write_doc (ValaGIRWriter* self, const gchar* comment);
 static void vala_gir_writer_write_indent (ValaGIRWriter* self);
 static void vala_gir_writer_write_c_includes (ValaGIRWriter* self, ValaNamespace* ns);
 gchar* vala_ccode_base_module_get_ccode_header_filenames (ValaSymbol* sym);
@@ -122,9 +175,9 @@ static void vala_gir_writer_write_gtype_attributes (ValaGIRWriter* self, ValaTyp
 static gchar* vala_gir_writer_gi_type_name (ValaGIRWriter* self, ValaTypeSymbol* type_symbol);
 gchar* vala_ccode_base_module_get_ccode_name (ValaCodeNode* node);
 static void vala_gir_writer_write_ctype_attributes (ValaGIRWriter* self, ValaTypeSymbol* symbol, const gchar* suffix);
-static void vala_gir_writer_do_write_signature (ValaGIRWriter* self, ValaMethod* m, const gchar* tag_name, gboolean instance, const gchar* name, const gchar* cname, ValaList* params, ValaDataType* return_type, gboolean can_fail);
+static void vala_gir_writer_do_write_signature (ValaGIRWriter* self, ValaMethod* m, const gchar* tag_name, gboolean instance, const gchar* name, const gchar* cname, ValaList* params, ValaDataType* return_type, gboolean can_fail, gboolean write_comment);
 gchar* vala_ccode_base_module_get_ccode_finish_name (ValaMethod* m);
-static void vala_gir_writer_write_signature (ValaGIRWriter* self, ValaMethod* m, const gchar* tag_name, gboolean instance);
+static void vala_gir_writer_write_signature (ValaGIRWriter* self, ValaMethod* m, const gchar* tag_name, gboolean write_doc, gboolean instance);
 static void vala_gir_writer_real_visit_struct (ValaCodeVisitor* base, ValaStruct* st);
 static void vala_gir_writer_real_visit_interface (ValaCodeVisitor* base, ValaInterface* iface);
 static void vala_gir_writer_real_visit_enum (ValaCodeVisitor* base, ValaEnum* en);
@@ -137,8 +190,8 @@ static void vala_gir_writer_real_visit_constant (ValaCodeVisitor* base, ValaCons
 static void vala_gir_writer_write_type (ValaGIRWriter* self, ValaDataType* type, gint index);
 static void vala_gir_writer_real_visit_field (ValaCodeVisitor* base, ValaField* f);
 static void vala_gir_writer_write_implicit_params (ValaGIRWriter* self, ValaDataType* type, gint* index, gboolean has_array_length, const gchar* name, ValaParameterDirection direction);
-static void vala_gir_writer_write_param_or_return (ValaGIRWriter* self, ValaDataType* type, gboolean is_parameter, gint* index, gboolean has_array_length, const gchar* name, ValaParameterDirection direction, gboolean constructor, gboolean caller_allocates);
-static void vala_gir_writer_write_params_and_return (ValaGIRWriter* self, ValaList* params, ValaDataType* return_type, gboolean return_array_length, gboolean constructor, ValaDataType* instance_type, gboolean user_data);
+static void vala_gir_writer_write_param_or_return (ValaGIRWriter* self, ValaDataType* type, gboolean is_parameter, gint* index, gboolean has_array_length, const gchar* name, const gchar* comment, ValaParameterDirection direction, gboolean constructor, gboolean caller_allocates);
+static void vala_gir_writer_write_params_and_return (ValaGIRWriter* self, ValaList* params, ValaDataType* return_type, gboolean return_array_length, const gchar* return_comment, gboolean constructor, ValaDataType* instance_type, gboolean user_data);
 gboolean vala_ccode_base_module_get_ccode_array_length (ValaCodeNode* node);
 static void vala_gir_writer_real_visit_delegate (ValaCodeVisitor* base, ValaDelegate* cb);
 static void vala_gir_writer_real_visit_method (ValaCodeVisitor* base, ValaMethod* m);
@@ -157,6 +210,244 @@ static void vala_gir_writer_finalize (ValaCodeVisitor* obj);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static gint _vala_array_length (gpointer array);
+
+
+static gchar* vala_gir_writer_real_get_interface_comment (ValaGIRWriter* self, ValaInterface* iface) {
+	gchar* result = NULL;
+	g_return_val_if_fail (iface != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_interface_comment (ValaGIRWriter* self, ValaInterface* iface) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_interface_comment (self, iface);
+}
+
+
+static gchar* vala_gir_writer_real_get_struct_comment (ValaGIRWriter* self, ValaStruct* st) {
+	gchar* result = NULL;
+	g_return_val_if_fail (st != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_struct_comment (ValaGIRWriter* self, ValaStruct* st) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_struct_comment (self, st);
+}
+
+
+static gchar* vala_gir_writer_real_get_enum_comment (ValaGIRWriter* self, ValaEnum* en) {
+	gchar* result = NULL;
+	g_return_val_if_fail (en != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_enum_comment (ValaGIRWriter* self, ValaEnum* en) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_enum_comment (self, en);
+}
+
+
+static gchar* vala_gir_writer_real_get_class_comment (ValaGIRWriter* self, ValaClass* c) {
+	gchar* result = NULL;
+	g_return_val_if_fail (c != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_class_comment (ValaGIRWriter* self, ValaClass* c) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_class_comment (self, c);
+}
+
+
+static gchar* vala_gir_writer_real_get_error_code_comment (ValaGIRWriter* self, ValaErrorCode* ecode) {
+	gchar* result = NULL;
+	g_return_val_if_fail (ecode != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_error_code_comment (ValaGIRWriter* self, ValaErrorCode* ecode) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_error_code_comment (self, ecode);
+}
+
+
+static gchar* vala_gir_writer_real_get_enum_value_comment (ValaGIRWriter* self, ValaEnumValue* ev) {
+	gchar* result = NULL;
+	g_return_val_if_fail (ev != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_enum_value_comment (ValaGIRWriter* self, ValaEnumValue* ev) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_enum_value_comment (self, ev);
+}
+
+
+static gchar* vala_gir_writer_real_get_constant_comment (ValaGIRWriter* self, ValaConstant* c) {
+	gchar* result = NULL;
+	g_return_val_if_fail (c != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_constant_comment (ValaGIRWriter* self, ValaConstant* c) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_constant_comment (self, c);
+}
+
+
+static gchar* vala_gir_writer_real_get_error_domain_comment (ValaGIRWriter* self, ValaErrorDomain* edomain) {
+	gchar* result = NULL;
+	g_return_val_if_fail (edomain != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_error_domain_comment (ValaGIRWriter* self, ValaErrorDomain* edomain) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_error_domain_comment (self, edomain);
+}
+
+
+static gchar* vala_gir_writer_real_get_field_comment (ValaGIRWriter* self, ValaField* f) {
+	gchar* result = NULL;
+	g_return_val_if_fail (f != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_field_comment (ValaGIRWriter* self, ValaField* f) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_field_comment (self, f);
+}
+
+
+static gchar* vala_gir_writer_real_get_delegate_comment (ValaGIRWriter* self, ValaDelegate* cb) {
+	gchar* result = NULL;
+	g_return_val_if_fail (cb != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_delegate_comment (ValaGIRWriter* self, ValaDelegate* cb) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_delegate_comment (self, cb);
+}
+
+
+static gchar* vala_gir_writer_real_get_method_comment (ValaGIRWriter* self, ValaMethod* m) {
+	gchar* result = NULL;
+	g_return_val_if_fail (m != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_method_comment (ValaGIRWriter* self, ValaMethod* m) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_method_comment (self, m);
+}
+
+
+static gchar* vala_gir_writer_real_get_property_comment (ValaGIRWriter* self, ValaProperty* prop) {
+	gchar* result = NULL;
+	g_return_val_if_fail (prop != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_property_comment (ValaGIRWriter* self, ValaProperty* prop) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_property_comment (self, prop);
+}
+
+
+static gchar* vala_gir_writer_real_get_delegate_return_comment (ValaGIRWriter* self, ValaDelegate* cb) {
+	gchar* result = NULL;
+	g_return_val_if_fail (cb != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_delegate_return_comment (ValaGIRWriter* self, ValaDelegate* cb) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_delegate_return_comment (self, cb);
+}
+
+
+static gchar* vala_gir_writer_real_get_signal_return_comment (ValaGIRWriter* self, ValaSignal* sig) {
+	gchar* result = NULL;
+	g_return_val_if_fail (sig != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_signal_return_comment (ValaGIRWriter* self, ValaSignal* sig) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_signal_return_comment (self, sig);
+}
+
+
+static gchar* vala_gir_writer_real_get_method_return_comment (ValaGIRWriter* self, ValaMethod* m) {
+	gchar* result = NULL;
+	g_return_val_if_fail (m != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_method_return_comment (ValaGIRWriter* self, ValaMethod* m) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_method_return_comment (self, m);
+}
+
+
+static gchar* vala_gir_writer_real_get_signal_comment (ValaGIRWriter* self, ValaSignal* sig) {
+	gchar* result = NULL;
+	g_return_val_if_fail (sig != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_signal_comment (ValaGIRWriter* self, ValaSignal* sig) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_signal_comment (self, sig);
+}
+
+
+static gchar* vala_gir_writer_real_get_parameter_comment (ValaGIRWriter* self, ValaParameter* param) {
+	gchar* result = NULL;
+	g_return_val_if_fail (param != NULL, NULL);
+	result = NULL;
+	return result;
+}
+
+
+gchar* vala_gir_writer_get_parameter_comment (ValaGIRWriter* self, ValaParameter* param) {
+	g_return_val_if_fail (self != NULL, NULL);
+	return VALA_GIR_WRITER_GET_CLASS (self)->get_parameter_comment (self, param);
+}
 
 
 static gpointer _vala_iterable_ref0 (gpointer self) {
@@ -191,11 +482,9 @@ void vala_gir_writer_write_includes (ValaGIRWriter* self) {
 			gint _tmp9_;
 			gpointer _tmp10_ = NULL;
 			ValaGIRWriterGIRNamespace* i;
-			FILE* _tmp11_;
-			ValaGIRWriterGIRNamespace* _tmp12_;
+			ValaGIRWriterGIRNamespace* _tmp11_;
+			const gchar* _tmp12_;
 			const gchar* _tmp13_;
-			ValaGIRWriterGIRNamespace* _tmp14_;
-			const gchar* _tmp15_;
 			_tmp5_ = _i_index;
 			_i_index = _tmp5_ + 1;
 			_tmp6_ = _i_index;
@@ -207,13 +496,23 @@ void vala_gir_writer_write_includes (ValaGIRWriter* self) {
 			_tmp9_ = _i_index;
 			_tmp10_ = vala_list_get ((ValaList*) _tmp8_, _tmp9_);
 			i = (ValaGIRWriterGIRNamespace*) _tmp10_;
-			vala_gir_writer_write_indent_stream (self);
-			_tmp11_ = self->priv->stream;
-			_tmp12_ = i;
-			_tmp13_ = (*_tmp12_).ns;
-			_tmp14_ = i;
-			_tmp15_ = (*_tmp14_).version;
-			fprintf (_tmp11_, "<include name=\"%s\" version=\"%s\"/>\n", _tmp13_, _tmp15_);
+			_tmp11_ = i;
+			_tmp12_ = (*_tmp11_).ns;
+			_tmp13_ = self->priv->gir_namespace;
+			if (g_strcmp0 (_tmp12_, _tmp13_) != 0) {
+				FILE* _tmp14_;
+				ValaGIRWriterGIRNamespace* _tmp15_;
+				const gchar* _tmp16_;
+				ValaGIRWriterGIRNamespace* _tmp17_;
+				const gchar* _tmp18_;
+				vala_gir_writer_write_indent_stream (self);
+				_tmp14_ = self->priv->stream;
+				_tmp15_ = i;
+				_tmp16_ = (*_tmp15_).ns;
+				_tmp17_ = i;
+				_tmp18_ = (*_tmp17_).version;
+				fprintf (_tmp14_, "<include name=\"%s\" version=\"%s\"/>\n", _tmp16_, _tmp18_);
+			}
 			_vala_gir_writer_gir_namespace_free0 (i);
 		}
 		_vala_iterable_unref0 (_i_list);
@@ -261,29 +560,36 @@ void vala_gir_writer_write_file (ValaGIRWriter* self, ValaCodeContext* context, 
 	ValaScope* _tmp17_;
 	ValaScope* _tmp18_;
 	ValaSymbol* _tmp19_ = NULL;
-	const gchar* _tmp20_;
-	ValaCodeContext* _tmp21_;
-	gint _tmp22_;
-	GString* _tmp23_;
+	ValaSymbol* _tmp20_;
+	ValaScope* _tmp21_;
+	ValaScope* _tmp22_;
+	ValaSymbol* _tmp23_ = NULL;
 	const gchar* _tmp24_;
-	const gchar* _tmp25_;
-	const gchar* _tmp26_;
-	gchar* _tmp27_ = NULL;
-	gchar* filename;
+	ValaCodeContext* _tmp25_;
+	gint _tmp26_;
+	GString* _tmp27_;
 	const gchar* _tmp28_;
-	FILE* _tmp29_ = NULL;
-	FILE* _tmp30_;
+	const gchar* _tmp29_;
+	const gchar* _tmp30_;
+	gchar* _tmp31_ = NULL;
+	gchar* filename;
+	const gchar* _tmp32_;
+	FILE* _tmp33_ = NULL;
 	FILE* _tmp34_;
-	FILE* _tmp35_;
-	FILE* _tmp36_;
-	FILE* _tmp37_;
 	FILE* _tmp38_;
 	FILE* _tmp39_;
-	gint _tmp40_;
-	gint _tmp41_;
+	FILE* _tmp40_;
+	FILE* _tmp41_;
 	FILE* _tmp42_;
-	GString* _tmp43_;
-	const gchar* _tmp44_;
+	FILE* _tmp43_;
+	gint _tmp44_;
+	gint _tmp45_;
+	FILE* _tmp46_;
+	GString* _tmp47_;
+	const gchar* _tmp48_;
+	ValaHashSet* _tmp84_;
+	gint _tmp85_;
+	gint _tmp86_;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (context != NULL);
 	g_return_if_fail (directory != NULL);
@@ -322,166 +628,199 @@ void vala_gir_writer_write_file (ValaGIRWriter* self, ValaCodeContext* context, 
 	_tmp19_ = vala_scope_lookup (_tmp18_, "Object");
 	_vala_code_node_unref0 (self->priv->gobject_type);
 	self->priv->gobject_type = VALA_TYPESYMBOL (_tmp19_);
-	_tmp20_ = package;
-	vala_gir_writer_write_package (self, _tmp20_);
-	_tmp21_ = context;
-	vala_code_context_accept (_tmp21_, (ValaCodeVisitor*) self);
-	_tmp22_ = self->priv->indent;
-	self->priv->indent = _tmp22_ - 1;
-	_tmp23_ = self->priv->buffer;
-	g_string_append_printf (_tmp23_, "</repository>\n");
-	_tmp24_ = directory;
-	_tmp25_ = gir_namespace;
-	_tmp26_ = gir_version;
-	_tmp27_ = g_strdup_printf ("%s%c%s-%s.gir", _tmp24_, (gint) G_DIR_SEPARATOR, _tmp25_, _tmp26_);
-	filename = _tmp27_;
-	_tmp28_ = filename;
-	_tmp29_ = fopen (_tmp28_, "w");
+	_tmp20_ = glib_ns;
+	_tmp21_ = vala_symbol_get_scope (_tmp20_);
+	_tmp22_ = _tmp21_;
+	_tmp23_ = vala_scope_lookup (_tmp22_, "InitiallyUnowned");
+	_vala_code_node_unref0 (self->priv->ginitiallyunowned_type);
+	self->priv->ginitiallyunowned_type = VALA_TYPESYMBOL (_tmp23_);
+	_tmp24_ = package;
+	vala_gir_writer_write_package (self, _tmp24_);
+	_tmp25_ = context;
+	vala_code_context_accept (_tmp25_, (ValaCodeVisitor*) self);
+	_tmp26_ = self->priv->indent;
+	self->priv->indent = _tmp26_ - 1;
+	_tmp27_ = self->priv->buffer;
+	g_string_append_printf (_tmp27_, "</repository>\n");
+	_tmp28_ = directory;
+	_tmp29_ = gir_namespace;
+	_tmp30_ = gir_version;
+	_tmp31_ = g_strdup_printf ("%s%c%s-%s.gir", _tmp28_, (gint) G_DIR_SEPARATOR, _tmp29_, _tmp30_);
+	filename = _tmp31_;
+	_tmp32_ = filename;
+	_tmp33_ = fopen (_tmp32_, "w");
 	_fclose0 (self->priv->stream);
-	self->priv->stream = _tmp29_;
-	_tmp30_ = self->priv->stream;
-	if (_tmp30_ == NULL) {
-		const gchar* _tmp31_;
-		gchar* _tmp32_ = NULL;
-		gchar* _tmp33_;
-		_tmp31_ = filename;
-		_tmp32_ = g_strdup_printf ("unable to open `%s' for writing", _tmp31_);
-		_tmp33_ = _tmp32_;
-		vala_report_error (NULL, _tmp33_);
-		_g_free0 (_tmp33_);
+	self->priv->stream = _tmp33_;
+	_tmp34_ = self->priv->stream;
+	if (_tmp34_ == NULL) {
+		const gchar* _tmp35_;
+		gchar* _tmp36_ = NULL;
+		gchar* _tmp37_;
+		_tmp35_ = filename;
+		_tmp36_ = g_strdup_printf ("unable to open `%s' for writing", _tmp35_);
+		_tmp37_ = _tmp36_;
+		vala_report_error (NULL, _tmp37_);
+		_g_free0 (_tmp37_);
 		_g_free0 (filename);
 		_vala_code_node_unref0 (glib_ns);
 		_vala_code_node_unref0 (root_symbol);
 		return;
 	}
-	_tmp34_ = self->priv->stream;
-	fprintf (_tmp34_, "<?xml version=\"1.0\"?>\n");
-	_tmp35_ = self->priv->stream;
-	fprintf (_tmp35_, "<repository version=\"1.2\"");
-	_tmp36_ = self->priv->stream;
-	fprintf (_tmp36_, " xmlns=\"http://www.gtk.org/introspection/core/1.0\"");
-	_tmp37_ = self->priv->stream;
-	fprintf (_tmp37_, " xmlns:c=\"http://www.gtk.org/introspection/c/1.0\"");
 	_tmp38_ = self->priv->stream;
-	fprintf (_tmp38_, " xmlns:glib=\"http://www.gtk.org/introspection/glib/1.0\"");
+	fprintf (_tmp38_, "<?xml version=\"1.0\"?>\n");
 	_tmp39_ = self->priv->stream;
-	fprintf (_tmp39_, ">\n");
-	_tmp40_ = self->priv->indent;
-	self->priv->indent = _tmp40_ + 1;
-	vala_gir_writer_write_includes (self);
-	_tmp41_ = self->priv->indent;
-	self->priv->indent = _tmp41_ - 1;
+	fprintf (_tmp39_, "<repository version=\"1.2\"");
+	_tmp40_ = self->priv->stream;
+	fprintf (_tmp40_, " xmlns=\"http://www.gtk.org/introspection/core/1.0\"");
+	_tmp41_ = self->priv->stream;
+	fprintf (_tmp41_, " xmlns:c=\"http://www.gtk.org/introspection/c/1.0\"");
 	_tmp42_ = self->priv->stream;
-	_tmp43_ = self->priv->buffer;
-	_tmp44_ = _tmp43_->str;
-	fputs (_tmp44_, _tmp42_);
+	fprintf (_tmp42_, " xmlns:glib=\"http://www.gtk.org/introspection/glib/1.0\"");
+	_tmp43_ = self->priv->stream;
+	fprintf (_tmp43_, ">\n");
+	_tmp44_ = self->priv->indent;
+	self->priv->indent = _tmp44_ + 1;
+	vala_gir_writer_write_includes (self);
+	_tmp45_ = self->priv->indent;
+	self->priv->indent = _tmp45_ - 1;
+	_tmp46_ = self->priv->stream;
+	_tmp47_ = self->priv->buffer;
+	_tmp48_ = _tmp47_->str;
+	fputs (_tmp48_, _tmp46_);
 	_fclose0 (self->priv->stream);
 	self->priv->stream = NULL;
 	{
-		ValaHashSet* _tmp45_;
-		ValaIterator* _tmp46_ = NULL;
+		ValaHashSet* _tmp49_;
+		ValaIterator* _tmp50_ = NULL;
 		ValaIterator* _ns_it;
-		_tmp45_ = self->priv->unannotated_namespaces;
-		_tmp46_ = vala_iterable_iterator ((ValaIterable*) _tmp45_);
-		_ns_it = _tmp46_;
+		_tmp49_ = self->priv->unannotated_namespaces;
+		_tmp50_ = vala_iterable_iterator ((ValaIterable*) _tmp49_);
+		_ns_it = _tmp50_;
 		while (TRUE) {
-			ValaIterator* _tmp47_;
-			gboolean _tmp48_ = FALSE;
-			ValaIterator* _tmp49_;
-			gpointer _tmp50_ = NULL;
+			ValaIterator* _tmp51_;
+			gboolean _tmp52_ = FALSE;
+			ValaIterator* _tmp53_;
+			gpointer _tmp54_ = NULL;
 			ValaNamespace* ns;
-			ValaHashSet* _tmp51_;
-			ValaNamespace* _tmp52_;
-			gboolean _tmp53_ = FALSE;
-			_tmp47_ = _ns_it;
-			_tmp48_ = vala_iterator_next (_tmp47_);
-			if (!_tmp48_) {
+			ValaHashSet* _tmp55_;
+			ValaNamespace* _tmp56_;
+			gboolean _tmp57_ = FALSE;
+			_tmp51_ = _ns_it;
+			_tmp52_ = vala_iterator_next (_tmp51_);
+			if (!_tmp52_) {
 				break;
 			}
-			_tmp49_ = _ns_it;
-			_tmp50_ = vala_iterator_get (_tmp49_);
-			ns = (ValaNamespace*) _tmp50_;
-			_tmp51_ = self->priv->our_namespaces;
-			_tmp52_ = ns;
-			_tmp53_ = vala_collection_contains ((ValaCollection*) _tmp51_, _tmp52_);
-			if (!_tmp53_) {
-				ValaNamespace* _tmp54_;
-				ValaSourceReference* _tmp55_;
-				ValaSourceReference* _tmp56_;
-				ValaNamespace* _tmp57_;
-				const gchar* _tmp58_;
-				const gchar* _tmp59_;
-				gchar* _tmp60_ = NULL;
-				gchar* _tmp61_;
-				_tmp54_ = ns;
-				_tmp55_ = vala_code_node_get_source_reference ((ValaCodeNode*) _tmp54_);
-				_tmp56_ = _tmp55_;
-				_tmp57_ = ns;
-				_tmp58_ = vala_symbol_get_name ((ValaSymbol*) _tmp57_);
-				_tmp59_ = _tmp58_;
-				_tmp60_ = g_strdup_printf ("Namespace %s does not have a GIR namespace and version annotation", _tmp59_);
-				_tmp61_ = _tmp60_;
-				vala_report_warning (_tmp56_, _tmp61_);
-				_g_free0 (_tmp61_);
+			_tmp53_ = _ns_it;
+			_tmp54_ = vala_iterator_get (_tmp53_);
+			ns = (ValaNamespace*) _tmp54_;
+			_tmp55_ = self->priv->our_namespaces;
+			_tmp56_ = ns;
+			_tmp57_ = vala_collection_contains ((ValaCollection*) _tmp55_, _tmp56_);
+			if (!_tmp57_) {
+				ValaNamespace* _tmp58_;
+				ValaSourceReference* _tmp59_;
+				ValaSourceReference* _tmp60_;
+				ValaNamespace* _tmp61_;
+				const gchar* _tmp62_;
+				const gchar* _tmp63_;
+				gchar* _tmp64_ = NULL;
+				gchar* _tmp65_;
+				_tmp58_ = ns;
+				_tmp59_ = vala_code_node_get_source_reference ((ValaCodeNode*) _tmp58_);
+				_tmp60_ = _tmp59_;
+				_tmp61_ = ns;
+				_tmp62_ = vala_symbol_get_name ((ValaSymbol*) _tmp61_);
+				_tmp63_ = _tmp62_;
+				_tmp64_ = g_strdup_printf ("Namespace %s does not have a GIR namespace and version annotation", _tmp63_);
+				_tmp65_ = _tmp64_;
+				vala_report_warning (_tmp60_, _tmp65_);
+				_g_free0 (_tmp65_);
 			}
 			_vala_code_node_unref0 (ns);
 		}
 		_vala_iterator_unref0 (_ns_it);
 	}
 	{
-		ValaHashSet* _tmp62_;
-		ValaIterator* _tmp63_ = NULL;
+		ValaHashSet* _tmp66_;
+		ValaIterator* _tmp67_ = NULL;
 		ValaIterator* _ns_it;
-		_tmp62_ = self->priv->our_namespaces;
-		_tmp63_ = vala_iterable_iterator ((ValaIterable*) _tmp62_);
-		_ns_it = _tmp63_;
+		_tmp66_ = self->priv->our_namespaces;
+		_tmp67_ = vala_iterable_iterator ((ValaIterable*) _tmp66_);
+		_ns_it = _tmp67_;
 		while (TRUE) {
-			ValaIterator* _tmp64_;
-			gboolean _tmp65_ = FALSE;
-			ValaIterator* _tmp66_;
-			gpointer _tmp67_ = NULL;
+			ValaIterator* _tmp68_;
+			gboolean _tmp69_ = FALSE;
+			ValaIterator* _tmp70_;
+			gpointer _tmp71_ = NULL;
 			ValaNamespace* ns;
-			ValaNamespace* _tmp68_;
-			ValaSourceReference* _tmp69_;
-			ValaSourceReference* _tmp70_;
-			ValaSourceFile* _tmp71_;
-			ValaSourceFile* _tmp72_;
-			const gchar* _tmp73_;
-			ValaNamespace* _tmp74_;
-			ValaSourceReference* _tmp75_;
-			ValaSourceReference* _tmp76_;
-			ValaSourceFile* _tmp77_;
-			ValaSourceFile* _tmp78_;
-			const gchar* _tmp79_;
-			_tmp64_ = _ns_it;
-			_tmp65_ = vala_iterator_next (_tmp64_);
-			if (!_tmp65_) {
+			ValaNamespace* _tmp72_;
+			ValaSourceReference* _tmp73_;
+			ValaSourceReference* _tmp74_;
+			ValaSourceFile* _tmp75_;
+			ValaSourceFile* _tmp76_;
+			const gchar* _tmp77_;
+			ValaNamespace* _tmp78_;
+			ValaSourceReference* _tmp79_;
+			ValaSourceReference* _tmp80_;
+			ValaSourceFile* _tmp81_;
+			ValaSourceFile* _tmp82_;
+			const gchar* _tmp83_;
+			_tmp68_ = _ns_it;
+			_tmp69_ = vala_iterator_next (_tmp68_);
+			if (!_tmp69_) {
 				break;
 			}
-			_tmp66_ = _ns_it;
-			_tmp67_ = vala_iterator_get (_tmp66_);
-			ns = (ValaNamespace*) _tmp67_;
-			_tmp68_ = ns;
-			_tmp69_ = vala_code_node_get_source_reference ((ValaCodeNode*) _tmp68_);
-			_tmp70_ = _tmp69_;
-			_tmp71_ = vala_source_reference_get_file (_tmp70_);
-			_tmp72_ = _tmp71_;
-			_tmp73_ = gir_namespace;
-			vala_source_file_set_gir_namespace (_tmp72_, _tmp73_);
-			_tmp74_ = ns;
-			_tmp75_ = vala_code_node_get_source_reference ((ValaCodeNode*) _tmp74_);
+			_tmp70_ = _ns_it;
+			_tmp71_ = vala_iterator_get (_tmp70_);
+			ns = (ValaNamespace*) _tmp71_;
+			_tmp72_ = ns;
+			_tmp73_ = vala_code_node_get_source_reference ((ValaCodeNode*) _tmp72_);
+			_tmp74_ = _tmp73_;
+			_tmp75_ = vala_source_reference_get_file (_tmp74_);
 			_tmp76_ = _tmp75_;
-			_tmp77_ = vala_source_reference_get_file (_tmp76_);
-			_tmp78_ = _tmp77_;
-			_tmp79_ = gir_version;
-			vala_source_file_set_gir_version (_tmp78_, _tmp79_);
+			_tmp77_ = gir_namespace;
+			vala_source_file_set_gir_namespace (_tmp76_, _tmp77_);
+			_tmp78_ = ns;
+			_tmp79_ = vala_code_node_get_source_reference ((ValaCodeNode*) _tmp78_);
+			_tmp80_ = _tmp79_;
+			_tmp81_ = vala_source_reference_get_file (_tmp80_);
+			_tmp82_ = _tmp81_;
+			_tmp83_ = gir_version;
+			vala_source_file_set_gir_version (_tmp82_, _tmp83_);
 			_vala_code_node_unref0 (ns);
 		}
 		_vala_iterator_unref0 (_ns_it);
+	}
+	_tmp84_ = self->priv->our_namespaces;
+	_tmp85_ = vala_collection_get_size ((ValaCollection*) _tmp84_);
+	_tmp86_ = _tmp85_;
+	if (_tmp86_ == 0) {
+		vala_report_error (NULL, "No suitable namespace found to export for GIR");
 	}
 	_g_free0 (filename);
 	_vala_code_node_unref0 (glib_ns);
 	_vala_code_node_unref0 (root_symbol);
+}
+
+
+static void vala_gir_writer_write_doc (ValaGIRWriter* self, const gchar* comment) {
+	const gchar* _tmp0_;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = comment;
+	if (_tmp0_ != NULL) {
+		GString* _tmp1_;
+		GString* _tmp2_;
+		const gchar* _tmp3_;
+		GString* _tmp4_;
+		vala_gir_writer_write_indent (self);
+		_tmp1_ = self->priv->buffer;
+		g_string_append (_tmp1_, "<doc xml:whitespace=\"preserve\">");
+		_tmp2_ = self->priv->buffer;
+		_tmp3_ = comment;
+		g_string_append (_tmp2_, _tmp3_);
+		_tmp4_ = self->priv->buffer;
+		g_string_append (_tmp4_, "</doc>\n");
+	}
 }
 
 
@@ -1028,72 +1367,75 @@ static void vala_gir_writer_real_visit_class (ValaCodeVisitor* base, ValaClass* 
 		ValaClass* _tmp35_;
 		GString* _tmp36_;
 		gint _tmp37_;
-		ValaClass* _tmp60_;
-		GString* _tmp61_;
-		gint _tmp62_;
-		GString* _tmp63_;
-		ValaClass* _tmp64_;
-		ValaClass* _tmp65_;
-		ValaClass* _tmp66_;
-		gchar* _tmp67_ = NULL;
-		gchar* _tmp68_;
+		ValaClass* _tmp38_;
+		gchar* _tmp39_ = NULL;
+		gchar* _tmp40_;
+		ValaClass* _tmp63_;
+		GString* _tmp64_;
+		gint _tmp65_;
+		GString* _tmp66_;
+		ValaClass* _tmp67_;
+		ValaClass* _tmp68_;
 		ValaClass* _tmp69_;
-		ValaClass* _tmp70_;
-		ValaClass* _tmp71_;
-		gchar* _tmp72_ = NULL;
-		gchar* _tmp73_;
-		gint _tmp74_;
-		GString* _tmp75_;
-		GString* _tmp76_;
+		gchar* _tmp70_ = NULL;
+		gchar* _tmp71_;
+		ValaClass* _tmp72_;
+		ValaClass* _tmp73_;
+		ValaClass* _tmp74_;
+		gchar* _tmp75_ = NULL;
+		gchar* _tmp76_;
 		gint _tmp77_;
 		GString* _tmp78_;
-		ValaClass* _tmp79_;
-		const gchar* _tmp80_;
-		const gchar* _tmp81_;
+		GString* _tmp79_;
+		gint _tmp80_;
+		GString* _tmp81_;
 		ValaClass* _tmp82_;
-		gchar* _tmp83_ = NULL;
-		gchar* _tmp84_;
-		gint _tmp85_;
-		GString* _tmp86_;
-		ValaArrayList* _tmp87_;
-		ValaClass* _tmp88_;
-		ValaClass* _tmp89_;
+		const gchar* _tmp83_;
+		const gchar* _tmp84_;
+		ValaClass* _tmp85_;
+		gchar* _tmp86_ = NULL;
+		gchar* _tmp87_;
+		gint _tmp88_;
+		GString* _tmp89_;
 		ValaArrayList* _tmp90_;
-		gint _tmp91_;
-		GString* _tmp92_;
-		GString* _tmp93_;
-		const gchar* _tmp94_;
-		ValaClass* _tmp95_;
+		ValaClass* _tmp91_;
+		ValaClass* _tmp92_;
+		ValaArrayList* _tmp93_;
+		gint _tmp94_;
+		GString* _tmp95_;
 		GString* _tmp96_;
-		ValaClass* _tmp97_;
-		const gchar* _tmp98_;
-		const gchar* _tmp99_;
-		GString* _tmp100_;
-		gint _tmp101_;
-		GString* _tmp102_;
-		gint _tmp103_;
-		GString* _tmp104_;
-		ValaClass* _tmp105_;
-		ValaClass* _tmp106_;
-		ValaClass* _tmp107_;
-		gchar* _tmp108_ = NULL;
-		gchar* _tmp109_;
+		const gchar* _tmp97_;
+		ValaClass* _tmp98_;
+		GString* _tmp99_;
+		ValaClass* _tmp100_;
+		const gchar* _tmp101_;
+		const gchar* _tmp102_;
+		GString* _tmp103_;
+		gint _tmp104_;
+		GString* _tmp105_;
+		gint _tmp106_;
+		GString* _tmp107_;
+		ValaClass* _tmp108_;
+		ValaClass* _tmp109_;
 		ValaClass* _tmp110_;
-		ValaClass* _tmp111_;
-		ValaClass* _tmp112_;
-		gchar* _tmp113_ = NULL;
-		gchar* _tmp114_;
-		gint _tmp115_;
-		GString* _tmp116_;
-		gint _tmp239_;
-		GString* _tmp240_;
-		GString* _tmp241_;
-		ValaClass* _tmp242_;
-		const gchar* _tmp243_;
-		const gchar* _tmp244_;
+		gchar* _tmp111_ = NULL;
+		gchar* _tmp112_;
+		ValaClass* _tmp113_;
+		ValaClass* _tmp114_;
+		ValaClass* _tmp115_;
+		gchar* _tmp116_ = NULL;
+		gchar* _tmp117_;
+		gint _tmp118_;
+		GString* _tmp119_;
+		gint _tmp242_;
+		GString* _tmp243_;
+		GString* _tmp244_;
 		ValaClass* _tmp245_;
-		gchar* _tmp246_ = NULL;
-		gchar* _tmp247_;
+		const gchar* _tmp246_;
+		const gchar* _tmp247_;
+		ValaClass* _tmp248_;
+		gchar* _tmp249_ = NULL;
+		gchar* _tmp250_;
 		_tmp14_ = cl;
 		_tmp15_ = vala_symbol_get_name ((ValaSymbol*) _tmp14_);
 		_tmp16_ = _tmp15_;
@@ -1133,430 +1475,435 @@ static void vala_gir_writer_real_visit_class (ValaCodeVisitor* base, ValaClass* 
 		g_string_append_printf (_tmp36_, ">\n");
 		_tmp37_ = self->priv->indent;
 		self->priv->indent = _tmp37_ + 1;
+		_tmp38_ = cl;
+		_tmp39_ = vala_gir_writer_get_class_comment (self, _tmp38_);
+		_tmp40_ = _tmp39_;
+		vala_gir_writer_write_doc (self, _tmp40_);
+		_g_free0 (_tmp40_);
 		{
-			ValaClass* _tmp38_;
-			ValaList* _tmp39_ = NULL;
+			ValaClass* _tmp41_;
+			ValaList* _tmp42_ = NULL;
 			ValaList* _base_type_list;
-			ValaList* _tmp40_;
-			gint _tmp41_;
-			gint _tmp42_;
+			ValaList* _tmp43_;
+			gint _tmp44_;
+			gint _tmp45_;
 			gint _base_type_size;
 			gint _base_type_index;
-			_tmp38_ = cl;
-			_tmp39_ = vala_class_get_base_types (_tmp38_);
-			_base_type_list = _tmp39_;
-			_tmp40_ = _base_type_list;
-			_tmp41_ = vala_collection_get_size ((ValaCollection*) _tmp40_);
-			_tmp42_ = _tmp41_;
-			_base_type_size = _tmp42_;
+			_tmp41_ = cl;
+			_tmp42_ = vala_class_get_base_types (_tmp41_);
+			_base_type_list = _tmp42_;
+			_tmp43_ = _base_type_list;
+			_tmp44_ = vala_collection_get_size ((ValaCollection*) _tmp43_);
+			_tmp45_ = _tmp44_;
+			_base_type_size = _tmp45_;
 			_base_type_index = -1;
 			while (TRUE) {
-				gint _tmp43_;
-				gint _tmp44_;
-				gint _tmp45_;
-				ValaList* _tmp46_;
+				gint _tmp46_;
 				gint _tmp47_;
-				gpointer _tmp48_ = NULL;
+				gint _tmp48_;
+				ValaList* _tmp49_;
+				gint _tmp50_;
+				gpointer _tmp51_ = NULL;
 				ValaDataType* base_type;
-				ValaDataType* _tmp49_;
-				ValaObjectType* _tmp50_;
+				ValaDataType* _tmp52_;
+				ValaObjectType* _tmp53_;
 				ValaObjectType* object_type;
-				ValaObjectType* _tmp51_;
-				ValaObjectTypeSymbol* _tmp52_;
-				ValaObjectTypeSymbol* _tmp53_;
-				_tmp43_ = _base_type_index;
-				_base_type_index = _tmp43_ + 1;
-				_tmp44_ = _base_type_index;
-				_tmp45_ = _base_type_size;
-				if (!(_tmp44_ < _tmp45_)) {
+				ValaObjectType* _tmp54_;
+				ValaObjectTypeSymbol* _tmp55_;
+				ValaObjectTypeSymbol* _tmp56_;
+				_tmp46_ = _base_type_index;
+				_base_type_index = _tmp46_ + 1;
+				_tmp47_ = _base_type_index;
+				_tmp48_ = _base_type_size;
+				if (!(_tmp47_ < _tmp48_)) {
 					break;
 				}
-				_tmp46_ = _base_type_list;
-				_tmp47_ = _base_type_index;
-				_tmp48_ = vala_list_get (_tmp46_, _tmp47_);
-				base_type = (ValaDataType*) _tmp48_;
-				_tmp49_ = base_type;
-				_tmp50_ = _vala_code_node_ref0 (VALA_OBJECT_TYPE (_tmp49_));
-				object_type = _tmp50_;
-				_tmp51_ = object_type;
-				_tmp52_ = vala_object_type_get_type_symbol (_tmp51_);
-				_tmp53_ = _tmp52_;
-				if (VALA_IS_INTERFACE (_tmp53_)) {
-					GString* _tmp54_;
-					ValaObjectType* _tmp55_;
-					ValaObjectTypeSymbol* _tmp56_;
-					ValaObjectTypeSymbol* _tmp57_;
-					gchar* _tmp58_ = NULL;
-					gchar* _tmp59_;
+				_tmp49_ = _base_type_list;
+				_tmp50_ = _base_type_index;
+				_tmp51_ = vala_list_get (_tmp49_, _tmp50_);
+				base_type = (ValaDataType*) _tmp51_;
+				_tmp52_ = base_type;
+				_tmp53_ = _vala_code_node_ref0 (VALA_OBJECT_TYPE (_tmp52_));
+				object_type = _tmp53_;
+				_tmp54_ = object_type;
+				_tmp55_ = vala_object_type_get_type_symbol (_tmp54_);
+				_tmp56_ = _tmp55_;
+				if (VALA_IS_INTERFACE (_tmp56_)) {
+					GString* _tmp57_;
+					ValaObjectType* _tmp58_;
+					ValaObjectTypeSymbol* _tmp59_;
+					ValaObjectTypeSymbol* _tmp60_;
+					gchar* _tmp61_ = NULL;
+					gchar* _tmp62_;
 					vala_gir_writer_write_indent (self);
-					_tmp54_ = self->priv->buffer;
-					_tmp55_ = object_type;
-					_tmp56_ = vala_object_type_get_type_symbol (_tmp55_);
-					_tmp57_ = _tmp56_;
-					_tmp58_ = vala_gir_writer_gi_type_name (self, (ValaTypeSymbol*) _tmp57_);
-					_tmp59_ = _tmp58_;
-					g_string_append_printf (_tmp54_, "<implements name=\"%s\"/>\n", _tmp59_);
-					_g_free0 (_tmp59_);
+					_tmp57_ = self->priv->buffer;
+					_tmp58_ = object_type;
+					_tmp59_ = vala_object_type_get_type_symbol (_tmp58_);
+					_tmp60_ = _tmp59_;
+					_tmp61_ = vala_gir_writer_gi_type_name (self, (ValaTypeSymbol*) _tmp60_);
+					_tmp62_ = _tmp61_;
+					g_string_append_printf (_tmp57_, "<implements name=\"%s\"/>\n", _tmp62_);
+					_g_free0 (_tmp62_);
 				}
 				_vala_code_node_unref0 (object_type);
 				_vala_code_node_unref0 (base_type);
 			}
 			_vala_iterable_unref0 (_base_type_list);
 		}
-		_tmp60_ = cl;
-		vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp60_);
+		_tmp63_ = cl;
+		vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp63_);
 		vala_gir_writer_write_indent (self);
-		_tmp61_ = self->priv->buffer;
-		g_string_append_printf (_tmp61_, "<field name=\"parent_instance\">\n");
-		_tmp62_ = self->priv->indent;
-		self->priv->indent = _tmp62_ + 1;
+		_tmp64_ = self->priv->buffer;
+		g_string_append_printf (_tmp64_, "<field name=\"parent_instance\">\n");
+		_tmp65_ = self->priv->indent;
+		self->priv->indent = _tmp65_ + 1;
 		vala_gir_writer_write_indent (self);
-		_tmp63_ = self->priv->buffer;
-		_tmp64_ = cl;
-		_tmp65_ = vala_class_get_base_class (_tmp64_);
-		_tmp66_ = _tmp65_;
-		_tmp67_ = vala_gir_writer_gi_type_name (self, (ValaTypeSymbol*) _tmp66_);
-		_tmp68_ = _tmp67_;
-		_tmp69_ = cl;
-		_tmp70_ = vala_class_get_base_class (_tmp69_);
+		_tmp66_ = self->priv->buffer;
+		_tmp67_ = cl;
+		_tmp68_ = vala_class_get_base_class (_tmp67_);
+		_tmp69_ = _tmp68_;
+		_tmp70_ = vala_gir_writer_gi_type_name (self, (ValaTypeSymbol*) _tmp69_);
 		_tmp71_ = _tmp70_;
-		_tmp72_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp71_);
-		_tmp73_ = _tmp72_;
-		g_string_append_printf (_tmp63_, "<type name=\"%s\" c:type=\"%s\"/>\n", _tmp68_, _tmp73_);
-		_g_free0 (_tmp73_);
-		_g_free0 (_tmp68_);
-		_tmp74_ = self->priv->indent;
-		self->priv->indent = _tmp74_ - 1;
-		vala_gir_writer_write_indent (self);
-		_tmp75_ = self->priv->buffer;
-		g_string_append_printf (_tmp75_, "</field>\n");
-		vala_gir_writer_write_indent (self);
-		_tmp76_ = self->priv->buffer;
-		g_string_append_printf (_tmp76_, "<field name=\"priv\">\n");
+		_tmp72_ = cl;
+		_tmp73_ = vala_class_get_base_class (_tmp72_);
+		_tmp74_ = _tmp73_;
+		_tmp75_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp74_);
+		_tmp76_ = _tmp75_;
+		g_string_append_printf (_tmp66_, "<type name=\"%s\" c:type=\"%s\"/>\n", _tmp71_, _tmp76_);
+		_g_free0 (_tmp76_);
+		_g_free0 (_tmp71_);
 		_tmp77_ = self->priv->indent;
-		self->priv->indent = _tmp77_ + 1;
+		self->priv->indent = _tmp77_ - 1;
 		vala_gir_writer_write_indent (self);
 		_tmp78_ = self->priv->buffer;
-		_tmp79_ = cl;
-		_tmp80_ = vala_symbol_get_name ((ValaSymbol*) _tmp79_);
-		_tmp81_ = _tmp80_;
+		g_string_append_printf (_tmp78_, "</field>\n");
+		vala_gir_writer_write_indent (self);
+		_tmp79_ = self->priv->buffer;
+		g_string_append_printf (_tmp79_, "<field name=\"priv\">\n");
+		_tmp80_ = self->priv->indent;
+		self->priv->indent = _tmp80_ + 1;
+		vala_gir_writer_write_indent (self);
+		_tmp81_ = self->priv->buffer;
 		_tmp82_ = cl;
-		_tmp83_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp82_);
+		_tmp83_ = vala_symbol_get_name ((ValaSymbol*) _tmp82_);
 		_tmp84_ = _tmp83_;
-		g_string_append_printf (_tmp78_, "<type name=\"%sPrivate\" c:type=\"%sPrivate*\"/>\n", _tmp81_, _tmp84_);
-		_g_free0 (_tmp84_);
-		_tmp85_ = self->priv->indent;
-		self->priv->indent = _tmp85_ - 1;
+		_tmp85_ = cl;
+		_tmp86_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp85_);
+		_tmp87_ = _tmp86_;
+		g_string_append_printf (_tmp81_, "<type name=\"%sPrivate\" c:type=\"%sPrivate*\"/>\n", _tmp84_, _tmp87_);
+		_g_free0 (_tmp87_);
+		_tmp88_ = self->priv->indent;
+		self->priv->indent = _tmp88_ - 1;
 		vala_gir_writer_write_indent (self);
-		_tmp86_ = self->priv->buffer;
-		g_string_append_printf (_tmp86_, "</field>\n");
-		_tmp87_ = self->priv->hierarchy;
-		_tmp88_ = cl;
-		vala_list_insert ((ValaList*) _tmp87_, 0, (ValaSymbol*) _tmp88_);
-		_tmp89_ = cl;
-		vala_code_node_accept_children ((ValaCodeNode*) _tmp89_, (ValaCodeVisitor*) self);
+		_tmp89_ = self->priv->buffer;
+		g_string_append_printf (_tmp89_, "</field>\n");
 		_tmp90_ = self->priv->hierarchy;
-		vala_list_remove_at ((ValaList*) _tmp90_, 0);
-		_tmp91_ = self->priv->indent;
-		self->priv->indent = _tmp91_ - 1;
+		_tmp91_ = cl;
+		vala_list_insert ((ValaList*) _tmp90_, 0, (ValaSymbol*) _tmp91_);
+		_tmp92_ = cl;
+		vala_code_node_accept_children ((ValaCodeNode*) _tmp92_, (ValaCodeVisitor*) self);
+		_tmp93_ = self->priv->hierarchy;
+		vala_list_remove_at ((ValaList*) _tmp93_, 0);
+		_tmp94_ = self->priv->indent;
+		self->priv->indent = _tmp94_ - 1;
 		vala_gir_writer_write_indent (self);
-		_tmp92_ = self->priv->buffer;
-		g_string_append_printf (_tmp92_, "</class>\n");
+		_tmp95_ = self->priv->buffer;
+		g_string_append_printf (_tmp95_, "</class>\n");
 		vala_gir_writer_write_indent (self);
-		_tmp93_ = self->priv->buffer;
-		_tmp94_ = gtype_struct_name;
-		g_string_append_printf (_tmp93_, "<record name=\"%s\"", _tmp94_);
-		_tmp95_ = cl;
-		vala_gir_writer_write_ctype_attributes (self, (ValaTypeSymbol*) _tmp95_, "Class");
 		_tmp96_ = self->priv->buffer;
-		_tmp97_ = cl;
-		_tmp98_ = vala_symbol_get_name ((ValaSymbol*) _tmp97_);
-		_tmp99_ = _tmp98_;
-		g_string_append_printf (_tmp96_, " glib:is-gtype-struct-for=\"%s\"", _tmp99_);
-		_tmp100_ = self->priv->buffer;
-		g_string_append_printf (_tmp100_, ">\n");
-		_tmp101_ = self->priv->indent;
-		self->priv->indent = _tmp101_ + 1;
+		_tmp97_ = gtype_struct_name;
+		g_string_append_printf (_tmp96_, "<record name=\"%s\"", _tmp97_);
+		_tmp98_ = cl;
+		vala_gir_writer_write_ctype_attributes (self, (ValaTypeSymbol*) _tmp98_, "Class");
+		_tmp99_ = self->priv->buffer;
+		_tmp100_ = cl;
+		_tmp101_ = vala_symbol_get_name ((ValaSymbol*) _tmp100_);
+		_tmp102_ = _tmp101_;
+		g_string_append_printf (_tmp99_, " glib:is-gtype-struct-for=\"%s\"", _tmp102_);
+		_tmp103_ = self->priv->buffer;
+		g_string_append_printf (_tmp103_, ">\n");
+		_tmp104_ = self->priv->indent;
+		self->priv->indent = _tmp104_ + 1;
 		vala_gir_writer_write_indent (self);
-		_tmp102_ = self->priv->buffer;
-		g_string_append_printf (_tmp102_, "<field name=\"parent_class\">\n");
-		_tmp103_ = self->priv->indent;
-		self->priv->indent = _tmp103_ + 1;
+		_tmp105_ = self->priv->buffer;
+		g_string_append_printf (_tmp105_, "<field name=\"parent_class\">\n");
+		_tmp106_ = self->priv->indent;
+		self->priv->indent = _tmp106_ + 1;
 		vala_gir_writer_write_indent (self);
-		_tmp104_ = self->priv->buffer;
-		_tmp105_ = cl;
-		_tmp106_ = vala_class_get_base_class (_tmp105_);
-		_tmp107_ = _tmp106_;
-		_tmp108_ = vala_gir_writer_gi_type_name (self, (ValaTypeSymbol*) _tmp107_);
-		_tmp109_ = _tmp108_;
-		_tmp110_ = cl;
-		_tmp111_ = vala_class_get_base_class (_tmp110_);
+		_tmp107_ = self->priv->buffer;
+		_tmp108_ = cl;
+		_tmp109_ = vala_class_get_base_class (_tmp108_);
+		_tmp110_ = _tmp109_;
+		_tmp111_ = vala_gir_writer_gi_type_name (self, (ValaTypeSymbol*) _tmp110_);
 		_tmp112_ = _tmp111_;
-		_tmp113_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp112_);
-		_tmp114_ = _tmp113_;
-		g_string_append_printf (_tmp104_, "<type name=\"%sClass\" c:type=\"%sClass\"/>\n", _tmp109_, _tmp114_);
-		_g_free0 (_tmp114_);
-		_g_free0 (_tmp109_);
-		_tmp115_ = self->priv->indent;
-		self->priv->indent = _tmp115_ - 1;
+		_tmp113_ = cl;
+		_tmp114_ = vala_class_get_base_class (_tmp113_);
+		_tmp115_ = _tmp114_;
+		_tmp116_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp115_);
+		_tmp117_ = _tmp116_;
+		g_string_append_printf (_tmp107_, "<type name=\"%sClass\" c:type=\"%sClass\"/>\n", _tmp112_, _tmp117_);
+		_g_free0 (_tmp117_);
+		_g_free0 (_tmp112_);
+		_tmp118_ = self->priv->indent;
+		self->priv->indent = _tmp118_ - 1;
 		vala_gir_writer_write_indent (self);
-		_tmp116_ = self->priv->buffer;
-		g_string_append_printf (_tmp116_, "</field>\n");
+		_tmp119_ = self->priv->buffer;
+		g_string_append_printf (_tmp119_, "</field>\n");
 		{
-			ValaClass* _tmp117_;
-			ValaList* _tmp118_ = NULL;
+			ValaClass* _tmp120_;
+			ValaList* _tmp121_ = NULL;
 			ValaList* _m_list;
-			ValaList* _tmp119_;
-			gint _tmp120_;
-			gint _tmp121_;
+			ValaList* _tmp122_;
+			gint _tmp123_;
+			gint _tmp124_;
 			gint _m_size;
 			gint _m_index;
-			_tmp117_ = cl;
-			_tmp118_ = vala_object_type_symbol_get_methods ((ValaObjectTypeSymbol*) _tmp117_);
-			_m_list = _tmp118_;
-			_tmp119_ = _m_list;
-			_tmp120_ = vala_collection_get_size ((ValaCollection*) _tmp119_);
-			_tmp121_ = _tmp120_;
-			_m_size = _tmp121_;
+			_tmp120_ = cl;
+			_tmp121_ = vala_object_type_symbol_get_methods ((ValaObjectTypeSymbol*) _tmp120_);
+			_m_list = _tmp121_;
+			_tmp122_ = _m_list;
+			_tmp123_ = vala_collection_get_size ((ValaCollection*) _tmp122_);
+			_tmp124_ = _tmp123_;
+			_m_size = _tmp124_;
 			_m_index = -1;
 			while (TRUE) {
-				gint _tmp122_;
-				gint _tmp123_;
-				gint _tmp124_;
-				ValaList* _tmp125_;
+				gint _tmp125_;
 				gint _tmp126_;
-				gpointer _tmp127_ = NULL;
+				gint _tmp127_;
+				ValaList* _tmp128_;
+				gint _tmp129_;
+				gpointer _tmp130_ = NULL;
 				ValaMethod* m;
-				gboolean _tmp128_ = FALSE;
-				ValaMethod* _tmp129_;
-				gboolean _tmp130_;
-				gboolean _tmp131_;
-				gboolean _tmp135_;
-				_tmp122_ = _m_index;
-				_m_index = _tmp122_ + 1;
-				_tmp123_ = _m_index;
-				_tmp124_ = _m_size;
-				if (!(_tmp123_ < _tmp124_)) {
+				gboolean _tmp131_ = FALSE;
+				ValaMethod* _tmp132_;
+				gboolean _tmp133_;
+				gboolean _tmp134_;
+				gboolean _tmp138_;
+				_tmp125_ = _m_index;
+				_m_index = _tmp125_ + 1;
+				_tmp126_ = _m_index;
+				_tmp127_ = _m_size;
+				if (!(_tmp126_ < _tmp127_)) {
 					break;
 				}
-				_tmp125_ = _m_list;
-				_tmp126_ = _m_index;
-				_tmp127_ = vala_list_get (_tmp125_, _tmp126_);
-				m = (ValaMethod*) _tmp127_;
-				_tmp129_ = m;
-				_tmp130_ = vala_method_get_is_abstract (_tmp129_);
-				_tmp131_ = _tmp130_;
-				if (_tmp131_) {
-					_tmp128_ = TRUE;
+				_tmp128_ = _m_list;
+				_tmp129_ = _m_index;
+				_tmp130_ = vala_list_get (_tmp128_, _tmp129_);
+				m = (ValaMethod*) _tmp130_;
+				_tmp132_ = m;
+				_tmp133_ = vala_method_get_is_abstract (_tmp132_);
+				_tmp134_ = _tmp133_;
+				if (_tmp134_) {
+					_tmp131_ = TRUE;
 				} else {
-					ValaMethod* _tmp132_;
-					gboolean _tmp133_;
-					gboolean _tmp134_;
-					_tmp132_ = m;
-					_tmp133_ = vala_method_get_is_virtual (_tmp132_);
-					_tmp134_ = _tmp133_;
-					_tmp128_ = _tmp134_;
-				}
-				_tmp135_ = _tmp128_;
-				if (_tmp135_) {
-					ValaMethod* _tmp136_;
+					ValaMethod* _tmp135_;
+					gboolean _tmp136_;
 					gboolean _tmp137_;
-					gboolean _tmp138_;
+					_tmp135_ = m;
+					_tmp136_ = vala_method_get_is_virtual (_tmp135_);
+					_tmp137_ = _tmp136_;
+					_tmp131_ = _tmp137_;
+				}
+				_tmp138_ = _tmp131_;
+				if (_tmp138_) {
+					ValaMethod* _tmp139_;
+					gboolean _tmp140_;
+					gboolean _tmp141_;
 					vala_gir_writer_write_indent (self);
-					_tmp136_ = m;
-					_tmp137_ = vala_method_get_coroutine (_tmp136_);
-					_tmp138_ = _tmp137_;
-					if (_tmp138_) {
-						ValaMethod* _tmp139_;
-						const gchar* _tmp140_;
-						const gchar* _tmp141_;
-						gchar* _tmp142_;
-						gchar* finish_name;
+					_tmp139_ = m;
+					_tmp140_ = vala_method_get_coroutine (_tmp139_);
+					_tmp141_ = _tmp140_;
+					if (_tmp141_) {
+						ValaMethod* _tmp142_;
 						const gchar* _tmp143_;
-						gboolean _tmp144_ = FALSE;
-						const gchar* _tmp152_;
-						gchar* _tmp153_;
-						GString* _tmp154_;
-						ValaMethod* _tmp155_;
-						const gchar* _tmp156_;
-						const gchar* _tmp157_;
-						gint _tmp158_;
-						ValaMethod* _tmp159_;
-						ValaMethod* _tmp160_;
-						const gchar* _tmp161_;
-						const gchar* _tmp162_;
+						const gchar* _tmp144_;
+						gchar* _tmp145_;
+						gchar* finish_name;
+						const gchar* _tmp146_;
+						gboolean _tmp147_ = FALSE;
+						const gchar* _tmp155_;
+						gchar* _tmp156_;
+						GString* _tmp157_;
+						ValaMethod* _tmp158_;
+						const gchar* _tmp159_;
+						const gchar* _tmp160_;
+						gint _tmp161_;
+						ValaMethod* _tmp162_;
 						ValaMethod* _tmp163_;
-						gchar* _tmp164_ = NULL;
-						gchar* _tmp165_;
+						const gchar* _tmp164_;
+						const gchar* _tmp165_;
 						ValaMethod* _tmp166_;
-						ValaList* _tmp167_ = NULL;
-						ValaList* _tmp168_;
-						ValaVoidType* _tmp169_;
-						ValaVoidType* _tmp170_;
-						gint _tmp171_;
-						GString* _tmp172_;
-						GString* _tmp173_;
-						const gchar* _tmp174_;
-						gint _tmp175_;
-						ValaMethod* _tmp176_;
+						gchar* _tmp167_ = NULL;
+						gchar* _tmp168_;
+						ValaMethod* _tmp169_;
+						ValaList* _tmp170_ = NULL;
+						ValaList* _tmp171_;
+						ValaVoidType* _tmp172_;
+						ValaVoidType* _tmp173_;
+						gint _tmp174_;
+						GString* _tmp175_;
+						GString* _tmp176_;
 						const gchar* _tmp177_;
-						ValaMethod* _tmp178_;
-						gchar* _tmp179_ = NULL;
-						gchar* _tmp180_;
+						gint _tmp178_;
+						ValaMethod* _tmp179_;
+						const gchar* _tmp180_;
 						ValaMethod* _tmp181_;
-						ValaList* _tmp182_ = NULL;
-						ValaList* _tmp183_;
+						gchar* _tmp182_ = NULL;
+						gchar* _tmp183_;
 						ValaMethod* _tmp184_;
-						ValaDataType* _tmp185_;
-						ValaDataType* _tmp186_;
+						ValaList* _tmp185_ = NULL;
+						ValaList* _tmp186_;
 						ValaMethod* _tmp187_;
-						gboolean _tmp188_;
-						gboolean _tmp189_;
-						gint _tmp190_;
-						GString* _tmp191_;
-						_tmp139_ = m;
-						_tmp140_ = vala_symbol_get_name ((ValaSymbol*) _tmp139_);
-						_tmp141_ = _tmp140_;
-						_tmp142_ = g_strdup (_tmp141_);
-						finish_name = _tmp142_;
-						_tmp143_ = finish_name;
-						_tmp144_ = g_str_has_suffix (_tmp143_, "_async");
-						if (_tmp144_) {
-							const gchar* _tmp145_;
-							const gchar* _tmp146_;
-							gint _tmp147_;
-							gint _tmp148_;
-							gint _tmp149_;
+						ValaDataType* _tmp188_;
+						ValaDataType* _tmp189_;
+						ValaMethod* _tmp190_;
+						gboolean _tmp191_;
+						gboolean _tmp192_;
+						gint _tmp193_;
+						GString* _tmp194_;
+						_tmp142_ = m;
+						_tmp143_ = vala_symbol_get_name ((ValaSymbol*) _tmp142_);
+						_tmp144_ = _tmp143_;
+						_tmp145_ = g_strdup (_tmp144_);
+						finish_name = _tmp145_;
+						_tmp146_ = finish_name;
+						_tmp147_ = g_str_has_suffix (_tmp146_, "_async");
+						if (_tmp147_) {
+							const gchar* _tmp148_;
+							const gchar* _tmp149_;
 							gint _tmp150_;
-							gchar* _tmp151_ = NULL;
-							_tmp145_ = finish_name;
-							_tmp146_ = finish_name;
-							_tmp147_ = strlen (_tmp146_);
-							_tmp148_ = _tmp147_;
-							_tmp149_ = strlen ("_async");
-							_tmp150_ = _tmp149_;
-							_tmp151_ = string_substring (_tmp145_, (glong) 0, (glong) (_tmp148_ - _tmp150_));
+							gint _tmp151_;
+							gint _tmp152_;
+							gint _tmp153_;
+							gchar* _tmp154_ = NULL;
+							_tmp148_ = finish_name;
+							_tmp149_ = finish_name;
+							_tmp150_ = strlen (_tmp149_);
+							_tmp151_ = _tmp150_;
+							_tmp152_ = strlen ("_async");
+							_tmp153_ = _tmp152_;
+							_tmp154_ = string_substring (_tmp148_, (glong) 0, (glong) (_tmp151_ - _tmp153_));
 							_g_free0 (finish_name);
-							finish_name = _tmp151_;
+							finish_name = _tmp154_;
 						}
-						_tmp152_ = finish_name;
-						_tmp153_ = g_strconcat (_tmp152_, "_finish", NULL);
+						_tmp155_ = finish_name;
+						_tmp156_ = g_strconcat (_tmp155_, "_finish", NULL);
 						_g_free0 (finish_name);
-						finish_name = _tmp153_;
+						finish_name = _tmp156_;
 						vala_gir_writer_write_indent (self);
-						_tmp154_ = self->priv->buffer;
-						_tmp155_ = m;
-						_tmp156_ = vala_symbol_get_name ((ValaSymbol*) _tmp155_);
-						_tmp157_ = _tmp156_;
-						g_string_append_printf (_tmp154_, "<field name=\"%s\">\n", _tmp157_);
-						_tmp158_ = self->priv->indent;
-						self->priv->indent = _tmp158_ + 1;
-						_tmp159_ = m;
-						_tmp160_ = m;
-						_tmp161_ = vala_symbol_get_name ((ValaSymbol*) _tmp160_);
-						_tmp162_ = _tmp161_;
+						_tmp157_ = self->priv->buffer;
+						_tmp158_ = m;
+						_tmp159_ = vala_symbol_get_name ((ValaSymbol*) _tmp158_);
+						_tmp160_ = _tmp159_;
+						g_string_append_printf (_tmp157_, "<field name=\"%s\">\n", _tmp160_);
+						_tmp161_ = self->priv->indent;
+						self->priv->indent = _tmp161_ + 1;
+						_tmp162_ = m;
 						_tmp163_ = m;
-						_tmp164_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp163_);
+						_tmp164_ = vala_symbol_get_name ((ValaSymbol*) _tmp163_);
 						_tmp165_ = _tmp164_;
 						_tmp166_ = m;
-						_tmp167_ = vala_method_get_async_begin_parameters (_tmp166_);
+						_tmp167_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp166_);
 						_tmp168_ = _tmp167_;
-						_tmp169_ = vala_void_type_new (NULL);
-						_tmp170_ = _tmp169_;
-						vala_gir_writer_do_write_signature (self, _tmp159_, "callback", TRUE, _tmp162_, _tmp165_, _tmp168_, (ValaDataType*) _tmp170_, FALSE);
-						_vala_code_node_unref0 (_tmp170_);
-						_vala_iterable_unref0 (_tmp168_);
-						_g_free0 (_tmp165_);
-						_tmp171_ = self->priv->indent;
-						self->priv->indent = _tmp171_ - 1;
+						_tmp169_ = m;
+						_tmp170_ = vala_method_get_async_begin_parameters (_tmp169_);
+						_tmp171_ = _tmp170_;
+						_tmp172_ = vala_void_type_new (NULL);
+						_tmp173_ = _tmp172_;
+						vala_gir_writer_do_write_signature (self, _tmp162_, "callback", TRUE, _tmp165_, _tmp168_, _tmp171_, (ValaDataType*) _tmp173_, FALSE, FALSE);
+						_vala_code_node_unref0 (_tmp173_);
+						_vala_iterable_unref0 (_tmp171_);
+						_g_free0 (_tmp168_);
+						_tmp174_ = self->priv->indent;
+						self->priv->indent = _tmp174_ - 1;
 						vala_gir_writer_write_indent (self);
-						_tmp172_ = self->priv->buffer;
-						g_string_append_printf (_tmp172_, "</field>\n");
+						_tmp175_ = self->priv->buffer;
+						g_string_append_printf (_tmp175_, "</field>\n");
 						vala_gir_writer_write_indent (self);
-						_tmp173_ = self->priv->buffer;
-						_tmp174_ = finish_name;
-						g_string_append_printf (_tmp173_, "<field name=\"%s\">\n", _tmp174_);
-						_tmp175_ = self->priv->indent;
-						self->priv->indent = _tmp175_ + 1;
-						_tmp176_ = m;
+						_tmp176_ = self->priv->buffer;
 						_tmp177_ = finish_name;
-						_tmp178_ = m;
-						_tmp179_ = vala_ccode_base_module_get_ccode_finish_name (_tmp178_);
-						_tmp180_ = _tmp179_;
+						g_string_append_printf (_tmp176_, "<field name=\"%s\">\n", _tmp177_);
+						_tmp178_ = self->priv->indent;
+						self->priv->indent = _tmp178_ + 1;
+						_tmp179_ = m;
+						_tmp180_ = finish_name;
 						_tmp181_ = m;
-						_tmp182_ = vala_method_get_async_end_parameters (_tmp181_);
+						_tmp182_ = vala_ccode_base_module_get_ccode_finish_name (_tmp181_);
 						_tmp183_ = _tmp182_;
 						_tmp184_ = m;
-						_tmp185_ = vala_method_get_return_type (_tmp184_);
+						_tmp185_ = vala_method_get_async_end_parameters (_tmp184_);
 						_tmp186_ = _tmp185_;
 						_tmp187_ = m;
-						_tmp188_ = vala_code_node_get_tree_can_fail ((ValaCodeNode*) _tmp187_);
+						_tmp188_ = vala_method_get_return_type (_tmp187_);
 						_tmp189_ = _tmp188_;
-						vala_gir_writer_do_write_signature (self, _tmp176_, "callback", TRUE, _tmp177_, _tmp180_, _tmp183_, _tmp186_, _tmp189_);
-						_vala_iterable_unref0 (_tmp183_);
-						_g_free0 (_tmp180_);
-						_tmp190_ = self->priv->indent;
-						self->priv->indent = _tmp190_ - 1;
+						_tmp190_ = m;
+						_tmp191_ = vala_code_node_get_tree_can_fail ((ValaCodeNode*) _tmp190_);
+						_tmp192_ = _tmp191_;
+						vala_gir_writer_do_write_signature (self, _tmp179_, "callback", TRUE, _tmp180_, _tmp183_, _tmp186_, _tmp189_, _tmp192_, FALSE);
+						_vala_iterable_unref0 (_tmp186_);
+						_g_free0 (_tmp183_);
+						_tmp193_ = self->priv->indent;
+						self->priv->indent = _tmp193_ - 1;
 						vala_gir_writer_write_indent (self);
-						_tmp191_ = self->priv->buffer;
-						g_string_append_printf (_tmp191_, "</field>\n");
+						_tmp194_ = self->priv->buffer;
+						g_string_append_printf (_tmp194_, "</field>\n");
 						_g_free0 (finish_name);
 					} else {
-						GString* _tmp192_;
-						ValaMethod* _tmp193_;
-						const gchar* _tmp194_;
-						const gchar* _tmp195_;
-						gint _tmp196_;
-						ValaMethod* _tmp197_;
-						ValaMethod* _tmp198_;
-						const gchar* _tmp199_;
-						const gchar* _tmp200_;
+						GString* _tmp195_;
+						ValaMethod* _tmp196_;
+						const gchar* _tmp197_;
+						const gchar* _tmp198_;
+						gint _tmp199_;
+						ValaMethod* _tmp200_;
 						ValaMethod* _tmp201_;
-						gchar* _tmp202_ = NULL;
-						gchar* _tmp203_;
+						const gchar* _tmp202_;
+						const gchar* _tmp203_;
 						ValaMethod* _tmp204_;
-						ValaList* _tmp205_ = NULL;
-						ValaList* _tmp206_;
+						gchar* _tmp205_ = NULL;
+						gchar* _tmp206_;
 						ValaMethod* _tmp207_;
-						ValaDataType* _tmp208_;
-						ValaDataType* _tmp209_;
+						ValaList* _tmp208_ = NULL;
+						ValaList* _tmp209_;
 						ValaMethod* _tmp210_;
-						gboolean _tmp211_;
-						gboolean _tmp212_;
-						gint _tmp213_;
-						GString* _tmp214_;
+						ValaDataType* _tmp211_;
+						ValaDataType* _tmp212_;
+						ValaMethod* _tmp213_;
+						gboolean _tmp214_;
+						gboolean _tmp215_;
+						gint _tmp216_;
+						GString* _tmp217_;
 						vala_gir_writer_write_indent (self);
-						_tmp192_ = self->priv->buffer;
-						_tmp193_ = m;
-						_tmp194_ = vala_symbol_get_name ((ValaSymbol*) _tmp193_);
-						_tmp195_ = _tmp194_;
-						g_string_append_printf (_tmp192_, "<field name=\"%s\">\n", _tmp195_);
-						_tmp196_ = self->priv->indent;
-						self->priv->indent = _tmp196_ + 1;
-						_tmp197_ = m;
-						_tmp198_ = m;
-						_tmp199_ = vala_symbol_get_name ((ValaSymbol*) _tmp198_);
-						_tmp200_ = _tmp199_;
+						_tmp195_ = self->priv->buffer;
+						_tmp196_ = m;
+						_tmp197_ = vala_symbol_get_name ((ValaSymbol*) _tmp196_);
+						_tmp198_ = _tmp197_;
+						g_string_append_printf (_tmp195_, "<field name=\"%s\">\n", _tmp198_);
+						_tmp199_ = self->priv->indent;
+						self->priv->indent = _tmp199_ + 1;
+						_tmp200_ = m;
 						_tmp201_ = m;
-						_tmp202_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp201_);
+						_tmp202_ = vala_symbol_get_name ((ValaSymbol*) _tmp201_);
 						_tmp203_ = _tmp202_;
 						_tmp204_ = m;
-						_tmp205_ = vala_method_get_parameters (_tmp204_);
+						_tmp205_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp204_);
 						_tmp206_ = _tmp205_;
 						_tmp207_ = m;
-						_tmp208_ = vala_method_get_return_type (_tmp207_);
+						_tmp208_ = vala_method_get_parameters (_tmp207_);
 						_tmp209_ = _tmp208_;
 						_tmp210_ = m;
-						_tmp211_ = vala_code_node_get_tree_can_fail ((ValaCodeNode*) _tmp210_);
+						_tmp211_ = vala_method_get_return_type (_tmp210_);
 						_tmp212_ = _tmp211_;
-						vala_gir_writer_do_write_signature (self, _tmp197_, "callback", TRUE, _tmp200_, _tmp203_, _tmp206_, _tmp209_, _tmp212_);
-						_vala_iterable_unref0 (_tmp206_);
-						_g_free0 (_tmp203_);
-						_tmp213_ = self->priv->indent;
-						self->priv->indent = _tmp213_ - 1;
+						_tmp213_ = m;
+						_tmp214_ = vala_code_node_get_tree_can_fail ((ValaCodeNode*) _tmp213_);
+						_tmp215_ = _tmp214_;
+						vala_gir_writer_do_write_signature (self, _tmp200_, "callback", TRUE, _tmp203_, _tmp206_, _tmp209_, _tmp212_, _tmp215_, FALSE);
+						_vala_iterable_unref0 (_tmp209_);
+						_g_free0 (_tmp206_);
+						_tmp216_ = self->priv->indent;
+						self->priv->indent = _tmp216_ - 1;
 						vala_gir_writer_write_indent (self);
-						_tmp214_ = self->priv->buffer;
-						g_string_append_printf (_tmp214_, "</field>\n");
+						_tmp217_ = self->priv->buffer;
+						g_string_append_printf (_tmp217_, "</field>\n");
 					}
 				}
 				_vala_code_node_unref0 (m);
@@ -1564,138 +1911,146 @@ static void vala_gir_writer_real_visit_class (ValaCodeVisitor* base, ValaClass* 
 			_vala_iterable_unref0 (_m_list);
 		}
 		{
-			ValaClass* _tmp215_;
-			ValaList* _tmp216_ = NULL;
+			ValaClass* _tmp218_;
+			ValaList* _tmp219_ = NULL;
 			ValaList* _sig_list;
-			ValaList* _tmp217_;
-			gint _tmp218_;
-			gint _tmp219_;
+			ValaList* _tmp220_;
+			gint _tmp221_;
+			gint _tmp222_;
 			gint _sig_size;
 			gint _sig_index;
-			_tmp215_ = cl;
-			_tmp216_ = vala_object_type_symbol_get_signals ((ValaObjectTypeSymbol*) _tmp215_);
-			_sig_list = _tmp216_;
-			_tmp217_ = _sig_list;
-			_tmp218_ = vala_collection_get_size ((ValaCollection*) _tmp217_);
-			_tmp219_ = _tmp218_;
-			_sig_size = _tmp219_;
+			_tmp218_ = cl;
+			_tmp219_ = vala_object_type_symbol_get_signals ((ValaObjectTypeSymbol*) _tmp218_);
+			_sig_list = _tmp219_;
+			_tmp220_ = _sig_list;
+			_tmp221_ = vala_collection_get_size ((ValaCollection*) _tmp220_);
+			_tmp222_ = _tmp221_;
+			_sig_size = _tmp222_;
 			_sig_index = -1;
 			while (TRUE) {
-				gint _tmp220_;
-				gint _tmp221_;
-				gint _tmp222_;
-				ValaList* _tmp223_;
+				gint _tmp223_;
 				gint _tmp224_;
-				gpointer _tmp225_ = NULL;
+				gint _tmp225_;
+				ValaList* _tmp226_;
+				gint _tmp227_;
+				gpointer _tmp228_ = NULL;
 				ValaSignal* sig;
-				ValaSignal* _tmp226_;
-				ValaMethod* _tmp227_;
-				ValaMethod* _tmp228_;
-				_tmp220_ = _sig_index;
-				_sig_index = _tmp220_ + 1;
-				_tmp221_ = _sig_index;
-				_tmp222_ = _sig_size;
-				if (!(_tmp221_ < _tmp222_)) {
+				ValaSignal* _tmp229_;
+				ValaMethod* _tmp230_;
+				ValaMethod* _tmp231_;
+				_tmp223_ = _sig_index;
+				_sig_index = _tmp223_ + 1;
+				_tmp224_ = _sig_index;
+				_tmp225_ = _sig_size;
+				if (!(_tmp224_ < _tmp225_)) {
 					break;
 				}
-				_tmp223_ = _sig_list;
-				_tmp224_ = _sig_index;
-				_tmp225_ = vala_list_get (_tmp223_, _tmp224_);
-				sig = (ValaSignal*) _tmp225_;
-				_tmp226_ = sig;
-				_tmp227_ = vala_signal_get_default_handler (_tmp226_);
-				_tmp228_ = _tmp227_;
-				if (_tmp228_ != NULL) {
-					GString* _tmp229_;
-					ValaSignal* _tmp230_;
-					const gchar* _tmp231_;
-					const gchar* _tmp232_;
-					gint _tmp233_;
-					ValaSignal* _tmp234_;
-					ValaMethod* _tmp235_;
-					ValaMethod* _tmp236_;
-					gint _tmp237_;
-					GString* _tmp238_;
+				_tmp226_ = _sig_list;
+				_tmp227_ = _sig_index;
+				_tmp228_ = vala_list_get (_tmp226_, _tmp227_);
+				sig = (ValaSignal*) _tmp228_;
+				_tmp229_ = sig;
+				_tmp230_ = vala_signal_get_default_handler (_tmp229_);
+				_tmp231_ = _tmp230_;
+				if (_tmp231_ != NULL) {
+					GString* _tmp232_;
+					ValaSignal* _tmp233_;
+					const gchar* _tmp234_;
+					const gchar* _tmp235_;
+					gint _tmp236_;
+					ValaSignal* _tmp237_;
+					ValaMethod* _tmp238_;
+					ValaMethod* _tmp239_;
+					gint _tmp240_;
+					GString* _tmp241_;
 					vala_gir_writer_write_indent (self);
-					_tmp229_ = self->priv->buffer;
-					_tmp230_ = sig;
-					_tmp231_ = vala_symbol_get_name ((ValaSymbol*) _tmp230_);
-					_tmp232_ = _tmp231_;
-					g_string_append_printf (_tmp229_, "<field name=\"%s\">\n", _tmp232_);
-					_tmp233_ = self->priv->indent;
-					self->priv->indent = _tmp233_ + 1;
-					_tmp234_ = sig;
-					_tmp235_ = vala_signal_get_default_handler (_tmp234_);
-					_tmp236_ = _tmp235_;
-					vala_gir_writer_write_signature (self, _tmp236_, "callback", TRUE);
-					_tmp237_ = self->priv->indent;
-					self->priv->indent = _tmp237_ - 1;
+					_tmp232_ = self->priv->buffer;
+					_tmp233_ = sig;
+					_tmp234_ = vala_symbol_get_name ((ValaSymbol*) _tmp233_);
+					_tmp235_ = _tmp234_;
+					g_string_append_printf (_tmp232_, "<field name=\"%s\">\n", _tmp235_);
+					_tmp236_ = self->priv->indent;
+					self->priv->indent = _tmp236_ + 1;
+					_tmp237_ = sig;
+					_tmp238_ = vala_signal_get_default_handler (_tmp237_);
+					_tmp239_ = _tmp238_;
+					vala_gir_writer_write_signature (self, _tmp239_, "callback", FALSE, TRUE);
+					_tmp240_ = self->priv->indent;
+					self->priv->indent = _tmp240_ - 1;
 					vala_gir_writer_write_indent (self);
-					_tmp238_ = self->priv->buffer;
-					g_string_append_printf (_tmp238_, "</field>\n");
+					_tmp241_ = self->priv->buffer;
+					g_string_append_printf (_tmp241_, "</field>\n");
 				}
 				_vala_code_node_unref0 (sig);
 			}
 			_vala_iterable_unref0 (_sig_list);
 		}
-		_tmp239_ = self->priv->indent;
-		self->priv->indent = _tmp239_ - 1;
+		_tmp242_ = self->priv->indent;
+		self->priv->indent = _tmp242_ - 1;
 		vala_gir_writer_write_indent (self);
-		_tmp240_ = self->priv->buffer;
-		g_string_append_printf (_tmp240_, "</record>\n");
+		_tmp243_ = self->priv->buffer;
+		g_string_append_printf (_tmp243_, "</record>\n");
 		vala_gir_writer_write_indent (self);
-		_tmp241_ = self->priv->buffer;
-		_tmp242_ = cl;
-		_tmp243_ = vala_symbol_get_name ((ValaSymbol*) _tmp242_);
-		_tmp244_ = _tmp243_;
+		_tmp244_ = self->priv->buffer;
 		_tmp245_ = cl;
-		_tmp246_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp245_);
+		_tmp246_ = vala_symbol_get_name ((ValaSymbol*) _tmp245_);
 		_tmp247_ = _tmp246_;
-		g_string_append_printf (_tmp241_, "<record name=\"%sPrivate\" c:type=\"%sPrivate\" disguised=\"1\"/>\n", _tmp244_, _tmp247_);
-		_g_free0 (_tmp247_);
+		_tmp248_ = cl;
+		_tmp249_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp248_);
+		_tmp250_ = _tmp249_;
+		g_string_append_printf (_tmp244_, "<record name=\"%sPrivate\" c:type=\"%sPrivate\" disguised=\"1\"/>\n", _tmp247_, _tmp250_);
+		_g_free0 (_tmp250_);
 		_g_free0 (gtype_struct_name);
 	} else {
-		GString* _tmp248_;
-		ValaClass* _tmp249_;
-		gchar* _tmp250_ = NULL;
-		gchar* _tmp251_;
+		GString* _tmp251_;
 		ValaClass* _tmp252_;
-		GString* _tmp253_;
-		gint _tmp254_;
+		gchar* _tmp253_ = NULL;
+		gchar* _tmp254_;
 		ValaClass* _tmp255_;
-		ValaArrayList* _tmp256_;
-		ValaClass* _tmp257_;
+		GString* _tmp256_;
+		gint _tmp257_;
 		ValaClass* _tmp258_;
-		ValaArrayList* _tmp259_;
-		gint _tmp260_;
-		GString* _tmp261_;
+		gchar* _tmp259_ = NULL;
+		gchar* _tmp260_;
+		ValaClass* _tmp261_;
+		ValaArrayList* _tmp262_;
+		ValaClass* _tmp263_;
+		ValaClass* _tmp264_;
+		ValaArrayList* _tmp265_;
+		gint _tmp266_;
+		GString* _tmp267_;
 		vala_gir_writer_write_indent (self);
-		_tmp248_ = self->priv->buffer;
-		_tmp249_ = cl;
-		_tmp250_ = vala_gir_writer_get_gir_name (self, (ValaSymbol*) _tmp249_);
-		_tmp251_ = _tmp250_;
-		g_string_append_printf (_tmp248_, "<record name=\"%s\"", _tmp251_);
-		_g_free0 (_tmp251_);
+		_tmp251_ = self->priv->buffer;
 		_tmp252_ = cl;
-		vala_gir_writer_write_symbol_attributes (self, (ValaSymbol*) _tmp252_);
-		_tmp253_ = self->priv->buffer;
-		g_string_append_printf (_tmp253_, ">\n");
-		_tmp254_ = self->priv->indent;
-		self->priv->indent = _tmp254_ + 1;
+		_tmp253_ = vala_gir_writer_get_gir_name (self, (ValaSymbol*) _tmp252_);
+		_tmp254_ = _tmp253_;
+		g_string_append_printf (_tmp251_, "<record name=\"%s\"", _tmp254_);
+		_g_free0 (_tmp254_);
 		_tmp255_ = cl;
-		vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp255_);
-		_tmp256_ = self->priv->hierarchy;
-		_tmp257_ = cl;
-		vala_list_insert ((ValaList*) _tmp256_, 0, (ValaSymbol*) _tmp257_);
+		vala_gir_writer_write_symbol_attributes (self, (ValaSymbol*) _tmp255_);
+		_tmp256_ = self->priv->buffer;
+		g_string_append_printf (_tmp256_, ">\n");
+		_tmp257_ = self->priv->indent;
+		self->priv->indent = _tmp257_ + 1;
 		_tmp258_ = cl;
-		vala_code_node_accept_children ((ValaCodeNode*) _tmp258_, (ValaCodeVisitor*) self);
-		_tmp259_ = self->priv->hierarchy;
-		vala_list_remove_at ((ValaList*) _tmp259_, 0);
-		_tmp260_ = self->priv->indent;
-		self->priv->indent = _tmp260_ - 1;
+		_tmp259_ = vala_gir_writer_get_class_comment (self, _tmp258_);
+		_tmp260_ = _tmp259_;
+		vala_gir_writer_write_doc (self, _tmp260_);
+		_g_free0 (_tmp260_);
+		_tmp261_ = cl;
+		vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp261_);
+		_tmp262_ = self->priv->hierarchy;
+		_tmp263_ = cl;
+		vala_list_insert ((ValaList*) _tmp262_, 0, (ValaSymbol*) _tmp263_);
+		_tmp264_ = cl;
+		vala_code_node_accept_children ((ValaCodeNode*) _tmp264_, (ValaCodeVisitor*) self);
+		_tmp265_ = self->priv->hierarchy;
+		vala_list_remove_at ((ValaList*) _tmp265_, 0);
+		_tmp266_ = self->priv->indent;
+		self->priv->indent = _tmp266_ - 1;
 		vala_gir_writer_write_indent (self);
-		_tmp261_ = self->priv->buffer;
-		g_string_append_printf (_tmp261_, "</record>\n");
+		_tmp267_ = self->priv->buffer;
+		g_string_append_printf (_tmp267_, "</record>\n");
 	}
 	vala_gir_writer_visit_deferred (self);
 }
@@ -1720,12 +2075,15 @@ static void vala_gir_writer_real_visit_struct (ValaCodeVisitor* base, ValaStruct
 	GString* _tmp16_;
 	gint _tmp17_;
 	ValaStruct* _tmp18_;
-	ValaArrayList* _tmp19_;
-	ValaStruct* _tmp20_;
+	gchar* _tmp19_ = NULL;
+	gchar* _tmp20_;
 	ValaStruct* _tmp21_;
 	ValaArrayList* _tmp22_;
-	gint _tmp23_;
-	GString* _tmp24_;
+	ValaStruct* _tmp23_;
+	ValaStruct* _tmp24_;
+	ValaArrayList* _tmp25_;
+	gint _tmp26_;
+	GString* _tmp27_;
 	self = (ValaGIRWriter*) base;
 	g_return_if_fail (st != NULL);
 	_tmp0_ = st;
@@ -1766,19 +2124,24 @@ static void vala_gir_writer_real_visit_struct (ValaCodeVisitor* base, ValaStruct
 	_tmp17_ = self->priv->indent;
 	self->priv->indent = _tmp17_ + 1;
 	_tmp18_ = st;
-	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp18_);
-	_tmp19_ = self->priv->hierarchy;
-	_tmp20_ = st;
-	vala_list_insert ((ValaList*) _tmp19_, 0, (ValaSymbol*) _tmp20_);
+	_tmp19_ = vala_gir_writer_get_struct_comment (self, _tmp18_);
+	_tmp20_ = _tmp19_;
+	vala_gir_writer_write_doc (self, _tmp20_);
+	_g_free0 (_tmp20_);
 	_tmp21_ = st;
-	vala_code_node_accept_children ((ValaCodeNode*) _tmp21_, (ValaCodeVisitor*) self);
+	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp21_);
 	_tmp22_ = self->priv->hierarchy;
-	vala_list_remove_at ((ValaList*) _tmp22_, 0);
-	_tmp23_ = self->priv->indent;
-	self->priv->indent = _tmp23_ - 1;
+	_tmp23_ = st;
+	vala_list_insert ((ValaList*) _tmp22_, 0, (ValaSymbol*) _tmp23_);
+	_tmp24_ = st;
+	vala_code_node_accept_children ((ValaCodeNode*) _tmp24_, (ValaCodeVisitor*) self);
+	_tmp25_ = self->priv->hierarchy;
+	vala_list_remove_at ((ValaList*) _tmp25_, 0);
+	_tmp26_ = self->priv->indent;
+	self->priv->indent = _tmp26_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp24_ = self->priv->buffer;
-	g_string_append_printf (_tmp24_, "</record>\n");
+	_tmp27_ = self->priv->buffer;
+	g_string_append_printf (_tmp27_, "</record>\n");
 	vala_gir_writer_visit_deferred (self);
 }
 
@@ -1810,34 +2173,37 @@ static void vala_gir_writer_real_visit_interface (ValaCodeVisitor* base, ValaInt
 	GString* _tmp23_;
 	gint _tmp24_;
 	ValaInterface* _tmp25_;
-	ValaList* _tmp26_ = NULL;
-	ValaList* _tmp27_;
-	gint _tmp28_;
-	gint _tmp29_;
-	gboolean _tmp30_;
-	ValaInterface* _tmp48_;
-	ValaArrayList* _tmp49_;
-	ValaInterface* _tmp50_;
+	gchar* _tmp26_ = NULL;
+	gchar* _tmp27_;
+	ValaInterface* _tmp28_;
+	ValaList* _tmp29_ = NULL;
+	ValaList* _tmp30_;
+	gint _tmp31_;
+	gint _tmp32_;
+	gboolean _tmp33_;
 	ValaInterface* _tmp51_;
 	ValaArrayList* _tmp52_;
-	gint _tmp53_;
-	GString* _tmp54_;
-	GString* _tmp55_;
-	const gchar* _tmp56_;
-	ValaInterface* _tmp57_;
+	ValaInterface* _tmp53_;
+	ValaInterface* _tmp54_;
+	ValaArrayList* _tmp55_;
+	gint _tmp56_;
+	GString* _tmp57_;
 	GString* _tmp58_;
-	ValaInterface* _tmp59_;
-	const gchar* _tmp60_;
-	const gchar* _tmp61_;
-	GString* _tmp62_;
-	gint _tmp63_;
-	GString* _tmp64_;
-	gint _tmp65_;
-	GString* _tmp66_;
-	gint _tmp67_;
-	GString* _tmp68_;
-	gint _tmp167_;
-	GString* _tmp168_;
+	const gchar* _tmp59_;
+	ValaInterface* _tmp60_;
+	GString* _tmp61_;
+	ValaInterface* _tmp62_;
+	const gchar* _tmp63_;
+	const gchar* _tmp64_;
+	GString* _tmp65_;
+	gint _tmp66_;
+	GString* _tmp67_;
+	gint _tmp68_;
+	GString* _tmp69_;
+	gint _tmp70_;
+	GString* _tmp71_;
+	gint _tmp170_;
+	GString* _tmp171_;
 	self = (ValaGIRWriter*) base;
 	g_return_if_fail (iface != NULL);
 	_tmp0_ = iface;
@@ -1888,376 +2254,381 @@ static void vala_gir_writer_real_visit_interface (ValaCodeVisitor* base, ValaInt
 	_tmp24_ = self->priv->indent;
 	self->priv->indent = _tmp24_ + 1;
 	_tmp25_ = iface;
-	_tmp26_ = vala_interface_get_prerequisites (_tmp25_);
+	_tmp26_ = vala_gir_writer_get_interface_comment (self, _tmp25_);
 	_tmp27_ = _tmp26_;
-	_tmp28_ = vala_collection_get_size ((ValaCollection*) _tmp27_);
-	_tmp29_ = _tmp28_;
-	_tmp30_ = _tmp29_ > 0;
-	_vala_iterable_unref0 (_tmp27_);
-	if (_tmp30_) {
+	vala_gir_writer_write_doc (self, _tmp27_);
+	_g_free0 (_tmp27_);
+	_tmp28_ = iface;
+	_tmp29_ = vala_interface_get_prerequisites (_tmp28_);
+	_tmp30_ = _tmp29_;
+	_tmp31_ = vala_collection_get_size ((ValaCollection*) _tmp30_);
+	_tmp32_ = _tmp31_;
+	_tmp33_ = _tmp32_ > 0;
+	_vala_iterable_unref0 (_tmp30_);
+	if (_tmp33_) {
 		{
-			ValaInterface* _tmp31_;
-			ValaList* _tmp32_ = NULL;
+			ValaInterface* _tmp34_;
+			ValaList* _tmp35_ = NULL;
 			ValaList* _base_type_list;
-			ValaList* _tmp33_;
-			gint _tmp34_;
-			gint _tmp35_;
+			ValaList* _tmp36_;
+			gint _tmp37_;
+			gint _tmp38_;
 			gint _base_type_size;
 			gint _base_type_index;
-			_tmp31_ = iface;
-			_tmp32_ = vala_interface_get_prerequisites (_tmp31_);
-			_base_type_list = _tmp32_;
-			_tmp33_ = _base_type_list;
-			_tmp34_ = vala_collection_get_size ((ValaCollection*) _tmp33_);
-			_tmp35_ = _tmp34_;
-			_base_type_size = _tmp35_;
+			_tmp34_ = iface;
+			_tmp35_ = vala_interface_get_prerequisites (_tmp34_);
+			_base_type_list = _tmp35_;
+			_tmp36_ = _base_type_list;
+			_tmp37_ = vala_collection_get_size ((ValaCollection*) _tmp36_);
+			_tmp38_ = _tmp37_;
+			_base_type_size = _tmp38_;
 			_base_type_index = -1;
 			while (TRUE) {
-				gint _tmp36_;
-				gint _tmp37_;
-				gint _tmp38_;
-				ValaList* _tmp39_;
+				gint _tmp39_;
 				gint _tmp40_;
-				gpointer _tmp41_ = NULL;
+				gint _tmp41_;
+				ValaList* _tmp42_;
+				gint _tmp43_;
+				gpointer _tmp44_ = NULL;
 				ValaDataType* base_type;
-				GString* _tmp42_;
-				ValaDataType* _tmp43_;
-				ValaObjectTypeSymbol* _tmp44_;
-				ValaObjectTypeSymbol* _tmp45_;
-				gchar* _tmp46_ = NULL;
-				gchar* _tmp47_;
-				_tmp36_ = _base_type_index;
-				_base_type_index = _tmp36_ + 1;
-				_tmp37_ = _base_type_index;
-				_tmp38_ = _base_type_size;
-				if (!(_tmp37_ < _tmp38_)) {
+				GString* _tmp45_;
+				ValaDataType* _tmp46_;
+				ValaObjectTypeSymbol* _tmp47_;
+				ValaObjectTypeSymbol* _tmp48_;
+				gchar* _tmp49_ = NULL;
+				gchar* _tmp50_;
+				_tmp39_ = _base_type_index;
+				_base_type_index = _tmp39_ + 1;
+				_tmp40_ = _base_type_index;
+				_tmp41_ = _base_type_size;
+				if (!(_tmp40_ < _tmp41_)) {
 					break;
 				}
-				_tmp39_ = _base_type_list;
-				_tmp40_ = _base_type_index;
-				_tmp41_ = vala_list_get (_tmp39_, _tmp40_);
-				base_type = (ValaDataType*) _tmp41_;
+				_tmp42_ = _base_type_list;
+				_tmp43_ = _base_type_index;
+				_tmp44_ = vala_list_get (_tmp42_, _tmp43_);
+				base_type = (ValaDataType*) _tmp44_;
 				vala_gir_writer_write_indent (self);
-				_tmp42_ = self->priv->buffer;
-				_tmp43_ = base_type;
-				_tmp44_ = vala_object_type_get_type_symbol (VALA_OBJECT_TYPE (_tmp43_));
-				_tmp45_ = _tmp44_;
-				_tmp46_ = vala_gir_writer_gi_type_name (self, (ValaTypeSymbol*) _tmp45_);
-				_tmp47_ = _tmp46_;
-				g_string_append_printf (_tmp42_, "<prerequisite name=\"%s\"/>\n", _tmp47_);
-				_g_free0 (_tmp47_);
+				_tmp45_ = self->priv->buffer;
+				_tmp46_ = base_type;
+				_tmp47_ = vala_object_type_get_type_symbol (VALA_OBJECT_TYPE (_tmp46_));
+				_tmp48_ = _tmp47_;
+				_tmp49_ = vala_gir_writer_gi_type_name (self, (ValaTypeSymbol*) _tmp48_);
+				_tmp50_ = _tmp49_;
+				g_string_append_printf (_tmp45_, "<prerequisite name=\"%s\"/>\n", _tmp50_);
+				_g_free0 (_tmp50_);
 				_vala_code_node_unref0 (base_type);
 			}
 			_vala_iterable_unref0 (_base_type_list);
 		}
 	}
-	_tmp48_ = iface;
-	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp48_);
-	_tmp49_ = self->priv->hierarchy;
-	_tmp50_ = iface;
-	vala_list_insert ((ValaList*) _tmp49_, 0, (ValaSymbol*) _tmp50_);
 	_tmp51_ = iface;
-	vala_code_node_accept_children ((ValaCodeNode*) _tmp51_, (ValaCodeVisitor*) self);
+	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp51_);
 	_tmp52_ = self->priv->hierarchy;
-	vala_list_remove_at ((ValaList*) _tmp52_, 0);
-	_tmp53_ = self->priv->indent;
-	self->priv->indent = _tmp53_ - 1;
+	_tmp53_ = iface;
+	vala_list_insert ((ValaList*) _tmp52_, 0, (ValaSymbol*) _tmp53_);
+	_tmp54_ = iface;
+	vala_code_node_accept_children ((ValaCodeNode*) _tmp54_, (ValaCodeVisitor*) self);
+	_tmp55_ = self->priv->hierarchy;
+	vala_list_remove_at ((ValaList*) _tmp55_, 0);
+	_tmp56_ = self->priv->indent;
+	self->priv->indent = _tmp56_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp54_ = self->priv->buffer;
-	g_string_append_printf (_tmp54_, "</interface>\n");
+	_tmp57_ = self->priv->buffer;
+	g_string_append_printf (_tmp57_, "</interface>\n");
 	vala_gir_writer_write_indent (self);
-	_tmp55_ = self->priv->buffer;
-	_tmp56_ = gtype_struct_name;
-	g_string_append_printf (_tmp55_, "<record name=\"%s\"", _tmp56_);
-	_tmp57_ = iface;
-	vala_gir_writer_write_ctype_attributes (self, (ValaTypeSymbol*) _tmp57_, "Iface");
 	_tmp58_ = self->priv->buffer;
-	_tmp59_ = iface;
-	_tmp60_ = vala_symbol_get_name ((ValaSymbol*) _tmp59_);
-	_tmp61_ = _tmp60_;
-	g_string_append_printf (_tmp58_, " glib:is-gtype-struct-for=\"%s\"", _tmp61_);
-	_tmp62_ = self->priv->buffer;
-	g_string_append_printf (_tmp62_, ">\n");
-	_tmp63_ = self->priv->indent;
-	self->priv->indent = _tmp63_ + 1;
+	_tmp59_ = gtype_struct_name;
+	g_string_append_printf (_tmp58_, "<record name=\"%s\"", _tmp59_);
+	_tmp60_ = iface;
+	vala_gir_writer_write_ctype_attributes (self, (ValaTypeSymbol*) _tmp60_, "Iface");
+	_tmp61_ = self->priv->buffer;
+	_tmp62_ = iface;
+	_tmp63_ = vala_symbol_get_name ((ValaSymbol*) _tmp62_);
+	_tmp64_ = _tmp63_;
+	g_string_append_printf (_tmp61_, " glib:is-gtype-struct-for=\"%s\"", _tmp64_);
+	_tmp65_ = self->priv->buffer;
+	g_string_append_printf (_tmp65_, ">\n");
+	_tmp66_ = self->priv->indent;
+	self->priv->indent = _tmp66_ + 1;
 	vala_gir_writer_write_indent (self);
-	_tmp64_ = self->priv->buffer;
-	g_string_append_printf (_tmp64_, "<field name=\"parent_iface\">\n");
-	_tmp65_ = self->priv->indent;
-	self->priv->indent = _tmp65_ + 1;
+	_tmp67_ = self->priv->buffer;
+	g_string_append_printf (_tmp67_, "<field name=\"parent_iface\">\n");
+	_tmp68_ = self->priv->indent;
+	self->priv->indent = _tmp68_ + 1;
 	vala_gir_writer_write_indent (self);
-	_tmp66_ = self->priv->buffer;
-	g_string_append_printf (_tmp66_, "<type name=\"GObject.TypeInterface\" c:type=\"GTypeInterface\"/>\n");
-	_tmp67_ = self->priv->indent;
-	self->priv->indent = _tmp67_ - 1;
+	_tmp69_ = self->priv->buffer;
+	g_string_append_printf (_tmp69_, "<type name=\"GObject.TypeInterface\" c:type=\"GTypeInterface\"/>\n");
+	_tmp70_ = self->priv->indent;
+	self->priv->indent = _tmp70_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp68_ = self->priv->buffer;
-	g_string_append_printf (_tmp68_, "</field>\n");
+	_tmp71_ = self->priv->buffer;
+	g_string_append_printf (_tmp71_, "</field>\n");
 	{
-		ValaInterface* _tmp69_;
-		ValaList* _tmp70_ = NULL;
+		ValaInterface* _tmp72_;
+		ValaList* _tmp73_ = NULL;
 		ValaList* _m_list;
-		ValaList* _tmp71_;
-		gint _tmp72_;
-		gint _tmp73_;
+		ValaList* _tmp74_;
+		gint _tmp75_;
+		gint _tmp76_;
 		gint _m_size;
 		gint _m_index;
-		_tmp69_ = iface;
-		_tmp70_ = vala_object_type_symbol_get_methods ((ValaObjectTypeSymbol*) _tmp69_);
-		_m_list = _tmp70_;
-		_tmp71_ = _m_list;
-		_tmp72_ = vala_collection_get_size ((ValaCollection*) _tmp71_);
-		_tmp73_ = _tmp72_;
-		_m_size = _tmp73_;
+		_tmp72_ = iface;
+		_tmp73_ = vala_object_type_symbol_get_methods ((ValaObjectTypeSymbol*) _tmp72_);
+		_m_list = _tmp73_;
+		_tmp74_ = _m_list;
+		_tmp75_ = vala_collection_get_size ((ValaCollection*) _tmp74_);
+		_tmp76_ = _tmp75_;
+		_m_size = _tmp76_;
 		_m_index = -1;
 		while (TRUE) {
-			gint _tmp74_;
-			gint _tmp75_;
-			gint _tmp76_;
-			ValaList* _tmp77_;
+			gint _tmp77_;
 			gint _tmp78_;
-			gpointer _tmp79_ = NULL;
+			gint _tmp79_;
+			ValaList* _tmp80_;
+			gint _tmp81_;
+			gpointer _tmp82_ = NULL;
 			ValaMethod* m;
-			gboolean _tmp80_ = FALSE;
-			ValaMethod* _tmp81_;
-			gboolean _tmp82_;
-			gboolean _tmp83_;
-			gboolean _tmp87_;
-			_tmp74_ = _m_index;
-			_m_index = _tmp74_ + 1;
-			_tmp75_ = _m_index;
-			_tmp76_ = _m_size;
-			if (!(_tmp75_ < _tmp76_)) {
+			gboolean _tmp83_ = FALSE;
+			ValaMethod* _tmp84_;
+			gboolean _tmp85_;
+			gboolean _tmp86_;
+			gboolean _tmp90_;
+			_tmp77_ = _m_index;
+			_m_index = _tmp77_ + 1;
+			_tmp78_ = _m_index;
+			_tmp79_ = _m_size;
+			if (!(_tmp78_ < _tmp79_)) {
 				break;
 			}
-			_tmp77_ = _m_list;
-			_tmp78_ = _m_index;
-			_tmp79_ = vala_list_get (_tmp77_, _tmp78_);
-			m = (ValaMethod*) _tmp79_;
-			_tmp81_ = m;
-			_tmp82_ = vala_method_get_is_abstract (_tmp81_);
-			_tmp83_ = _tmp82_;
-			if (_tmp83_) {
-				_tmp80_ = TRUE;
+			_tmp80_ = _m_list;
+			_tmp81_ = _m_index;
+			_tmp82_ = vala_list_get (_tmp80_, _tmp81_);
+			m = (ValaMethod*) _tmp82_;
+			_tmp84_ = m;
+			_tmp85_ = vala_method_get_is_abstract (_tmp84_);
+			_tmp86_ = _tmp85_;
+			if (_tmp86_) {
+				_tmp83_ = TRUE;
 			} else {
-				ValaMethod* _tmp84_;
-				gboolean _tmp85_;
-				gboolean _tmp86_;
-				_tmp84_ = m;
-				_tmp85_ = vala_method_get_is_virtual (_tmp84_);
-				_tmp86_ = _tmp85_;
-				_tmp80_ = _tmp86_;
-			}
-			_tmp87_ = _tmp80_;
-			if (_tmp87_) {
-				ValaMethod* _tmp88_;
+				ValaMethod* _tmp87_;
+				gboolean _tmp88_;
 				gboolean _tmp89_;
-				gboolean _tmp90_;
-				_tmp88_ = m;
-				_tmp89_ = vala_method_get_coroutine (_tmp88_);
-				_tmp90_ = _tmp89_;
-				if (_tmp90_) {
-					ValaMethod* _tmp91_;
-					const gchar* _tmp92_;
-					const gchar* _tmp93_;
-					gchar* _tmp94_;
-					gchar* finish_name;
+				_tmp87_ = m;
+				_tmp88_ = vala_method_get_is_virtual (_tmp87_);
+				_tmp89_ = _tmp88_;
+				_tmp83_ = _tmp89_;
+			}
+			_tmp90_ = _tmp83_;
+			if (_tmp90_) {
+				ValaMethod* _tmp91_;
+				gboolean _tmp92_;
+				gboolean _tmp93_;
+				_tmp91_ = m;
+				_tmp92_ = vala_method_get_coroutine (_tmp91_);
+				_tmp93_ = _tmp92_;
+				if (_tmp93_) {
+					ValaMethod* _tmp94_;
 					const gchar* _tmp95_;
-					gboolean _tmp96_ = FALSE;
-					const gchar* _tmp104_;
-					gchar* _tmp105_;
-					GString* _tmp106_;
-					ValaMethod* _tmp107_;
-					const gchar* _tmp108_;
-					const gchar* _tmp109_;
-					gint _tmp110_;
-					ValaMethod* _tmp111_;
-					ValaMethod* _tmp112_;
-					const gchar* _tmp113_;
-					const gchar* _tmp114_;
+					const gchar* _tmp96_;
+					gchar* _tmp97_;
+					gchar* finish_name;
+					const gchar* _tmp98_;
+					gboolean _tmp99_ = FALSE;
+					const gchar* _tmp107_;
+					gchar* _tmp108_;
+					GString* _tmp109_;
+					ValaMethod* _tmp110_;
+					const gchar* _tmp111_;
+					const gchar* _tmp112_;
+					gint _tmp113_;
+					ValaMethod* _tmp114_;
 					ValaMethod* _tmp115_;
-					gchar* _tmp116_ = NULL;
-					gchar* _tmp117_;
+					const gchar* _tmp116_;
+					const gchar* _tmp117_;
 					ValaMethod* _tmp118_;
-					ValaList* _tmp119_ = NULL;
-					ValaList* _tmp120_;
-					ValaVoidType* _tmp121_;
-					ValaVoidType* _tmp122_;
-					gint _tmp123_;
-					GString* _tmp124_;
-					GString* _tmp125_;
-					const gchar* _tmp126_;
-					gint _tmp127_;
-					ValaMethod* _tmp128_;
+					gchar* _tmp119_ = NULL;
+					gchar* _tmp120_;
+					ValaMethod* _tmp121_;
+					ValaList* _tmp122_ = NULL;
+					ValaList* _tmp123_;
+					ValaVoidType* _tmp124_;
+					ValaVoidType* _tmp125_;
+					gint _tmp126_;
+					GString* _tmp127_;
+					GString* _tmp128_;
 					const gchar* _tmp129_;
-					ValaMethod* _tmp130_;
-					gchar* _tmp131_ = NULL;
-					gchar* _tmp132_;
+					gint _tmp130_;
+					ValaMethod* _tmp131_;
+					const gchar* _tmp132_;
 					ValaMethod* _tmp133_;
-					ValaList* _tmp134_ = NULL;
-					ValaList* _tmp135_;
+					gchar* _tmp134_ = NULL;
+					gchar* _tmp135_;
 					ValaMethod* _tmp136_;
-					ValaDataType* _tmp137_;
-					ValaDataType* _tmp138_;
+					ValaList* _tmp137_ = NULL;
+					ValaList* _tmp138_;
 					ValaMethod* _tmp139_;
-					gboolean _tmp140_;
-					gboolean _tmp141_;
-					gint _tmp142_;
-					GString* _tmp143_;
-					_tmp91_ = m;
-					_tmp92_ = vala_symbol_get_name ((ValaSymbol*) _tmp91_);
-					_tmp93_ = _tmp92_;
-					_tmp94_ = g_strdup (_tmp93_);
-					finish_name = _tmp94_;
-					_tmp95_ = finish_name;
-					_tmp96_ = g_str_has_suffix (_tmp95_, "_async");
-					if (_tmp96_) {
-						const gchar* _tmp97_;
-						const gchar* _tmp98_;
-						gint _tmp99_;
-						gint _tmp100_;
-						gint _tmp101_;
+					ValaDataType* _tmp140_;
+					ValaDataType* _tmp141_;
+					ValaMethod* _tmp142_;
+					gboolean _tmp143_;
+					gboolean _tmp144_;
+					gint _tmp145_;
+					GString* _tmp146_;
+					_tmp94_ = m;
+					_tmp95_ = vala_symbol_get_name ((ValaSymbol*) _tmp94_);
+					_tmp96_ = _tmp95_;
+					_tmp97_ = g_strdup (_tmp96_);
+					finish_name = _tmp97_;
+					_tmp98_ = finish_name;
+					_tmp99_ = g_str_has_suffix (_tmp98_, "_async");
+					if (_tmp99_) {
+						const gchar* _tmp100_;
+						const gchar* _tmp101_;
 						gint _tmp102_;
-						gchar* _tmp103_ = NULL;
-						_tmp97_ = finish_name;
-						_tmp98_ = finish_name;
-						_tmp99_ = strlen (_tmp98_);
-						_tmp100_ = _tmp99_;
-						_tmp101_ = strlen ("_async");
-						_tmp102_ = _tmp101_;
-						_tmp103_ = string_substring (_tmp97_, (glong) 0, (glong) (_tmp100_ - _tmp102_));
+						gint _tmp103_;
+						gint _tmp104_;
+						gint _tmp105_;
+						gchar* _tmp106_ = NULL;
+						_tmp100_ = finish_name;
+						_tmp101_ = finish_name;
+						_tmp102_ = strlen (_tmp101_);
+						_tmp103_ = _tmp102_;
+						_tmp104_ = strlen ("_async");
+						_tmp105_ = _tmp104_;
+						_tmp106_ = string_substring (_tmp100_, (glong) 0, (glong) (_tmp103_ - _tmp105_));
 						_g_free0 (finish_name);
-						finish_name = _tmp103_;
+						finish_name = _tmp106_;
 					}
-					_tmp104_ = finish_name;
-					_tmp105_ = g_strconcat (_tmp104_, "_finish", NULL);
+					_tmp107_ = finish_name;
+					_tmp108_ = g_strconcat (_tmp107_, "_finish", NULL);
 					_g_free0 (finish_name);
-					finish_name = _tmp105_;
+					finish_name = _tmp108_;
 					vala_gir_writer_write_indent (self);
-					_tmp106_ = self->priv->buffer;
-					_tmp107_ = m;
-					_tmp108_ = vala_symbol_get_name ((ValaSymbol*) _tmp107_);
-					_tmp109_ = _tmp108_;
-					g_string_append_printf (_tmp106_, "<field name=\"%s\">\n", _tmp109_);
-					_tmp110_ = self->priv->indent;
-					self->priv->indent = _tmp110_ + 1;
-					_tmp111_ = m;
-					_tmp112_ = m;
-					_tmp113_ = vala_symbol_get_name ((ValaSymbol*) _tmp112_);
-					_tmp114_ = _tmp113_;
+					_tmp109_ = self->priv->buffer;
+					_tmp110_ = m;
+					_tmp111_ = vala_symbol_get_name ((ValaSymbol*) _tmp110_);
+					_tmp112_ = _tmp111_;
+					g_string_append_printf (_tmp109_, "<field name=\"%s\">\n", _tmp112_);
+					_tmp113_ = self->priv->indent;
+					self->priv->indent = _tmp113_ + 1;
+					_tmp114_ = m;
 					_tmp115_ = m;
-					_tmp116_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp115_);
+					_tmp116_ = vala_symbol_get_name ((ValaSymbol*) _tmp115_);
 					_tmp117_ = _tmp116_;
 					_tmp118_ = m;
-					_tmp119_ = vala_method_get_async_begin_parameters (_tmp118_);
+					_tmp119_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp118_);
 					_tmp120_ = _tmp119_;
-					_tmp121_ = vala_void_type_new (NULL);
-					_tmp122_ = _tmp121_;
-					vala_gir_writer_do_write_signature (self, _tmp111_, "callback", TRUE, _tmp114_, _tmp117_, _tmp120_, (ValaDataType*) _tmp122_, FALSE);
-					_vala_code_node_unref0 (_tmp122_);
-					_vala_iterable_unref0 (_tmp120_);
-					_g_free0 (_tmp117_);
-					_tmp123_ = self->priv->indent;
-					self->priv->indent = _tmp123_ - 1;
+					_tmp121_ = m;
+					_tmp122_ = vala_method_get_async_begin_parameters (_tmp121_);
+					_tmp123_ = _tmp122_;
+					_tmp124_ = vala_void_type_new (NULL);
+					_tmp125_ = _tmp124_;
+					vala_gir_writer_do_write_signature (self, _tmp114_, "callback", TRUE, _tmp117_, _tmp120_, _tmp123_, (ValaDataType*) _tmp125_, FALSE, FALSE);
+					_vala_code_node_unref0 (_tmp125_);
+					_vala_iterable_unref0 (_tmp123_);
+					_g_free0 (_tmp120_);
+					_tmp126_ = self->priv->indent;
+					self->priv->indent = _tmp126_ - 1;
 					vala_gir_writer_write_indent (self);
-					_tmp124_ = self->priv->buffer;
-					g_string_append_printf (_tmp124_, "</field>\n");
+					_tmp127_ = self->priv->buffer;
+					g_string_append_printf (_tmp127_, "</field>\n");
 					vala_gir_writer_write_indent (self);
-					_tmp125_ = self->priv->buffer;
-					_tmp126_ = finish_name;
-					g_string_append_printf (_tmp125_, "<field name=\"%s\">\n", _tmp126_);
-					_tmp127_ = self->priv->indent;
-					self->priv->indent = _tmp127_ + 1;
-					_tmp128_ = m;
+					_tmp128_ = self->priv->buffer;
 					_tmp129_ = finish_name;
-					_tmp130_ = m;
-					_tmp131_ = vala_ccode_base_module_get_ccode_finish_name (_tmp130_);
-					_tmp132_ = _tmp131_;
+					g_string_append_printf (_tmp128_, "<field name=\"%s\">\n", _tmp129_);
+					_tmp130_ = self->priv->indent;
+					self->priv->indent = _tmp130_ + 1;
+					_tmp131_ = m;
+					_tmp132_ = finish_name;
 					_tmp133_ = m;
-					_tmp134_ = vala_method_get_async_end_parameters (_tmp133_);
+					_tmp134_ = vala_ccode_base_module_get_ccode_finish_name (_tmp133_);
 					_tmp135_ = _tmp134_;
 					_tmp136_ = m;
-					_tmp137_ = vala_method_get_return_type (_tmp136_);
+					_tmp137_ = vala_method_get_async_end_parameters (_tmp136_);
 					_tmp138_ = _tmp137_;
 					_tmp139_ = m;
-					_tmp140_ = vala_code_node_get_tree_can_fail ((ValaCodeNode*) _tmp139_);
+					_tmp140_ = vala_method_get_return_type (_tmp139_);
 					_tmp141_ = _tmp140_;
-					vala_gir_writer_do_write_signature (self, _tmp128_, "callback", TRUE, _tmp129_, _tmp132_, _tmp135_, _tmp138_, _tmp141_);
-					_vala_iterable_unref0 (_tmp135_);
-					_g_free0 (_tmp132_);
-					_tmp142_ = self->priv->indent;
-					self->priv->indent = _tmp142_ - 1;
+					_tmp142_ = m;
+					_tmp143_ = vala_code_node_get_tree_can_fail ((ValaCodeNode*) _tmp142_);
+					_tmp144_ = _tmp143_;
+					vala_gir_writer_do_write_signature (self, _tmp131_, "callback", TRUE, _tmp132_, _tmp135_, _tmp138_, _tmp141_, _tmp144_, FALSE);
+					_vala_iterable_unref0 (_tmp138_);
+					_g_free0 (_tmp135_);
+					_tmp145_ = self->priv->indent;
+					self->priv->indent = _tmp145_ - 1;
 					vala_gir_writer_write_indent (self);
-					_tmp143_ = self->priv->buffer;
-					g_string_append_printf (_tmp143_, "</field>\n");
+					_tmp146_ = self->priv->buffer;
+					g_string_append_printf (_tmp146_, "</field>\n");
 					_g_free0 (finish_name);
 				} else {
-					GString* _tmp144_;
-					ValaMethod* _tmp145_;
-					const gchar* _tmp146_;
-					const gchar* _tmp147_;
-					gint _tmp148_;
-					ValaMethod* _tmp149_;
-					ValaMethod* _tmp150_;
-					const gchar* _tmp151_;
-					const gchar* _tmp152_;
+					GString* _tmp147_;
+					ValaMethod* _tmp148_;
+					const gchar* _tmp149_;
+					const gchar* _tmp150_;
+					gint _tmp151_;
+					ValaMethod* _tmp152_;
 					ValaMethod* _tmp153_;
-					gchar* _tmp154_ = NULL;
-					gchar* _tmp155_;
+					const gchar* _tmp154_;
+					const gchar* _tmp155_;
 					ValaMethod* _tmp156_;
-					ValaList* _tmp157_ = NULL;
-					ValaList* _tmp158_;
+					gchar* _tmp157_ = NULL;
+					gchar* _tmp158_;
 					ValaMethod* _tmp159_;
-					ValaDataType* _tmp160_;
-					ValaDataType* _tmp161_;
+					ValaList* _tmp160_ = NULL;
+					ValaList* _tmp161_;
 					ValaMethod* _tmp162_;
-					gboolean _tmp163_;
-					gboolean _tmp164_;
-					gint _tmp165_;
-					GString* _tmp166_;
+					ValaDataType* _tmp163_;
+					ValaDataType* _tmp164_;
+					ValaMethod* _tmp165_;
+					gboolean _tmp166_;
+					gboolean _tmp167_;
+					gint _tmp168_;
+					GString* _tmp169_;
 					vala_gir_writer_write_indent (self);
-					_tmp144_ = self->priv->buffer;
-					_tmp145_ = m;
-					_tmp146_ = vala_symbol_get_name ((ValaSymbol*) _tmp145_);
-					_tmp147_ = _tmp146_;
-					g_string_append_printf (_tmp144_, "<field name=\"%s\">\n", _tmp147_);
-					_tmp148_ = self->priv->indent;
-					self->priv->indent = _tmp148_ + 1;
-					_tmp149_ = m;
-					_tmp150_ = m;
-					_tmp151_ = vala_symbol_get_name ((ValaSymbol*) _tmp150_);
-					_tmp152_ = _tmp151_;
+					_tmp147_ = self->priv->buffer;
+					_tmp148_ = m;
+					_tmp149_ = vala_symbol_get_name ((ValaSymbol*) _tmp148_);
+					_tmp150_ = _tmp149_;
+					g_string_append_printf (_tmp147_, "<field name=\"%s\">\n", _tmp150_);
+					_tmp151_ = self->priv->indent;
+					self->priv->indent = _tmp151_ + 1;
+					_tmp152_ = m;
 					_tmp153_ = m;
-					_tmp154_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp153_);
+					_tmp154_ = vala_symbol_get_name ((ValaSymbol*) _tmp153_);
 					_tmp155_ = _tmp154_;
 					_tmp156_ = m;
-					_tmp157_ = vala_method_get_parameters (_tmp156_);
+					_tmp157_ = vala_ccode_base_module_get_ccode_name ((ValaCodeNode*) _tmp156_);
 					_tmp158_ = _tmp157_;
 					_tmp159_ = m;
-					_tmp160_ = vala_method_get_return_type (_tmp159_);
+					_tmp160_ = vala_method_get_parameters (_tmp159_);
 					_tmp161_ = _tmp160_;
 					_tmp162_ = m;
-					_tmp163_ = vala_code_node_get_tree_can_fail ((ValaCodeNode*) _tmp162_);
+					_tmp163_ = vala_method_get_return_type (_tmp162_);
 					_tmp164_ = _tmp163_;
-					vala_gir_writer_do_write_signature (self, _tmp149_, "callback", TRUE, _tmp152_, _tmp155_, _tmp158_, _tmp161_, _tmp164_);
-					_vala_iterable_unref0 (_tmp158_);
-					_g_free0 (_tmp155_);
-					_tmp165_ = self->priv->indent;
-					self->priv->indent = _tmp165_ - 1;
+					_tmp165_ = m;
+					_tmp166_ = vala_code_node_get_tree_can_fail ((ValaCodeNode*) _tmp165_);
+					_tmp167_ = _tmp166_;
+					vala_gir_writer_do_write_signature (self, _tmp152_, "callback", TRUE, _tmp155_, _tmp158_, _tmp161_, _tmp164_, _tmp167_, FALSE);
+					_vala_iterable_unref0 (_tmp161_);
+					_g_free0 (_tmp158_);
+					_tmp168_ = self->priv->indent;
+					self->priv->indent = _tmp168_ - 1;
 					vala_gir_writer_write_indent (self);
-					_tmp166_ = self->priv->buffer;
-					g_string_append_printf (_tmp166_, "</field>\n");
+					_tmp169_ = self->priv->buffer;
+					g_string_append_printf (_tmp169_, "</field>\n");
 				}
 			}
 			_vala_code_node_unref0 (m);
 		}
 		_vala_iterable_unref0 (_m_list);
 	}
-	_tmp167_ = self->priv->indent;
-	self->priv->indent = _tmp167_ - 1;
+	_tmp170_ = self->priv->indent;
+	self->priv->indent = _tmp170_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp168_ = self->priv->buffer;
-	g_string_append_printf (_tmp168_, "</record>\n");
+	_tmp171_ = self->priv->buffer;
+	g_string_append_printf (_tmp171_, "</record>\n");
 	vala_gir_writer_visit_deferred (self);
 	_g_free0 (gtype_struct_name);
 }
@@ -2441,13 +2812,16 @@ static void vala_gir_writer_real_visit_enum (ValaCodeVisitor* base, ValaEnum* en
 	GString* _tmp24_;
 	gint _tmp25_;
 	ValaEnum* _tmp26_;
-	ValaArrayList* _tmp27_;
-	ValaEnum* _tmp28_;
+	gchar* _tmp27_ = NULL;
+	gchar* _tmp28_;
 	ValaEnum* _tmp29_;
 	ValaArrayList* _tmp30_;
-	gint _tmp31_;
-	GString* _tmp32_;
-	const gchar* _tmp33_;
+	ValaEnum* _tmp31_;
+	ValaEnum* _tmp32_;
+	ValaArrayList* _tmp33_;
+	gint _tmp34_;
+	GString* _tmp35_;
+	const gchar* _tmp36_;
 	self = (ValaGIRWriter*) base;
 	g_return_if_fail (en != NULL);
 	_tmp0_ = en;
@@ -2502,21 +2876,26 @@ static void vala_gir_writer_real_visit_enum (ValaCodeVisitor* base, ValaEnum* en
 	_tmp25_ = self->priv->indent;
 	self->priv->indent = _tmp25_ + 1;
 	_tmp26_ = en;
-	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp26_);
-	self->priv->enum_value = 0;
-	_tmp27_ = self->priv->hierarchy;
-	_tmp28_ = en;
-	vala_list_insert ((ValaList*) _tmp27_, 0, (ValaSymbol*) _tmp28_);
+	_tmp27_ = vala_gir_writer_get_enum_comment (self, _tmp26_);
+	_tmp28_ = _tmp27_;
+	vala_gir_writer_write_doc (self, _tmp28_);
+	_g_free0 (_tmp28_);
 	_tmp29_ = en;
-	vala_code_node_accept_children ((ValaCodeNode*) _tmp29_, (ValaCodeVisitor*) self);
+	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp29_);
+	self->priv->enum_value = 0;
 	_tmp30_ = self->priv->hierarchy;
-	vala_list_remove_at ((ValaList*) _tmp30_, 0);
-	_tmp31_ = self->priv->indent;
-	self->priv->indent = _tmp31_ - 1;
+	_tmp31_ = en;
+	vala_list_insert ((ValaList*) _tmp30_, 0, (ValaSymbol*) _tmp31_);
+	_tmp32_ = en;
+	vala_code_node_accept_children ((ValaCodeNode*) _tmp32_, (ValaCodeVisitor*) self);
+	_tmp33_ = self->priv->hierarchy;
+	vala_list_remove_at ((ValaList*) _tmp33_, 0);
+	_tmp34_ = self->priv->indent;
+	self->priv->indent = _tmp34_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp32_ = self->priv->buffer;
-	_tmp33_ = element_name;
-	g_string_append_printf (_tmp32_, "</%s>\n", _tmp33_);
+	_tmp35_ = self->priv->buffer;
+	_tmp36_ = element_name;
+	g_string_append_printf (_tmp35_, "</%s>\n", _tmp36_);
 	vala_gir_writer_visit_deferred (self);
 	_g_free0 (element_name);
 }
@@ -2540,7 +2919,10 @@ static void vala_gir_writer_real_visit_enum_value (ValaCodeVisitor* base, ValaEn
 	ValaExpression* _tmp12_;
 	ValaExpression* _tmp13_;
 	ValaEnumValue* _tmp27_;
-	GString* _tmp28_;
+	ValaEnumValue* _tmp28_;
+	gchar* _tmp29_ = NULL;
+	gchar* comment;
+	const gchar* _tmp30_;
 	self = (ValaGIRWriter*) base;
 	g_return_if_fail (ev != NULL);
 	vala_gir_writer_write_indent (self);
@@ -2604,8 +2986,33 @@ static void vala_gir_writer_real_visit_enum_value (ValaCodeVisitor* base, ValaEn
 	}
 	_tmp27_ = ev;
 	vala_gir_writer_write_symbol_attributes (self, (ValaSymbol*) _tmp27_);
-	_tmp28_ = self->priv->buffer;
-	g_string_append_printf (_tmp28_, "/>\n");
+	_tmp28_ = ev;
+	_tmp29_ = vala_gir_writer_get_enum_value_comment (self, _tmp28_);
+	comment = _tmp29_;
+	_tmp30_ = comment;
+	if (_tmp30_ == NULL) {
+		GString* _tmp31_;
+		_tmp31_ = self->priv->buffer;
+		g_string_append_printf (_tmp31_, "/>\n");
+	} else {
+		GString* _tmp32_;
+		gint _tmp33_;
+		const gchar* _tmp34_;
+		gint _tmp35_;
+		GString* _tmp36_;
+		_tmp32_ = self->priv->buffer;
+		g_string_append_printf (_tmp32_, ">\n");
+		_tmp33_ = self->priv->indent;
+		self->priv->indent = _tmp33_ + 1;
+		_tmp34_ = comment;
+		vala_gir_writer_write_doc (self, _tmp34_);
+		_tmp35_ = self->priv->indent;
+		self->priv->indent = _tmp35_ - 1;
+		vala_gir_writer_write_indent (self);
+		_tmp36_ = self->priv->buffer;
+		g_string_append_printf (_tmp36_, "</member>\n");
+	}
+	_g_free0 (comment);
 	_vala_code_node_unref0 (en);
 }
 
@@ -2640,12 +3047,15 @@ static void vala_gir_writer_real_visit_error_domain (ValaCodeVisitor* base, Vala
 	ValaErrorDomain* _tmp25_;
 	GString* _tmp26_;
 	gint _tmp27_;
-	ValaArrayList* _tmp28_;
-	ValaErrorDomain* _tmp29_;
-	ValaErrorDomain* _tmp30_;
+	ValaErrorDomain* _tmp28_;
+	gchar* _tmp29_ = NULL;
+	gchar* _tmp30_;
 	ValaArrayList* _tmp31_;
-	gint _tmp32_;
-	GString* _tmp33_;
+	ValaErrorDomain* _tmp32_;
+	ValaErrorDomain* _tmp33_;
+	ValaArrayList* _tmp34_;
+	gint _tmp35_;
+	GString* _tmp36_;
 	self = (ValaGIRWriter*) base;
 	g_return_if_fail (edomain != NULL);
 	_tmp0_ = edomain;
@@ -2696,19 +3106,24 @@ static void vala_gir_writer_real_visit_error_domain (ValaCodeVisitor* base, Vala
 	g_string_append_printf (_tmp26_, ">\n");
 	_tmp27_ = self->priv->indent;
 	self->priv->indent = _tmp27_ + 1;
+	_tmp28_ = edomain;
+	_tmp29_ = vala_gir_writer_get_error_domain_comment (self, _tmp28_);
+	_tmp30_ = _tmp29_;
+	vala_gir_writer_write_doc (self, _tmp30_);
+	_g_free0 (_tmp30_);
 	self->priv->enum_value = 0;
-	_tmp28_ = self->priv->hierarchy;
-	_tmp29_ = edomain;
-	vala_list_insert ((ValaList*) _tmp28_, 0, (ValaSymbol*) _tmp29_);
-	_tmp30_ = edomain;
-	vala_code_node_accept_children ((ValaCodeNode*) _tmp30_, (ValaCodeVisitor*) self);
 	_tmp31_ = self->priv->hierarchy;
-	vala_list_remove_at ((ValaList*) _tmp31_, 0);
-	_tmp32_ = self->priv->indent;
-	self->priv->indent = _tmp32_ - 1;
+	_tmp32_ = edomain;
+	vala_list_insert ((ValaList*) _tmp31_, 0, (ValaSymbol*) _tmp32_);
+	_tmp33_ = edomain;
+	vala_code_node_accept_children ((ValaCodeNode*) _tmp33_, (ValaCodeVisitor*) self);
+	_tmp34_ = self->priv->hierarchy;
+	vala_list_remove_at ((ValaList*) _tmp34_, 0);
+	_tmp35_ = self->priv->indent;
+	self->priv->indent = _tmp35_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp33_ = self->priv->buffer;
-	g_string_append_printf (_tmp33_, "</enumeration>\n");
+	_tmp36_ = self->priv->buffer;
+	g_string_append_printf (_tmp36_, "</enumeration>\n");
 	vala_gir_writer_visit_deferred (self);
 }
 
@@ -2728,7 +3143,10 @@ static void vala_gir_writer_real_visit_error_code (ValaCodeVisitor* base, ValaEr
 	ValaExpression* _tmp10_;
 	ValaExpression* _tmp11_;
 	ValaErrorCode* _tmp20_;
-	GString* _tmp21_;
+	ValaErrorCode* _tmp21_;
+	gchar* _tmp22_ = NULL;
+	gchar* comment;
+	const gchar* _tmp23_;
 	self = (ValaGIRWriter*) base;
 	g_return_if_fail (ecode != NULL);
 	vala_gir_writer_write_indent (self);
@@ -2774,8 +3192,33 @@ static void vala_gir_writer_real_visit_error_code (ValaCodeVisitor* base, ValaEr
 	}
 	_tmp20_ = ecode;
 	vala_gir_writer_write_symbol_attributes (self, (ValaSymbol*) _tmp20_);
-	_tmp21_ = self->priv->buffer;
-	g_string_append_printf (_tmp21_, "/>\n");
+	_tmp21_ = ecode;
+	_tmp22_ = vala_gir_writer_get_error_code_comment (self, _tmp21_);
+	comment = _tmp22_;
+	_tmp23_ = comment;
+	if (_tmp23_ == NULL) {
+		GString* _tmp24_;
+		_tmp24_ = self->priv->buffer;
+		g_string_append_printf (_tmp24_, "/>\n");
+	} else {
+		GString* _tmp25_;
+		gint _tmp26_;
+		const gchar* _tmp27_;
+		gint _tmp28_;
+		GString* _tmp29_;
+		_tmp25_ = self->priv->buffer;
+		g_string_append_printf (_tmp25_, ">\n");
+		_tmp26_ = self->priv->indent;
+		self->priv->indent = _tmp26_ + 1;
+		_tmp27_ = comment;
+		vala_gir_writer_write_doc (self, _tmp27_);
+		_tmp28_ = self->priv->indent;
+		self->priv->indent = _tmp28_ - 1;
+		vala_gir_writer_write_indent (self);
+		_tmp29_ = self->priv->buffer;
+		g_string_append_printf (_tmp29_, "</member>\n");
+	}
+	_g_free0 (comment);
 }
 
 
@@ -2806,11 +3249,14 @@ static void vala_gir_writer_real_visit_constant (ValaCodeVisitor* base, ValaCons
 	ValaConstant* _tmp20_;
 	GString* _tmp21_;
 	gint _tmp22_;
-	ValaExpression* _tmp23_;
-	ValaDataType* _tmp24_;
-	ValaDataType* _tmp25_;
-	gint _tmp26_;
-	GString* _tmp27_;
+	ValaConstant* _tmp23_;
+	gchar* _tmp24_ = NULL;
+	gchar* _tmp25_;
+	ValaExpression* _tmp26_;
+	ValaDataType* _tmp27_;
+	ValaDataType* _tmp28_;
+	gint _tmp29_;
+	GString* _tmp30_;
 	self = (ValaGIRWriter*) base;
 	g_return_if_fail (c != NULL);
 	_tmp0_ = c;
@@ -2851,15 +3297,20 @@ static void vala_gir_writer_real_visit_constant (ValaCodeVisitor* base, ValaCons
 	g_string_append_printf (_tmp21_, ">\n");
 	_tmp22_ = self->priv->indent;
 	self->priv->indent = _tmp22_ + 1;
-	_tmp23_ = initializer;
-	_tmp24_ = vala_expression_get_value_type (_tmp23_);
+	_tmp23_ = c;
+	_tmp24_ = vala_gir_writer_get_constant_comment (self, _tmp23_);
 	_tmp25_ = _tmp24_;
-	vala_gir_writer_write_type (self, _tmp25_, -1);
-	_tmp26_ = self->priv->indent;
-	self->priv->indent = _tmp26_ - 1;
+	vala_gir_writer_write_doc (self, _tmp25_);
+	_g_free0 (_tmp25_);
+	_tmp26_ = initializer;
+	_tmp27_ = vala_expression_get_value_type (_tmp26_);
+	_tmp28_ = _tmp27_;
+	vala_gir_writer_write_type (self, _tmp28_, -1);
+	_tmp29_ = self->priv->indent;
+	self->priv->indent = _tmp29_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp27_ = self->priv->buffer;
-	g_string_append_printf (_tmp27_, "</constant>\n");
+	_tmp30_ = self->priv->buffer;
+	g_string_append_printf (_tmp30_, "</constant>\n");
 	_g_free0 (value);
 	_vala_code_node_unref0 (initializer);
 }
@@ -2885,11 +3336,14 @@ static void vala_gir_writer_real_visit_field (ValaCodeVisitor* base, ValaField* 
 	GString* _tmp16_;
 	gint _tmp17_;
 	ValaField* _tmp18_;
-	ValaField* _tmp19_;
-	ValaDataType* _tmp20_;
-	ValaDataType* _tmp21_;
-	gint _tmp22_;
-	GString* _tmp23_;
+	gchar* _tmp19_ = NULL;
+	gchar* _tmp20_;
+	ValaField* _tmp21_;
+	ValaField* _tmp22_;
+	ValaDataType* _tmp23_;
+	ValaDataType* _tmp24_;
+	gint _tmp25_;
+	GString* _tmp26_;
 	self = (ValaGIRWriter*) base;
 	g_return_if_fail (f != NULL);
 	_tmp0_ = f;
@@ -2927,16 +3381,21 @@ static void vala_gir_writer_real_visit_field (ValaCodeVisitor* base, ValaField* 
 	_tmp17_ = self->priv->indent;
 	self->priv->indent = _tmp17_ + 1;
 	_tmp18_ = f;
-	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp18_);
-	_tmp19_ = f;
-	_tmp20_ = vala_variable_get_variable_type ((ValaVariable*) _tmp19_);
-	_tmp21_ = _tmp20_;
-	vala_gir_writer_write_type (self, _tmp21_, -1);
-	_tmp22_ = self->priv->indent;
-	self->priv->indent = _tmp22_ - 1;
+	_tmp19_ = vala_gir_writer_get_field_comment (self, _tmp18_);
+	_tmp20_ = _tmp19_;
+	vala_gir_writer_write_doc (self, _tmp20_);
+	_g_free0 (_tmp20_);
+	_tmp21_ = f;
+	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp21_);
+	_tmp22_ = f;
+	_tmp23_ = vala_variable_get_variable_type ((ValaVariable*) _tmp22_);
+	_tmp24_ = _tmp23_;
+	vala_gir_writer_write_type (self, _tmp24_, -1);
+	_tmp25_ = self->priv->indent;
+	self->priv->indent = _tmp25_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp23_ = self->priv->buffer;
-	g_string_append_printf (_tmp23_, "</field>\n");
+	_tmp26_ = self->priv->buffer;
+	g_string_append_printf (_tmp26_, "</field>\n");
 }
 
 
@@ -2993,7 +3452,7 @@ static void vala_gir_writer_write_implicit_params (ValaGIRWriter* self, ValaData
 		_tmp17_ = g_strdup_printf ("%s_length1", _tmp16_);
 		_tmp18_ = _tmp17_;
 		_tmp19_ = direction;
-		vala_gir_writer_write_param_or_return (self, (ValaDataType*) _tmp14_, TRUE, index, _tmp15_, _tmp18_, _tmp19_, FALSE, FALSE);
+		vala_gir_writer_write_param_or_return (self, (ValaDataType*) _tmp14_, TRUE, index, _tmp15_, _tmp18_, NULL, _tmp19_, FALSE, FALSE);
 		_g_free0 (_tmp18_);
 		_vala_code_node_unref0 (int_type);
 	} else {
@@ -3024,7 +3483,7 @@ static void vala_gir_writer_write_implicit_params (ValaGIRWriter* self, ValaData
 			_tmp27_ = g_strdup_printf ("%s_target", _tmp26_);
 			_tmp28_ = _tmp27_;
 			_tmp29_ = direction;
-			vala_gir_writer_write_param_or_return (self, (ValaDataType*) _tmp25_, TRUE, index, FALSE, _tmp28_, _tmp29_, FALSE, FALSE);
+			vala_gir_writer_write_param_or_return (self, (ValaDataType*) _tmp25_, TRUE, index, FALSE, _tmp28_, NULL, _tmp29_, FALSE, FALSE);
 			_g_free0 (_tmp28_);
 			_tmp30_ = type;
 			_tmp31_ = vala_data_type_get_value_owned (_tmp30_);
@@ -3073,7 +3532,7 @@ static void vala_gir_writer_write_implicit_params (ValaGIRWriter* self, ValaData
 				_tmp49_ = g_strdup_printf ("%s_target_destroy_notify", _tmp48_);
 				_tmp50_ = _tmp49_;
 				_tmp51_ = direction;
-				vala_gir_writer_write_param_or_return (self, (ValaDataType*) _tmp47_, TRUE, index, FALSE, _tmp50_, _tmp51_, FALSE, FALSE);
+				vala_gir_writer_write_param_or_return (self, (ValaDataType*) _tmp47_, TRUE, index, FALSE, _tmp50_, NULL, _tmp51_, FALSE, FALSE);
 				_g_free0 (_tmp50_);
 				_vala_code_node_unref0 (notify_type);
 			}
@@ -3083,7 +3542,7 @@ static void vala_gir_writer_write_implicit_params (ValaGIRWriter* self, ValaData
 }
 
 
-static void vala_gir_writer_write_params_and_return (ValaGIRWriter* self, ValaList* params, ValaDataType* return_type, gboolean return_array_length, gboolean constructor, ValaDataType* instance_type, gboolean user_data) {
+static void vala_gir_writer_write_params_and_return (ValaGIRWriter* self, ValaList* params, ValaDataType* return_type, gboolean return_array_length, const gchar* return_comment, gboolean constructor, ValaDataType* instance_type, gboolean user_data) {
 	gint last_index;
 	gboolean _tmp0_ = FALSE;
 	ValaDataType* _tmp1_;
@@ -3100,9 +3559,9 @@ static void vala_gir_writer_write_params_and_return (ValaGIRWriter* self, ValaLi
 	gboolean _tmp18_;
 	gboolean _tmp20_;
 	gboolean _tmp22_;
-	gboolean _tmp75_ = FALSE;
-	ValaDataType* _tmp76_;
-	gboolean _tmp78_;
+	gboolean _tmp79_ = FALSE;
+	ValaDataType* _tmp80_;
+	gboolean _tmp82_;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (params != NULL);
 	last_index = 0;
@@ -3168,11 +3627,11 @@ static void vala_gir_writer_write_params_and_return (ValaGIRWriter* self, ValaLi
 		gint _tmp24_;
 		gint index;
 		ValaDataType* _tmp25_;
-		gboolean _tmp60_;
-		gint _tmp65_;
-		gboolean _tmp66_;
-		gint _tmp73_;
-		GString* _tmp74_;
+		gboolean _tmp63_;
+		gint _tmp69_;
+		gboolean _tmp70_;
+		gint _tmp77_;
+		GString* _tmp78_;
 		vala_gir_writer_write_indent (self);
 		_tmp23_ = self->priv->buffer;
 		g_string_append_printf (_tmp23_, "<parameters>\n");
@@ -3183,7 +3642,7 @@ static void vala_gir_writer_write_params_and_return (ValaGIRWriter* self, ValaLi
 		if (_tmp25_ != NULL) {
 			ValaDataType* _tmp26_;
 			_tmp26_ = instance_type;
-			vala_gir_writer_write_param_or_return (self, _tmp26_, TRUE, &index, FALSE, "self", VALA_PARAMETER_DIRECTION_IN, FALSE, FALSE);
+			vala_gir_writer_write_param_or_return (self, _tmp26_, TRUE, &index, FALSE, "self", NULL, VALA_PARAMETER_DIRECTION_IN, FALSE, FALSE);
 		}
 		{
 			ValaList* _tmp27_;
@@ -3219,19 +3678,22 @@ static void vala_gir_writer_write_params_and_return (ValaGIRWriter* self, ValaLi
 				const gchar* _tmp44_;
 				const gchar* _tmp45_;
 				ValaParameter* _tmp46_;
-				ValaParameterDirection _tmp47_;
-				ValaParameterDirection _tmp48_;
+				gchar* _tmp47_ = NULL;
+				gchar* _tmp48_;
 				ValaParameter* _tmp49_;
-				ValaDataType* _tmp50_;
-				ValaDataType* _tmp51_;
+				ValaParameterDirection _tmp50_;
+				ValaParameterDirection _tmp51_;
 				ValaParameter* _tmp52_;
-				gboolean _tmp53_ = FALSE;
-				ValaParameter* _tmp54_;
-				const gchar* _tmp55_;
-				const gchar* _tmp56_;
+				ValaDataType* _tmp53_;
+				ValaDataType* _tmp54_;
+				ValaParameter* _tmp55_;
+				gboolean _tmp56_ = FALSE;
 				ValaParameter* _tmp57_;
-				ValaParameterDirection _tmp58_;
-				ValaParameterDirection _tmp59_;
+				const gchar* _tmp58_;
+				const gchar* _tmp59_;
+				ValaParameter* _tmp60_;
+				ValaParameterDirection _tmp61_;
+				ValaParameterDirection _tmp62_;
 				_tmp32_ = _param_index;
 				_param_index = _tmp32_ + 1;
 				_tmp33_ = _param_index;
@@ -3252,98 +3714,108 @@ static void vala_gir_writer_write_params_and_return (ValaGIRWriter* self, ValaLi
 				_tmp44_ = vala_symbol_get_name ((ValaSymbol*) _tmp43_);
 				_tmp45_ = _tmp44_;
 				_tmp46_ = param;
-				_tmp47_ = vala_parameter_get_direction (_tmp46_);
+				_tmp47_ = vala_gir_writer_get_parameter_comment (self, _tmp46_);
 				_tmp48_ = _tmp47_;
-				vala_gir_writer_write_param_or_return (self, _tmp40_, TRUE, &index, _tmp42_, _tmp45_, _tmp48_, FALSE, FALSE);
 				_tmp49_ = param;
-				_tmp50_ = vala_variable_get_variable_type ((ValaVariable*) _tmp49_);
+				_tmp50_ = vala_parameter_get_direction (_tmp49_);
 				_tmp51_ = _tmp50_;
+				vala_gir_writer_write_param_or_return (self, _tmp40_, TRUE, &index, _tmp42_, _tmp45_, _tmp48_, _tmp51_, FALSE, FALSE);
+				_g_free0 (_tmp48_);
 				_tmp52_ = param;
-				_tmp53_ = vala_ccode_base_module_get_ccode_array_length ((ValaCodeNode*) _tmp52_);
-				_tmp54_ = param;
-				_tmp55_ = vala_symbol_get_name ((ValaSymbol*) _tmp54_);
-				_tmp56_ = _tmp55_;
+				_tmp53_ = vala_variable_get_variable_type ((ValaVariable*) _tmp52_);
+				_tmp54_ = _tmp53_;
+				_tmp55_ = param;
+				_tmp56_ = vala_ccode_base_module_get_ccode_array_length ((ValaCodeNode*) _tmp55_);
 				_tmp57_ = param;
-				_tmp58_ = vala_parameter_get_direction (_tmp57_);
+				_tmp58_ = vala_symbol_get_name ((ValaSymbol*) _tmp57_);
 				_tmp59_ = _tmp58_;
-				vala_gir_writer_write_implicit_params (self, _tmp51_, &index, _tmp53_, _tmp56_, _tmp59_);
+				_tmp60_ = param;
+				_tmp61_ = vala_parameter_get_direction (_tmp60_);
+				_tmp62_ = _tmp61_;
+				vala_gir_writer_write_implicit_params (self, _tmp54_, &index, _tmp56_, _tmp59_, _tmp62_);
 				_vala_code_node_unref0 (param);
 			}
 			_vala_iterable_unref0 (_param_list);
 		}
-		_tmp60_ = ret_is_struct;
-		if (_tmp60_) {
-			ValaDataType* _tmp61_;
-			gboolean _tmp62_;
-			_tmp61_ = return_type;
-			_tmp62_ = constructor;
-			vala_gir_writer_write_param_or_return (self, _tmp61_, TRUE, &index, FALSE, "result", VALA_PARAMETER_DIRECTION_OUT, _tmp62_, TRUE);
+		_tmp63_ = ret_is_struct;
+		if (_tmp63_) {
+			ValaDataType* _tmp64_;
+			const gchar* _tmp65_;
+			gboolean _tmp66_;
+			_tmp64_ = return_type;
+			_tmp65_ = return_comment;
+			_tmp66_ = constructor;
+			vala_gir_writer_write_param_or_return (self, _tmp64_, TRUE, &index, FALSE, "result", _tmp65_, VALA_PARAMETER_DIRECTION_OUT, _tmp66_, TRUE);
 		} else {
-			ValaDataType* _tmp63_;
-			gboolean _tmp64_;
-			_tmp63_ = return_type;
-			_tmp64_ = return_array_length;
-			vala_gir_writer_write_implicit_params (self, _tmp63_, &index, _tmp64_, "result", VALA_PARAMETER_DIRECTION_OUT);
+			ValaDataType* _tmp67_;
+			gboolean _tmp68_;
+			_tmp67_ = return_type;
+			_tmp68_ = return_array_length;
+			vala_gir_writer_write_implicit_params (self, _tmp67_, &index, _tmp68_, "result", VALA_PARAMETER_DIRECTION_OUT);
 		}
-		_tmp65_ = index;
-		last_index = _tmp65_ - 1;
-		_tmp66_ = user_data;
-		if (_tmp66_) {
-			GString* _tmp67_;
-			gint _tmp68_;
-			gint _tmp69_;
-			GString* _tmp70_;
-			gint _tmp71_;
-			GString* _tmp72_;
+		_tmp69_ = index;
+		last_index = _tmp69_ - 1;
+		_tmp70_ = user_data;
+		if (_tmp70_) {
+			GString* _tmp71_;
+			gint _tmp72_;
+			gint _tmp73_;
+			GString* _tmp74_;
+			gint _tmp75_;
+			GString* _tmp76_;
 			vala_gir_writer_write_indent (self);
-			_tmp67_ = self->priv->buffer;
-			_tmp68_ = index;
-			g_string_append_printf (_tmp67_, "<parameter name=\"user_data\" transfer-ownership=\"none\" closure=\"%d" \
-"\">\n", _tmp68_);
-			_tmp69_ = self->priv->indent;
-			self->priv->indent = _tmp69_ + 1;
+			_tmp71_ = self->priv->buffer;
+			_tmp72_ = index;
+			g_string_append_printf (_tmp71_, "<parameter name=\"user_data\" transfer-ownership=\"none\" closure=\"%d" \
+"\">\n", _tmp72_);
+			_tmp73_ = self->priv->indent;
+			self->priv->indent = _tmp73_ + 1;
 			vala_gir_writer_write_indent (self);
-			_tmp70_ = self->priv->buffer;
-			g_string_append_printf (_tmp70_, "<type name=\"gpointer\" c:type=\"void*\"/>\n");
-			_tmp71_ = self->priv->indent;
-			self->priv->indent = _tmp71_ - 1;
+			_tmp74_ = self->priv->buffer;
+			g_string_append_printf (_tmp74_, "<type name=\"gpointer\" c:type=\"void*\"/>\n");
+			_tmp75_ = self->priv->indent;
+			self->priv->indent = _tmp75_ - 1;
 			vala_gir_writer_write_indent (self);
-			_tmp72_ = self->priv->buffer;
-			g_string_append_printf (_tmp72_, "</parameter>\n");
+			_tmp76_ = self->priv->buffer;
+			g_string_append_printf (_tmp76_, "</parameter>\n");
 		}
-		_tmp73_ = self->priv->indent;
-		self->priv->indent = _tmp73_ - 1;
+		_tmp77_ = self->priv->indent;
+		self->priv->indent = _tmp77_ - 1;
 		vala_gir_writer_write_indent (self);
-		_tmp74_ = self->priv->buffer;
-		g_string_append_printf (_tmp74_, "</parameters>\n");
+		_tmp78_ = self->priv->buffer;
+		g_string_append_printf (_tmp78_, "</parameters>\n");
 	}
-	_tmp76_ = return_type;
-	if (_tmp76_ != NULL) {
-		gboolean _tmp77_;
-		_tmp77_ = ret_is_struct;
-		_tmp75_ = !_tmp77_;
-	} else {
-		_tmp75_ = FALSE;
-	}
-	_tmp78_ = _tmp75_;
-	if (_tmp78_) {
-		ValaDataType* _tmp79_;
-		gboolean _tmp80_;
+	_tmp80_ = return_type;
+	if (_tmp80_ != NULL) {
 		gboolean _tmp81_;
-		_tmp79_ = return_type;
-		_tmp80_ = return_array_length;
-		_tmp81_ = constructor;
-		vala_gir_writer_write_param_or_return (self, _tmp79_, FALSE, &last_index, _tmp80_, NULL, VALA_PARAMETER_DIRECTION_IN, _tmp81_, FALSE);
+		_tmp81_ = ret_is_struct;
+		_tmp79_ = !_tmp81_;
 	} else {
-		gboolean _tmp82_;
-		_tmp82_ = ret_is_struct;
-		if (_tmp82_) {
-			ValaVoidType* _tmp83_;
-			ValaVoidType* _tmp84_;
-			_tmp83_ = vala_void_type_new (NULL);
-			_tmp84_ = _tmp83_;
-			vala_gir_writer_write_param_or_return (self, (ValaDataType*) _tmp84_, FALSE, &last_index, FALSE, NULL, VALA_PARAMETER_DIRECTION_IN, FALSE, FALSE);
-			_vala_code_node_unref0 (_tmp84_);
+		_tmp79_ = FALSE;
+	}
+	_tmp82_ = _tmp79_;
+	if (_tmp82_) {
+		ValaDataType* _tmp83_;
+		gboolean _tmp84_;
+		const gchar* _tmp85_;
+		gboolean _tmp86_;
+		_tmp83_ = return_type;
+		_tmp84_ = return_array_length;
+		_tmp85_ = return_comment;
+		_tmp86_ = constructor;
+		vala_gir_writer_write_param_or_return (self, _tmp83_, FALSE, &last_index, _tmp84_, NULL, _tmp85_, VALA_PARAMETER_DIRECTION_IN, _tmp86_, FALSE);
+	} else {
+		gboolean _tmp87_;
+		_tmp87_ = ret_is_struct;
+		if (_tmp87_) {
+			ValaVoidType* _tmp88_;
+			ValaVoidType* _tmp89_;
+			const gchar* _tmp90_;
+			_tmp88_ = vala_void_type_new (NULL);
+			_tmp89_ = _tmp88_;
+			_tmp90_ = return_comment;
+			vala_gir_writer_write_param_or_return (self, (ValaDataType*) _tmp89_, FALSE, &last_index, FALSE, NULL, _tmp90_, VALA_PARAMETER_DIRECTION_IN, FALSE, FALSE);
+			_vala_code_node_unref0 (_tmp89_);
 		}
 	}
 }
@@ -3371,19 +3843,25 @@ static void vala_gir_writer_real_visit_delegate (ValaCodeVisitor* base, ValaDele
 	GString* _tmp18_;
 	gint _tmp19_;
 	ValaDelegate* _tmp20_;
-	ValaDelegate* _tmp21_;
-	ValaList* _tmp22_ = NULL;
-	ValaList* _tmp23_;
+	gchar* _tmp21_ = NULL;
+	gchar* _tmp22_;
+	ValaDelegate* _tmp23_;
 	ValaDelegate* _tmp24_;
-	ValaDataType* _tmp25_;
-	ValaDataType* _tmp26_;
+	ValaList* _tmp25_ = NULL;
+	ValaList* _tmp26_;
 	ValaDelegate* _tmp27_;
-	gboolean _tmp28_ = FALSE;
-	ValaDelegate* _tmp29_;
-	gboolean _tmp30_;
-	gboolean _tmp31_;
-	gint _tmp32_;
-	GString* _tmp33_;
+	ValaDataType* _tmp28_;
+	ValaDataType* _tmp29_;
+	ValaDelegate* _tmp30_;
+	gboolean _tmp31_ = FALSE;
+	ValaDelegate* _tmp32_;
+	gchar* _tmp33_ = NULL;
+	gchar* _tmp34_;
+	ValaDelegate* _tmp35_;
+	gboolean _tmp36_;
+	gboolean _tmp37_;
+	gint _tmp38_;
+	GString* _tmp39_;
 	self = (ValaGIRWriter*) base;
 	g_return_if_fail (cb != NULL);
 	_tmp0_ = cb;
@@ -3424,25 +3902,34 @@ static void vala_gir_writer_real_visit_delegate (ValaCodeVisitor* base, ValaDele
 	_tmp19_ = self->priv->indent;
 	self->priv->indent = _tmp19_ + 1;
 	_tmp20_ = cb;
-	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp20_);
-	_tmp21_ = cb;
-	_tmp22_ = vala_delegate_get_parameters (_tmp21_);
-	_tmp23_ = _tmp22_;
+	_tmp21_ = vala_gir_writer_get_delegate_comment (self, _tmp20_);
+	_tmp22_ = _tmp21_;
+	vala_gir_writer_write_doc (self, _tmp22_);
+	_g_free0 (_tmp22_);
+	_tmp23_ = cb;
+	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp23_);
 	_tmp24_ = cb;
-	_tmp25_ = vala_delegate_get_return_type (_tmp24_);
+	_tmp25_ = vala_delegate_get_parameters (_tmp24_);
 	_tmp26_ = _tmp25_;
 	_tmp27_ = cb;
-	_tmp28_ = vala_ccode_base_module_get_ccode_array_length ((ValaCodeNode*) _tmp27_);
-	_tmp29_ = cb;
-	_tmp30_ = vala_delegate_get_has_target (_tmp29_);
-	_tmp31_ = _tmp30_;
-	vala_gir_writer_write_params_and_return (self, _tmp23_, _tmp26_, _tmp28_, FALSE, NULL, _tmp31_);
-	_vala_iterable_unref0 (_tmp23_);
-	_tmp32_ = self->priv->indent;
-	self->priv->indent = _tmp32_ - 1;
+	_tmp28_ = vala_delegate_get_return_type (_tmp27_);
+	_tmp29_ = _tmp28_;
+	_tmp30_ = cb;
+	_tmp31_ = vala_ccode_base_module_get_ccode_array_length ((ValaCodeNode*) _tmp30_);
+	_tmp32_ = cb;
+	_tmp33_ = vala_gir_writer_get_delegate_return_comment (self, _tmp32_);
+	_tmp34_ = _tmp33_;
+	_tmp35_ = cb;
+	_tmp36_ = vala_delegate_get_has_target (_tmp35_);
+	_tmp37_ = _tmp36_;
+	vala_gir_writer_write_params_and_return (self, _tmp26_, _tmp29_, _tmp31_, _tmp34_, FALSE, NULL, _tmp37_);
+	_g_free0 (_tmp34_);
+	_vala_iterable_unref0 (_tmp26_);
+	_tmp38_ = self->priv->indent;
+	self->priv->indent = _tmp38_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp33_ = self->priv->buffer;
-	g_string_append_printf (_tmp33_, "</callback>\n");
+	_tmp39_ = self->priv->buffer;
+	g_string_append_printf (_tmp39_, "</callback>\n");
 }
 
 
@@ -3598,7 +4085,7 @@ static void vala_gir_writer_real_visit_method (ValaCodeVisitor* base, ValaMethod
 	}
 	_tmp46_ = m;
 	_tmp47_ = tag_name;
-	vala_gir_writer_write_signature (self, _tmp46_, _tmp47_, FALSE);
+	vala_gir_writer_write_signature (self, _tmp46_, _tmp47_, TRUE, FALSE);
 	_tmp49_ = m;
 	_tmp50_ = vala_method_get_is_abstract (_tmp49_);
 	_tmp51_ = _tmp50_;
@@ -3617,7 +4104,7 @@ static void vala_gir_writer_real_visit_method (ValaCodeVisitor* base, ValaMethod
 	if (_tmp55_) {
 		ValaMethod* _tmp56_;
 		_tmp56_ = m;
-		vala_gir_writer_write_signature (self, _tmp56_, "virtual-method", FALSE);
+		vala_gir_writer_write_signature (self, _tmp56_, "virtual-method", TRUE, FALSE);
 	}
 	_vala_code_node_unref0 (parent);
 	_g_free0 (tag_name);
@@ -3735,7 +4222,7 @@ static gboolean vala_gir_writer_check_signature (ValaGIRWriter* self, ValaMethod
 }
 
 
-static void vala_gir_writer_write_signature (ValaGIRWriter* self, ValaMethod* m, const gchar* tag_name, gboolean instance) {
+static void vala_gir_writer_write_signature (ValaGIRWriter* self, ValaMethod* m, const gchar* tag_name, gboolean write_doc, gboolean instance) {
 	ValaArrayList* _tmp0_;
 	gpointer _tmp1_ = NULL;
 	ValaSymbol* parent;
@@ -3882,7 +4369,7 @@ static void vala_gir_writer_write_signature (ValaGIRWriter* self, ValaMethod* m,
 		_tmp47_ = _tmp46_;
 		_tmp48_ = vala_void_type_new (NULL);
 		_tmp49_ = _tmp48_;
-		vala_gir_writer_do_write_signature (self, _tmp38_, _tmp39_, _tmp40_, _tmp41_, _tmp44_, _tmp47_, (ValaDataType*) _tmp49_, FALSE);
+		vala_gir_writer_do_write_signature (self, _tmp38_, _tmp39_, _tmp40_, _tmp41_, _tmp44_, _tmp47_, (ValaDataType*) _tmp49_, FALSE, TRUE);
 		_vala_code_node_unref0 (_tmp49_);
 		_vala_iterable_unref0 (_tmp47_);
 		_g_free0 (_tmp44_);
@@ -3902,7 +4389,7 @@ static void vala_gir_writer_write_signature (ValaGIRWriter* self, ValaMethod* m,
 		_tmp63_ = m;
 		_tmp64_ = vala_code_node_get_tree_can_fail ((ValaCodeNode*) _tmp63_);
 		_tmp65_ = _tmp64_;
-		vala_gir_writer_do_write_signature (self, _tmp50_, _tmp51_, _tmp52_, _tmp53_, _tmp56_, _tmp59_, _tmp62_, _tmp65_);
+		vala_gir_writer_do_write_signature (self, _tmp50_, _tmp51_, _tmp52_, _tmp53_, _tmp56_, _tmp59_, _tmp62_, _tmp65_, FALSE);
 		_vala_iterable_unref0 (_tmp59_);
 		_g_free0 (_tmp56_);
 		_g_free0 (finish_name);
@@ -3939,7 +4426,7 @@ static void vala_gir_writer_write_signature (ValaGIRWriter* self, ValaMethod* m,
 		_tmp79_ = m;
 		_tmp80_ = vala_code_node_get_tree_can_fail ((ValaCodeNode*) _tmp79_);
 		_tmp81_ = _tmp80_;
-		vala_gir_writer_do_write_signature (self, _tmp66_, _tmp67_, _tmp68_, _tmp69_, _tmp72_, _tmp75_, _tmp78_, _tmp81_);
+		vala_gir_writer_do_write_signature (self, _tmp66_, _tmp67_, _tmp68_, _tmp69_, _tmp72_, _tmp75_, _tmp78_, _tmp81_, TRUE);
 		_vala_iterable_unref0 (_tmp75_);
 		_g_free0 (_tmp72_);
 	}
@@ -3948,7 +4435,7 @@ static void vala_gir_writer_write_signature (ValaGIRWriter* self, ValaMethod* m,
 }
 
 
-static void vala_gir_writer_do_write_signature (ValaGIRWriter* self, ValaMethod* m, const gchar* tag_name, gboolean instance, const gchar* name, const gchar* cname, ValaList* params, ValaDataType* return_type, gboolean can_fail) {
+static void vala_gir_writer_do_write_signature (ValaGIRWriter* self, ValaMethod* m, const gchar* tag_name, gboolean instance, const gchar* name, const gchar* cname, ValaList* params, ValaDataType* return_type, gboolean can_fail, gboolean write_comment) {
 	GString* _tmp0_;
 	const gchar* _tmp1_;
 	const gchar* _tmp2_;
@@ -3957,17 +4444,20 @@ static void vala_gir_writer_do_write_signature (ValaGIRWriter* self, ValaMethod*
 	ValaMethod* _tmp13_;
 	GString* _tmp14_;
 	gint _tmp15_;
-	ValaMethod* _tmp16_;
+	gchar* return_comment;
+	gboolean _tmp16_;
+	ValaMethod* _tmp22_;
 	ValaDataType* instance_type;
-	gboolean _tmp17_;
-	ValaList* _tmp22_;
-	ValaDataType* _tmp23_;
-	ValaMethod* _tmp24_;
-	gboolean _tmp25_ = FALSE;
-	ValaDataType* _tmp26_;
-	gint _tmp27_;
-	GString* _tmp28_;
-	const gchar* _tmp29_;
+	gboolean _tmp23_;
+	ValaList* _tmp28_;
+	ValaDataType* _tmp29_;
+	ValaMethod* _tmp30_;
+	gboolean _tmp31_ = FALSE;
+	const gchar* _tmp32_;
+	ValaDataType* _tmp33_;
+	gint _tmp34_;
+	GString* _tmp35_;
+	const gchar* _tmp36_;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (m != NULL);
 	g_return_if_fail (tag_name != NULL);
@@ -4016,35 +4506,55 @@ static void vala_gir_writer_do_write_signature (ValaGIRWriter* self, ValaMethod*
 	g_string_append_printf (_tmp14_, ">\n");
 	_tmp15_ = self->priv->indent;
 	self->priv->indent = _tmp15_ + 1;
-	_tmp16_ = m;
-	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp16_);
-	instance_type = NULL;
-	_tmp17_ = instance;
-	if (_tmp17_) {
-		ValaMethod* _tmp18_;
-		ValaSymbol* _tmp19_;
-		ValaSymbol* _tmp20_;
-		ValaDataType* _tmp21_ = NULL;
-		_tmp18_ = m;
-		_tmp19_ = vala_symbol_get_parent_symbol ((ValaSymbol*) _tmp18_);
-		_tmp20_ = _tmp19_;
-		_tmp21_ = vala_ccode_base_module_get_data_type_for_symbol (VALA_TYPESYMBOL (_tmp20_));
-		_vala_code_node_unref0 (instance_type);
-		instance_type = _tmp21_;
+	return_comment = NULL;
+	_tmp16_ = write_comment;
+	if (_tmp16_) {
+		ValaMethod* _tmp17_;
+		gchar* _tmp18_ = NULL;
+		ValaMethod* _tmp19_;
+		gchar* _tmp20_ = NULL;
+		gchar* _tmp21_;
+		_tmp17_ = m;
+		_tmp18_ = vala_gir_writer_get_method_return_comment (self, _tmp17_);
+		_g_free0 (return_comment);
+		return_comment = _tmp18_;
+		_tmp19_ = m;
+		_tmp20_ = vala_gir_writer_get_method_comment (self, _tmp19_);
+		_tmp21_ = _tmp20_;
+		vala_gir_writer_write_doc (self, _tmp21_);
+		_g_free0 (_tmp21_);
 	}
-	_tmp22_ = params;
-	_tmp23_ = return_type;
-	_tmp24_ = m;
-	_tmp25_ = vala_ccode_base_module_get_ccode_array_length ((ValaCodeNode*) _tmp24_);
-	_tmp26_ = instance_type;
-	vala_gir_writer_write_params_and_return (self, _tmp22_, _tmp23_, _tmp25_, FALSE, _tmp26_, FALSE);
-	_tmp27_ = self->priv->indent;
-	self->priv->indent = _tmp27_ - 1;
+	_tmp22_ = m;
+	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp22_);
+	instance_type = NULL;
+	_tmp23_ = instance;
+	if (_tmp23_) {
+		ValaMethod* _tmp24_;
+		ValaSymbol* _tmp25_;
+		ValaSymbol* _tmp26_;
+		ValaDataType* _tmp27_ = NULL;
+		_tmp24_ = m;
+		_tmp25_ = vala_symbol_get_parent_symbol ((ValaSymbol*) _tmp24_);
+		_tmp26_ = _tmp25_;
+		_tmp27_ = vala_ccode_base_module_get_data_type_for_symbol (VALA_TYPESYMBOL (_tmp26_));
+		_vala_code_node_unref0 (instance_type);
+		instance_type = _tmp27_;
+	}
+	_tmp28_ = params;
+	_tmp29_ = return_type;
+	_tmp30_ = m;
+	_tmp31_ = vala_ccode_base_module_get_ccode_array_length ((ValaCodeNode*) _tmp30_);
+	_tmp32_ = return_comment;
+	_tmp33_ = instance_type;
+	vala_gir_writer_write_params_and_return (self, _tmp28_, _tmp29_, _tmp31_, _tmp32_, FALSE, _tmp33_, FALSE);
+	_tmp34_ = self->priv->indent;
+	self->priv->indent = _tmp34_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp28_ = self->priv->buffer;
-	_tmp29_ = tag_name;
-	g_string_append_printf (_tmp28_, "</%s>\n", _tmp29_);
+	_tmp35_ = self->priv->buffer;
+	_tmp36_ = tag_name;
+	g_string_append_printf (_tmp35_, "</%s>\n", _tmp36_);
 	_vala_code_node_unref0 (instance_type);
+	_g_free0 (return_comment);
 }
 
 
@@ -4082,18 +4592,24 @@ static void vala_gir_writer_real_visit_creation_method (ValaCodeVisitor* base, V
 	GString* _tmp68_;
 	gint _tmp69_;
 	ValaCreationMethod* _tmp70_;
-	ValaCreationMethod* _tmp71_;
-	ValaSymbol* _tmp72_;
-	ValaSymbol* _tmp73_;
-	ValaDataType* _tmp74_ = NULL;
+	gchar* _tmp71_ = NULL;
+	gchar* _tmp72_;
+	ValaCreationMethod* _tmp73_;
+	ValaCreationMethod* _tmp74_;
+	ValaSymbol* _tmp75_;
+	ValaSymbol* _tmp76_;
+	ValaDataType* _tmp77_ = NULL;
 	ValaDataType* datatype;
-	ValaCreationMethod* _tmp75_;
-	ValaList* _tmp76_ = NULL;
-	ValaList* _tmp77_;
-	ValaDataType* _tmp78_;
-	gint _tmp79_;
-	GString* _tmp80_;
-	const gchar* _tmp81_;
+	ValaCreationMethod* _tmp78_;
+	ValaList* _tmp79_ = NULL;
+	ValaList* _tmp80_;
+	ValaDataType* _tmp81_;
+	ValaCreationMethod* _tmp82_;
+	gchar* _tmp83_ = NULL;
+	gchar* _tmp84_;
+	gint _tmp85_;
+	GString* _tmp86_;
+	const gchar* _tmp87_;
 	self = (ValaGIRWriter*) base;
 	g_return_if_fail (m != NULL);
 	_tmp0_ = m;
@@ -4259,24 +4775,33 @@ static void vala_gir_writer_real_visit_creation_method (ValaCodeVisitor* base, V
 	_tmp69_ = self->priv->indent;
 	self->priv->indent = _tmp69_ + 1;
 	_tmp70_ = m;
-	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp70_);
-	_tmp71_ = m;
-	_tmp72_ = vala_symbol_get_parent_symbol ((ValaSymbol*) _tmp71_);
-	_tmp73_ = _tmp72_;
-	_tmp74_ = vala_ccode_base_module_get_data_type_for_symbol (VALA_TYPESYMBOL (_tmp73_));
-	datatype = _tmp74_;
-	_tmp75_ = m;
-	_tmp76_ = vala_method_get_parameters ((ValaMethod*) _tmp75_);
-	_tmp77_ = _tmp76_;
-	_tmp78_ = datatype;
-	vala_gir_writer_write_params_and_return (self, _tmp77_, _tmp78_, FALSE, TRUE, NULL, FALSE);
-	_vala_iterable_unref0 (_tmp77_);
-	_tmp79_ = self->priv->indent;
-	self->priv->indent = _tmp79_ - 1;
+	_tmp71_ = vala_gir_writer_get_method_comment (self, (ValaMethod*) _tmp70_);
+	_tmp72_ = _tmp71_;
+	vala_gir_writer_write_doc (self, _tmp72_);
+	_g_free0 (_tmp72_);
+	_tmp73_ = m;
+	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp73_);
+	_tmp74_ = m;
+	_tmp75_ = vala_symbol_get_parent_symbol ((ValaSymbol*) _tmp74_);
+	_tmp76_ = _tmp75_;
+	_tmp77_ = vala_ccode_base_module_get_data_type_for_symbol (VALA_TYPESYMBOL (_tmp76_));
+	datatype = _tmp77_;
+	_tmp78_ = m;
+	_tmp79_ = vala_method_get_parameters ((ValaMethod*) _tmp78_);
+	_tmp80_ = _tmp79_;
+	_tmp81_ = datatype;
+	_tmp82_ = m;
+	_tmp83_ = vala_gir_writer_get_method_return_comment (self, (ValaMethod*) _tmp82_);
+	_tmp84_ = _tmp83_;
+	vala_gir_writer_write_params_and_return (self, _tmp80_, _tmp81_, FALSE, _tmp84_, TRUE, NULL, FALSE);
+	_g_free0 (_tmp84_);
+	_vala_iterable_unref0 (_tmp80_);
+	_tmp85_ = self->priv->indent;
+	self->priv->indent = _tmp85_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp80_ = self->priv->buffer;
-	_tmp81_ = tag_name;
-	g_string_append_printf (_tmp80_, "</%s>\n", _tmp81_);
+	_tmp86_ = self->priv->buffer;
+	_tmp87_ = tag_name;
+	g_string_append_printf (_tmp86_, "</%s>\n", _tmp87_);
 	_vala_code_node_unref0 (datatype);
 	_g_free0 (tag_name);
 }
@@ -4374,11 +4899,14 @@ static void vala_gir_writer_real_visit_property (ValaCodeVisitor* base, ValaProp
 	GString* _tmp49_;
 	gint _tmp50_;
 	ValaProperty* _tmp51_;
-	ValaProperty* _tmp52_;
-	ValaDataType* _tmp53_;
-	ValaDataType* _tmp54_;
-	gint _tmp55_;
-	GString* _tmp56_;
+	gchar* _tmp52_ = NULL;
+	gchar* _tmp53_;
+	ValaProperty* _tmp54_;
+	ValaProperty* _tmp55_;
+	ValaDataType* _tmp56_;
+	ValaDataType* _tmp57_;
+	gint _tmp58_;
+	GString* _tmp59_;
 	self = (ValaGIRWriter*) base;
 	g_return_if_fail (prop != NULL);
 	_tmp2_ = prop;
@@ -4501,16 +5029,21 @@ static void vala_gir_writer_real_visit_property (ValaCodeVisitor* base, ValaProp
 	_tmp50_ = self->priv->indent;
 	self->priv->indent = _tmp50_ + 1;
 	_tmp51_ = prop;
-	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp51_);
-	_tmp52_ = prop;
-	_tmp53_ = vala_property_get_property_type (_tmp52_);
-	_tmp54_ = _tmp53_;
-	vala_gir_writer_write_type (self, _tmp54_, -1);
-	_tmp55_ = self->priv->indent;
-	self->priv->indent = _tmp55_ - 1;
+	_tmp52_ = vala_gir_writer_get_property_comment (self, _tmp51_);
+	_tmp53_ = _tmp52_;
+	vala_gir_writer_write_doc (self, _tmp53_);
+	_g_free0 (_tmp53_);
+	_tmp54_ = prop;
+	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp54_);
+	_tmp55_ = prop;
+	_tmp56_ = vala_property_get_property_type (_tmp55_);
+	_tmp57_ = _tmp56_;
+	vala_gir_writer_write_type (self, _tmp57_, -1);
+	_tmp58_ = self->priv->indent;
+	self->priv->indent = _tmp58_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp56_ = self->priv->buffer;
-	g_string_append_printf (_tmp56_, "</property>\n");
+	_tmp59_ = self->priv->buffer;
+	g_string_append_printf (_tmp59_, "</property>\n");
 }
 
 
@@ -4526,14 +5059,20 @@ static void vala_gir_writer_real_visit_signal (ValaCodeVisitor* base, ValaSignal
 	GString* _tmp7_;
 	gint _tmp8_;
 	ValaSignal* _tmp9_;
-	ValaSignal* _tmp10_;
-	ValaList* _tmp11_ = NULL;
-	ValaList* _tmp12_;
+	gchar* _tmp10_ = NULL;
+	gchar* _tmp11_;
+	ValaSignal* _tmp12_;
 	ValaSignal* _tmp13_;
-	ValaDataType* _tmp14_;
-	ValaDataType* _tmp15_;
-	gint _tmp16_;
-	GString* _tmp17_;
+	ValaList* _tmp14_ = NULL;
+	ValaList* _tmp15_;
+	ValaSignal* _tmp16_;
+	ValaDataType* _tmp17_;
+	ValaDataType* _tmp18_;
+	ValaSignal* _tmp19_;
+	gchar* _tmp20_ = NULL;
+	gchar* _tmp21_;
+	gint _tmp22_;
+	GString* _tmp23_;
 	self = (ValaGIRWriter*) base;
 	g_return_if_fail (sig != NULL);
 	_tmp0_ = sig;
@@ -4555,20 +5094,29 @@ static void vala_gir_writer_real_visit_signal (ValaCodeVisitor* base, ValaSignal
 	_tmp8_ = self->priv->indent;
 	self->priv->indent = _tmp8_ + 1;
 	_tmp9_ = sig;
-	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp9_);
-	_tmp10_ = sig;
-	_tmp11_ = vala_signal_get_parameters (_tmp10_);
-	_tmp12_ = _tmp11_;
+	_tmp10_ = vala_gir_writer_get_signal_comment (self, _tmp9_);
+	_tmp11_ = _tmp10_;
+	vala_gir_writer_write_doc (self, _tmp11_);
+	_g_free0 (_tmp11_);
+	_tmp12_ = sig;
+	vala_gir_writer_write_annotations (self, (ValaCodeNode*) _tmp12_);
 	_tmp13_ = sig;
-	_tmp14_ = vala_signal_get_return_type (_tmp13_);
+	_tmp14_ = vala_signal_get_parameters (_tmp13_);
 	_tmp15_ = _tmp14_;
-	vala_gir_writer_write_params_and_return (self, _tmp12_, _tmp15_, FALSE, FALSE, NULL, FALSE);
-	_vala_iterable_unref0 (_tmp12_);
-	_tmp16_ = self->priv->indent;
-	self->priv->indent = _tmp16_ - 1;
+	_tmp16_ = sig;
+	_tmp17_ = vala_signal_get_return_type (_tmp16_);
+	_tmp18_ = _tmp17_;
+	_tmp19_ = sig;
+	_tmp20_ = vala_gir_writer_get_signal_return_comment (self, _tmp19_);
+	_tmp21_ = _tmp20_;
+	vala_gir_writer_write_params_and_return (self, _tmp15_, _tmp18_, FALSE, _tmp21_, FALSE, NULL, FALSE);
+	_g_free0 (_tmp21_);
+	_vala_iterable_unref0 (_tmp15_);
+	_tmp22_ = self->priv->indent;
+	self->priv->indent = _tmp22_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp17_ = self->priv->buffer;
-	g_string_append_printf (_tmp17_, "</glib:signal>\n");
+	_tmp23_ = self->priv->buffer;
+	g_string_append_printf (_tmp23_, "</glib:signal>\n");
 }
 
 
@@ -4634,7 +5182,7 @@ static void vala_gir_writer_write_indent_stream (ValaGIRWriter* self) {
 }
 
 
-static void vala_gir_writer_write_param_or_return (ValaGIRWriter* self, ValaDataType* type, gboolean is_parameter, gint* index, gboolean has_array_length, const gchar* name, ValaParameterDirection direction, gboolean constructor, gboolean caller_allocates) {
+static void vala_gir_writer_write_param_or_return (ValaGIRWriter* self, ValaDataType* type, gboolean is_parameter, gint* index, gboolean has_array_length, const gchar* name, const gchar* comment, ValaParameterDirection direction, gboolean constructor, gboolean caller_allocates) {
 	const gchar* _tmp0_ = NULL;
 	gboolean _tmp1_;
 	const gchar* _tmp2_;
@@ -4653,24 +5201,25 @@ static void vala_gir_writer_write_param_or_return (ValaGIRWriter* self, ValaData
 	gboolean _tmp18_;
 	gboolean _tmp19_;
 	gboolean _tmp21_;
-	gboolean _tmp23_;
-	gboolean _tmp26_;
-	ValaDataType* _tmp28_;
-	gboolean _tmp29_;
 	gboolean _tmp30_;
-	gboolean _tmp32_ = FALSE;
-	ValaDelegateType* _tmp33_;
-	gboolean _tmp39_;
-	GString* _tmp62_;
-	gint _tmp63_;
+	gboolean _tmp33_;
+	ValaDataType* _tmp35_;
+	gboolean _tmp36_;
+	gboolean _tmp37_;
+	gboolean _tmp39_ = FALSE;
+	ValaDelegateType* _tmp40_;
+	gboolean _tmp46_;
+	GString* _tmp69_;
+	gint _tmp70_;
+	const gchar* _tmp71_;
 	gint length_param_index;
-	gboolean _tmp64_;
-	ValaDataType* _tmp70_;
-	gint _tmp71_;
-	gint _tmp72_;
-	GString* _tmp73_;
-	const gchar* _tmp74_;
-	gint _tmp75_;
+	gboolean _tmp72_;
+	ValaDataType* _tmp78_;
+	gint _tmp79_;
+	gint _tmp80_;
+	GString* _tmp81_;
+	const gchar* _tmp82_;
+	gint _tmp83_;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (type != NULL);
 	vala_gir_writer_write_indent (self);
@@ -4725,148 +5274,168 @@ static void vala_gir_writer_write_param_or_return (ValaGIRWriter* self, ValaData
 	if (_tmp21_) {
 		_tmp15_ = TRUE;
 	} else {
-		gboolean _tmp22_;
-		_tmp22_ = constructor;
-		_tmp15_ = _tmp22_;
+		gboolean _tmp22_ = FALSE;
+		gboolean _tmp23_;
+		gboolean _tmp29_;
+		_tmp23_ = constructor;
+		if (_tmp23_) {
+			ValaDataType* _tmp24_;
+			ValaTypeSymbol* _tmp25_;
+			ValaTypeSymbol* _tmp26_;
+			ValaTypeSymbol* _tmp27_;
+			gboolean _tmp28_ = FALSE;
+			_tmp24_ = type;
+			_tmp25_ = vala_data_type_get_data_type (_tmp24_);
+			_tmp26_ = _tmp25_;
+			_tmp27_ = self->priv->ginitiallyunowned_type;
+			_tmp28_ = vala_typesymbol_is_subtype_of (_tmp26_, _tmp27_);
+			_tmp22_ = !_tmp28_;
+		} else {
+			_tmp22_ = FALSE;
+		}
+		_tmp29_ = _tmp22_;
+		_tmp15_ = _tmp29_;
 	}
-	_tmp23_ = _tmp15_;
-	if (_tmp23_) {
-		GString* _tmp24_;
-		_tmp24_ = self->priv->buffer;
-		g_string_append_printf (_tmp24_, " transfer-ownership=\"full\"");
-	} else {
-		GString* _tmp25_;
-		_tmp25_ = self->priv->buffer;
-		g_string_append_printf (_tmp25_, " transfer-ownership=\"none\"");
-	}
-	_tmp26_ = caller_allocates;
-	if (_tmp26_) {
-		GString* _tmp27_;
-		_tmp27_ = self->priv->buffer;
-		g_string_append_printf (_tmp27_, " caller-allocates=\"1\"");
-	}
-	_tmp28_ = type;
-	_tmp29_ = vala_data_type_get_nullable (_tmp28_);
-	_tmp30_ = _tmp29_;
+	_tmp30_ = _tmp15_;
 	if (_tmp30_) {
 		GString* _tmp31_;
 		_tmp31_ = self->priv->buffer;
-		g_string_append_printf (_tmp31_, " allow-none=\"1\"");
-	}
-	_tmp33_ = delegate_type;
-	if (_tmp33_ != NULL) {
-		ValaDelegateType* _tmp34_;
-		ValaDelegate* _tmp35_;
-		ValaDelegate* _tmp36_;
-		gboolean _tmp37_;
-		gboolean _tmp38_;
-		_tmp34_ = delegate_type;
-		_tmp35_ = vala_delegate_type_get_delegate_symbol (_tmp34_);
-		_tmp36_ = _tmp35_;
-		_tmp37_ = vala_delegate_get_has_target (_tmp36_);
-		_tmp38_ = _tmp37_;
-		_tmp32_ = _tmp38_;
+		g_string_append_printf (_tmp31_, " transfer-ownership=\"full\"");
 	} else {
-		_tmp32_ = FALSE;
+		GString* _tmp32_;
+		_tmp32_ = self->priv->buffer;
+		g_string_append_printf (_tmp32_, " transfer-ownership=\"none\"");
 	}
-	_tmp39_ = _tmp32_;
-	if (_tmp39_) {
-		gint _tmp40_ = 0;
-		gboolean _tmp41_;
-		gint _tmp50_;
+	_tmp33_ = caller_allocates;
+	if (_tmp33_) {
+		GString* _tmp34_;
+		_tmp34_ = self->priv->buffer;
+		g_string_append_printf (_tmp34_, " caller-allocates=\"1\"");
+	}
+	_tmp35_ = type;
+	_tmp36_ = vala_data_type_get_nullable (_tmp35_);
+	_tmp37_ = _tmp36_;
+	if (_tmp37_) {
+		GString* _tmp38_;
+		_tmp38_ = self->priv->buffer;
+		g_string_append_printf (_tmp38_, " allow-none=\"1\"");
+	}
+	_tmp40_ = delegate_type;
+	if (_tmp40_ != NULL) {
+		ValaDelegateType* _tmp41_;
+		ValaDelegate* _tmp42_;
+		ValaDelegate* _tmp43_;
+		gboolean _tmp44_;
+		gboolean _tmp45_;
+		_tmp41_ = delegate_type;
+		_tmp42_ = vala_delegate_type_get_delegate_symbol (_tmp41_);
+		_tmp43_ = _tmp42_;
+		_tmp44_ = vala_delegate_get_has_target (_tmp43_);
+		_tmp45_ = _tmp44_;
+		_tmp39_ = _tmp45_;
+	} else {
+		_tmp39_ = FALSE;
+	}
+	_tmp46_ = _tmp39_;
+	if (_tmp46_) {
+		gint _tmp47_ = 0;
+		gboolean _tmp48_;
+		gint _tmp57_;
 		gint closure_index;
-		GString* _tmp51_;
-		gint _tmp52_;
-		ValaDataType* _tmp53_;
-		gboolean _tmp54_;
-		gboolean _tmp55_;
-		ValaDelegateType* _tmp58_;
-		gboolean _tmp59_;
-		gboolean _tmp60_;
-		_tmp41_ = is_parameter;
-		if (_tmp41_) {
-			gint _tmp42_;
-			_tmp42_ = *index;
-			_tmp40_ = _tmp42_ + 1;
-		} else {
-			gint _tmp43_ = 0;
-			ValaDataType* _tmp44_;
-			gboolean _tmp45_;
-			gboolean _tmp46_;
-			gint _tmp49_;
-			_tmp44_ = type;
-			_tmp45_ = vala_data_type_get_value_owned (_tmp44_);
-			_tmp46_ = _tmp45_;
-			if (_tmp46_) {
-				gint _tmp47_;
-				_tmp47_ = *index;
-				_tmp43_ = _tmp47_ - 1;
-			} else {
-				gint _tmp48_;
-				_tmp48_ = *index;
-				_tmp43_ = _tmp48_;
-			}
-			_tmp49_ = _tmp43_;
-			_tmp40_ = _tmp49_;
-		}
-		_tmp50_ = _tmp40_;
-		closure_index = _tmp50_;
-		_tmp51_ = self->priv->buffer;
-		_tmp52_ = closure_index;
-		g_string_append_printf (_tmp51_, " closure=\"%i\"", _tmp52_);
-		_tmp53_ = type;
-		_tmp54_ = vala_data_type_get_value_owned (_tmp53_);
-		_tmp55_ = _tmp54_;
-		if (_tmp55_) {
-			GString* _tmp56_;
-			gint _tmp57_;
-			_tmp56_ = self->priv->buffer;
-			_tmp57_ = closure_index;
-			g_string_append_printf (_tmp56_, " destroy=\"%i\"", _tmp57_ + 1);
-		}
-		_tmp58_ = delegate_type;
-		_tmp59_ = vala_delegate_type_get_is_called_once (_tmp58_);
-		_tmp60_ = _tmp59_;
-		if (_tmp60_) {
-			GString* _tmp61_;
-			_tmp61_ = self->priv->buffer;
-			g_string_append (_tmp61_, " scope=\"async\"");
-		}
-	}
-	_tmp62_ = self->priv->buffer;
-	g_string_append_printf (_tmp62_, ">\n");
-	_tmp63_ = self->priv->indent;
-	self->priv->indent = _tmp63_ + 1;
-	length_param_index = -1;
-	_tmp64_ = has_array_length;
-	if (_tmp64_) {
-		gint _tmp65_ = 0;
+		GString* _tmp58_;
+		gint _tmp59_;
+		ValaDataType* _tmp60_;
+		gboolean _tmp61_;
+		gboolean _tmp62_;
+		ValaDelegateType* _tmp65_;
 		gboolean _tmp66_;
-		gint _tmp69_;
-		_tmp66_ = is_parameter;
-		if (_tmp66_) {
-			gint _tmp67_;
-			_tmp67_ = *index;
-			_tmp65_ = _tmp67_ + 1;
+		gboolean _tmp67_;
+		_tmp48_ = is_parameter;
+		if (_tmp48_) {
+			gint _tmp49_;
+			_tmp49_ = *index;
+			_tmp47_ = _tmp49_ + 1;
 		} else {
-			gint _tmp68_;
-			_tmp68_ = *index;
-			_tmp65_ = _tmp68_;
+			gint _tmp50_ = 0;
+			ValaDataType* _tmp51_;
+			gboolean _tmp52_;
+			gboolean _tmp53_;
+			gint _tmp56_;
+			_tmp51_ = type;
+			_tmp52_ = vala_data_type_get_value_owned (_tmp51_);
+			_tmp53_ = _tmp52_;
+			if (_tmp53_) {
+				gint _tmp54_;
+				_tmp54_ = *index;
+				_tmp50_ = _tmp54_ - 1;
+			} else {
+				gint _tmp55_;
+				_tmp55_ = *index;
+				_tmp50_ = _tmp55_;
+			}
+			_tmp56_ = _tmp50_;
+			_tmp47_ = _tmp56_;
 		}
-		_tmp69_ = _tmp65_;
-		length_param_index = _tmp69_;
+		_tmp57_ = _tmp47_;
+		closure_index = _tmp57_;
+		_tmp58_ = self->priv->buffer;
+		_tmp59_ = closure_index;
+		g_string_append_printf (_tmp58_, " closure=\"%i\"", _tmp59_);
+		_tmp60_ = type;
+		_tmp61_ = vala_data_type_get_value_owned (_tmp60_);
+		_tmp62_ = _tmp61_;
+		if (_tmp62_) {
+			GString* _tmp63_;
+			gint _tmp64_;
+			_tmp63_ = self->priv->buffer;
+			_tmp64_ = closure_index;
+			g_string_append_printf (_tmp63_, " destroy=\"%i\"", _tmp64_ + 1);
+		}
+		_tmp65_ = delegate_type;
+		_tmp66_ = vala_delegate_type_get_is_called_once (_tmp65_);
+		_tmp67_ = _tmp66_;
+		if (_tmp67_) {
+			GString* _tmp68_;
+			_tmp68_ = self->priv->buffer;
+			g_string_append (_tmp68_, " scope=\"async\"");
+		}
 	}
-	_tmp70_ = type;
-	_tmp71_ = length_param_index;
-	vala_gir_writer_write_type (self, _tmp70_, _tmp71_);
-	_tmp72_ = self->priv->indent;
-	self->priv->indent = _tmp72_ - 1;
+	_tmp69_ = self->priv->buffer;
+	g_string_append_printf (_tmp69_, ">\n");
+	_tmp70_ = self->priv->indent;
+	self->priv->indent = _tmp70_ + 1;
+	_tmp71_ = comment;
+	vala_gir_writer_write_doc (self, _tmp71_);
+	length_param_index = -1;
+	_tmp72_ = has_array_length;
+	if (_tmp72_) {
+		gint _tmp73_ = 0;
+		gboolean _tmp74_;
+		gint _tmp77_;
+		_tmp74_ = is_parameter;
+		if (_tmp74_) {
+			gint _tmp75_;
+			_tmp75_ = *index;
+			_tmp73_ = _tmp75_ + 1;
+		} else {
+			gint _tmp76_;
+			_tmp76_ = *index;
+			_tmp73_ = _tmp76_;
+		}
+		_tmp77_ = _tmp73_;
+		length_param_index = _tmp77_;
+	}
+	_tmp78_ = type;
+	_tmp79_ = length_param_index;
+	vala_gir_writer_write_type (self, _tmp78_, _tmp79_);
+	_tmp80_ = self->priv->indent;
+	self->priv->indent = _tmp80_ - 1;
 	vala_gir_writer_write_indent (self);
-	_tmp73_ = self->priv->buffer;
-	_tmp74_ = tag;
-	g_string_append_printf (_tmp73_, "</%s>\n", _tmp74_);
-	_tmp75_ = *index;
-	*index = _tmp75_ + 1;
+	_tmp81_ = self->priv->buffer;
+	_tmp82_ = tag;
+	g_string_append_printf (_tmp81_, "</%s>\n", _tmp82_);
+	_tmp83_ = *index;
+	*index = _tmp83_ + 1;
 	_vala_code_node_unref0 (delegate_type);
 	_g_free0 (tag);
 }
@@ -5973,6 +6542,23 @@ static void vala_gir_writer_class_init (ValaGIRWriterClass * klass) {
 	vala_gir_writer_parent_class = g_type_class_peek_parent (klass);
 	VALA_CODE_VISITOR_CLASS (klass)->finalize = vala_gir_writer_finalize;
 	g_type_class_add_private (klass, sizeof (ValaGIRWriterPrivate));
+	VALA_GIR_WRITER_CLASS (klass)->get_interface_comment = vala_gir_writer_real_get_interface_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_struct_comment = vala_gir_writer_real_get_struct_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_enum_comment = vala_gir_writer_real_get_enum_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_class_comment = vala_gir_writer_real_get_class_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_error_code_comment = vala_gir_writer_real_get_error_code_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_enum_value_comment = vala_gir_writer_real_get_enum_value_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_constant_comment = vala_gir_writer_real_get_constant_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_error_domain_comment = vala_gir_writer_real_get_error_domain_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_field_comment = vala_gir_writer_real_get_field_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_delegate_comment = vala_gir_writer_real_get_delegate_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_method_comment = vala_gir_writer_real_get_method_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_property_comment = vala_gir_writer_real_get_property_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_delegate_return_comment = vala_gir_writer_real_get_delegate_return_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_signal_return_comment = vala_gir_writer_real_get_signal_return_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_method_return_comment = vala_gir_writer_real_get_method_return_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_signal_comment = vala_gir_writer_real_get_signal_comment;
+	VALA_GIR_WRITER_CLASS (klass)->get_parameter_comment = vala_gir_writer_real_get_parameter_comment;
 	VALA_CODE_VISITOR_CLASS (klass)->visit_namespace = vala_gir_writer_real_visit_namespace;
 	VALA_CODE_VISITOR_CLASS (klass)->visit_class = vala_gir_writer_real_visit_class;
 	VALA_CODE_VISITOR_CLASS (klass)->visit_struct = vala_gir_writer_real_visit_struct;
@@ -6040,6 +6626,7 @@ static void vala_gir_writer_finalize (ValaCodeVisitor* obj) {
 	_vala_iterable_unref0 (self->priv->hierarchy);
 	_vala_iterable_unref0 (self->priv->deferred);
 	_vala_code_node_unref0 (self->priv->gobject_type);
+	_vala_code_node_unref0 (self->priv->ginitiallyunowned_type);
 	_vala_iterable_unref0 (self->priv->externals);
 	VALA_CODE_VISITOR_CLASS (vala_gir_writer_parent_class)->finalize (obj);
 }

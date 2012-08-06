@@ -63,8 +63,6 @@ struct _ValaComment {
 struct _ValaCommentClass {
 	GTypeClass parent_class;
 	void (*finalize) (ValaComment *self);
-	const gchar* (*get_content) (ValaComment* self);
-	void (*set_content) (ValaComment* self, const gchar* value);
 };
 
 struct _ValaCommentPrivate {
@@ -127,16 +125,9 @@ ValaComment* vala_comment_new (const gchar* comment, ValaSourceReference* _sourc
 
 
 const gchar* vala_comment_get_content (ValaComment* self) {
-	g_return_val_if_fail (self != NULL, NULL);
-	return VALA_COMMENT_GET_CLASS (self)->get_content (self);
-}
-
-
-static const gchar* vala_comment_real_get_content (ValaComment* base) {
 	const gchar* result;
-	ValaComment* self;
 	const gchar* _tmp0_;
-	self = base;
+	g_return_val_if_fail (self != NULL, NULL);
 	_tmp0_ = self->priv->_content;
 	result = _tmp0_;
 	return result;
@@ -144,16 +135,9 @@ static const gchar* vala_comment_real_get_content (ValaComment* base) {
 
 
 void vala_comment_set_content (ValaComment* self, const gchar* value) {
-	g_return_if_fail (self != NULL);
-	VALA_COMMENT_GET_CLASS (self)->set_content (self, value);
-}
-
-
-static void vala_comment_real_set_content (ValaComment* base, const gchar* value) {
-	ValaComment* self;
 	const gchar* _tmp0_;
 	gchar* _tmp1_;
-	self = base;
+	g_return_if_fail (self != NULL);
 	_tmp0_ = value;
 	_tmp1_ = g_strdup (_tmp0_);
 	_g_free0 (self->priv->_content);
@@ -301,8 +285,6 @@ static void vala_comment_class_init (ValaCommentClass * klass) {
 	vala_comment_parent_class = g_type_class_peek_parent (klass);
 	VALA_COMMENT_CLASS (klass)->finalize = vala_comment_finalize;
 	g_type_class_add_private (klass, sizeof (ValaCommentPrivate));
-	VALA_COMMENT_CLASS (klass)->get_content = vala_comment_real_get_content;
-	VALA_COMMENT_CLASS (klass)->set_content = vala_comment_real_set_content;
 }
 
 

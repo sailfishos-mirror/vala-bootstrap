@@ -16,23 +16,24 @@ namespace Peas {
 		public string[] get_loaded_plugins ();
 		public unowned Peas.PluginInfo get_plugin_info (string plugin_name);
 		public unowned GLib.List<Peas.PluginInfo> get_plugin_list ();
+		public void prepend_search_path (string module_dir, string? data_dir);
 		public bool provides_extension (Peas.PluginInfo info, GLib.Type extension_type);
 		public void rescan_plugins ();
 		public void set_loaded_plugins ([CCode (array_length = false, array_null_terminated = true)] string[]? plugin_names);
+		[CCode (cname = "peas_engine_load_plugin")]
+		public bool try_load_plugin (Peas.PluginInfo info);
+		[CCode (cname = "peas_engine_unload_plugin")]
+		public bool try_unload_plugin (Peas.PluginInfo info);
 		[CCode (array_length = false, array_null_terminated = true)]
 		public string[] loaded_plugins { owned get; set; }
 		public void* plugin_list { get; }
-		[HasEmitter]
 		public virtual signal void load_plugin (Peas.PluginInfo info);
-		[HasEmitter]
 		public virtual signal void unload_plugin (Peas.PluginInfo info);
 	}
 	[CCode (cheader_filename = "libpeas/peas.h")]
 	public class Extension : GLib.Object {
 		[CCode (has_construct_function = false)]
 		protected Extension ();
-		public static GLib.Type get_extension_type (Peas.Extension exten);
-		public static GLib.Type get_type ();
 	}
 	[CCode (cheader_filename = "libpeas/peas.h", type_id = "peas_extension_base_get_type ()")]
 	public abstract class ExtensionBase : GLib.Object {
@@ -49,7 +50,8 @@ namespace Peas {
 		public ExtensionSet (Peas.Engine engine, GLib.Type exten_type, ...);
 		public void @foreach (Peas.ExtensionSetForeachFunc func);
 		public unowned Peas.Extension get_extension (Peas.PluginInfo info);
-		public static Peas.ExtensionSet newv (Peas.Engine? engine, GLib.Type exten_type, [CCode (array_length_cname = "n_parameters", array_length_pos = 2.5, array_length_type = "guint")] GLib.Parameter[] parameters);
+		[CCode (has_construct_function = false)]
+		public ExtensionSet.newv (Peas.Engine? engine, GLib.Type exten_type, [CCode (array_length_cname = "n_parameters", array_length_pos = 2.5, array_length_type = "guint")] GLib.Parameter[] parameters);
 		public void* construct_properties { construct; }
 		[NoAccessorMethod]
 		public Peas.Engine engine { owned get; construct; }
@@ -81,11 +83,13 @@ namespace Peas {
 		[CCode (array_length = false, array_null_terminated = true)]
 		public unowned string[] get_dependencies ();
 		public unowned string get_description ();
+		public unowned string get_external_data (string key);
 		public unowned string get_help_uri ();
 		public unowned string get_icon_name ();
 		public unowned string get_module_dir ();
 		public unowned string get_module_name ();
 		public unowned string get_name ();
+		public GLib.Settings get_settings (string? schema_id);
 		public unowned string get_version ();
 		public unowned string get_website ();
 		public bool has_dependency (string module_name);
@@ -110,8 +114,8 @@ namespace Peas {
 		DEP_LOADING_FAILED;
 		public static GLib.Quark quark ();
 	}
-	[CCode (cheader_filename = "libpeas/peas.h", has_target = false)]
-	public delegate void ExtensionSetForeachFunc (Peas.ExtensionSet @set, Peas.PluginInfo info, Peas.Extension exten, void* data);
+	[CCode (cheader_filename = "libpeas/peas.h", instance_pos = 3.9)]
+	public delegate void ExtensionSetForeachFunc (Peas.ExtensionSet @set, Peas.PluginInfo info, Peas.Extension exten);
 	[CCode (cheader_filename = "libpeas/peas.h", instance_pos = 1.9)]
 	public delegate GLib.Object FactoryFunc ([CCode (array_length_cname = "n_parameters", array_length_pos = 0.5, array_length_type = "guint")] GLib.Parameter[] parameters);
 }

@@ -469,7 +469,7 @@ public abstract class Vala.CCodeMethodModule : CCodeStructModule {
 							var d = deleg_type.delegate_symbol;
 							if (d.has_target) {
 								// create variable to store delegate target
-								vardecl = new CCodeVariableDeclarator.zero (get_delegate_target_cname (get_variable_cname ("_vala_" + param.name)), new CCodeConstant ("NULL"));
+								vardecl = new CCodeVariableDeclarator.zero ("_vala_" + get_ccode_delegate_target_name (param), new CCodeConstant ("NULL"));
 								ccode.add_declaration ("void *", vardecl);
 
 								if (deleg_type.value_owned) {
@@ -915,6 +915,13 @@ public abstract class Vala.CCodeMethodModule : CCodeStructModule {
 		generate_cparameters (m, cfile, cparam_map, vfunc, null, carg_map, vcall, direction);
 
 		push_function (vfunc);
+
+		if (context.assert && m.return_type.data_type is Struct && ((Struct) m.return_type.data_type).is_simple_type () && default_value_for_type (m.return_type, false) == null) {
+			// the type check will use the result variable
+			var vardecl = new CCodeVariableDeclarator ("result", default_value_for_type (m.return_type, true));
+			vardecl.init0 = true;
+			ccode.add_declaration (get_ccode_name (m.return_type), vardecl);
+		}
 
 		// add a typecheck statement for "self"
 		create_method_type_check_statement (m, return_type, (TypeSymbol) m.parent_symbol, true, "self");

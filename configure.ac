@@ -7,6 +7,11 @@ AM_INIT_AUTOMAKE([1.11 dist-bzip2])
 AM_MAINTAINER_MODE([enable])
 
 PACKAGE_SUFFIX=-0.16
+
+dnl http://people.gnome.org/~walters/docs/build-api.txt
+dnl We don't support separate builddir when building from git
+echo \#buildapi-variable-no-builddir >/dev/null
+
 AC_SUBST(PACKAGE_SUFFIX)
 AC_DEFINE_UNQUOTED(PACKAGE_SUFFIX, "$PACKAGE_SUFFIX", [Define to the suffix of this package])
 
@@ -115,6 +120,7 @@ AC_CONFIG_FILES([Makefile
            doc/Makefile
            doc/vala/Makefile
            gobject-introspection/Makefile
+           vapigen/vapigen.pc
            vapigen/Makefile
            vapigen/vala-gen-introspect/Makefile
            vapigen/vala-gen-introspect/vala-gen-introspect])

@@ -43,11 +43,13 @@ namespace Vala {
 		public string copy_function { get; }
 		public string default_value { get; }
 		public bool delegate_target { get; private set; }
+		public string delegate_target_name { get; }
 		public string destroy_function { get; }
 		public string finish_name { get; }
 		public string finish_real_name { get; }
 		public string finish_vfunc_name { get; }
 		public string free_function { get; }
+		public bool free_function_address_of { get; }
 		public string get_value_function { get; }
 		public string header_filenames { get; }
 		public string lower_case_prefix { get; }
@@ -200,6 +202,7 @@ namespace Vala {
 		public virtual void generate_error_domain_declaration (Vala.ErrorDomain edomain, Vala.CCodeFile decl_space);
 		public void generate_field_declaration (Vala.Field f, Vala.CCodeFile decl_space);
 		protected string generate_free_func_wrapper (Vala.DataType type);
+		protected string generate_free_function_address_of_wrapper (Vala.DataType type);
 		public Vala.CCodeFunctionCall generate_instance_cast (Vala.CCodeExpression expr, Vala.TypeSymbol type);
 		public virtual void generate_interface_declaration (Vala.Interface iface, Vala.CCodeFile decl_space);
 		public virtual void generate_method_declaration (Vala.Method m, Vala.CCodeFile decl_space);
@@ -229,6 +232,7 @@ namespace Vala {
 		public static string get_ccode_declarator_suffix (Vala.DataType type);
 		public static string get_ccode_default_value (Vala.TypeSymbol sym);
 		public static bool get_ccode_delegate_target (Vala.CodeNode node);
+		public static string get_ccode_delegate_target_name (Vala.Variable variable);
 		public static double get_ccode_delegate_target_pos (Vala.CodeNode node);
 		public static string get_ccode_destroy_function (Vala.TypeSymbol sym);
 		public static double get_ccode_destroy_notify_pos (Vala.CodeNode node);
@@ -237,6 +241,7 @@ namespace Vala {
 		public static string get_ccode_finish_real_name (Vala.Method m);
 		public static string get_ccode_finish_vfunc_name (Vala.Method m);
 		public static string get_ccode_free_function (Vala.TypeSymbol sym);
+		public static bool get_ccode_free_function_address_of (Vala.Class cl);
 		public static double get_ccode_generic_type_pos (Vala.Method m);
 		public static string get_ccode_get_value_function (Vala.CodeNode sym);
 		public static bool get_ccode_has_copy_function (Vala.Struct st);
@@ -329,11 +334,13 @@ namespace Vala {
 		public bool is_lvalue_access_allowed (Vala.DataType type);
 		public bool is_pure_ccode_expression (Vala.CCodeExpression cexpr);
 		public static bool is_reference_counting (Vala.TypeSymbol sym);
+		public bool is_simple_struct_creation (Vala.Variable variable, Vala.Expression expr);
 		public Vala.TargetValue load_temp_value (Vala.TargetValue lvalue);
 		public abstract Vala.TargetValue load_this_parameter (Vala.TypeSymbol sym);
 		public abstract Vala.TargetValue load_variable (Vala.Variable variable, Vala.TargetValue value);
 		public virtual bool method_has_wrapper (Vala.Method method);
 		public unowned Vala.Block? next_closure_block (Vala.Symbol sym);
+		public bool no_implicit_copy (Vala.DataType type);
 		public void pop_context ();
 		public void pop_function ();
 		public void pop_line ();
@@ -851,6 +858,23 @@ namespace Vala {
 	[CCode (cheader_filename = "valacodegen.h")]
 	public class GIRWriter : Vala.CodeVisitor {
 		public GIRWriter ();
+		protected virtual string? get_class_comment (Vala.Class c);
+		protected virtual string? get_constant_comment (Vala.Constant c);
+		protected virtual string? get_delegate_comment (Vala.Delegate cb);
+		protected virtual string? get_delegate_return_comment (Vala.Delegate cb);
+		protected virtual string? get_enum_comment (Vala.Enum en);
+		protected virtual string? get_enum_value_comment (Vala.EnumValue ev);
+		protected virtual string? get_error_code_comment (Vala.ErrorCode ecode);
+		protected virtual string? get_error_domain_comment (Vala.ErrorDomain edomain);
+		protected virtual string? get_field_comment (Vala.Field f);
+		protected virtual string? get_interface_comment (Vala.Interface iface);
+		protected virtual string? get_method_comment (Vala.Method m);
+		protected virtual string? get_method_return_comment (Vala.Method m);
+		protected virtual string? get_parameter_comment (Vala.Parameter param);
+		protected virtual string? get_property_comment (Vala.Property prop);
+		protected virtual string? get_signal_comment (Vala.Signal sig);
+		protected virtual string? get_signal_return_comment (Vala.Signal sig);
+		protected virtual string? get_struct_comment (Vala.Struct st);
 		public override void visit_class (Vala.Class cl);
 		public override void visit_constant (Vala.Constant c);
 		public override void visit_creation_method (Vala.CreationMethod m);

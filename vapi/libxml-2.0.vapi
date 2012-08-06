@@ -335,8 +335,11 @@ namespace Xml {
 		public Doc* doc;
 		public int compression;
 		public int standalone;
+		[CCode (cname = "intSubset")]
 		public Dtd* int_subset;
+		[CCode (cname = "extSubset")]
 		public Dtd* ext_subset;
+		[CCode (cname = "oldNs")]
 		public Ns* old_ns;
 		public weak string version;
 		public weak string encoding;
@@ -950,6 +953,24 @@ namespace Xml {
 	[Compact]
 	[CCode (cname = "xmlSchemaValidCtxt", cheader_filename = "libxml/xmlreader.h")]
 	public class SchemaValidCtxt {
+	}
+
+	/* xmlsave */
+
+	[Compact]
+	[CCode (cname = "xmlSaveCtxt", free_function = "xmlSaveClose", cheader_filename = "libxml/xmlsave.h")]
+	public class SaveCtxt {
+		[CCode (cname = "xmlSaveToIO")]
+		public SaveCtxt.to_io (OutputWriteCallback iowrite, OutputCloseCallback ioclose, void * ioctx = null, string? encoding = null, int options = 0);
+
+		[CCode (cname = "xmlSaveClose")]
+		public int close ();
+		[CCode (cname = "xmlSaveFlush")]
+		public int flush ();
+		[CCode (cname = "xmlSaveDoc")]
+		public int save_doc (Xml.Doc *doc);
+		[CCode (cname = "xmlSaveTree")]
+		public int save_tree (Xml.Node *node);
 	}
 
 	/* xmlwriter - the XMLWriter implementation */

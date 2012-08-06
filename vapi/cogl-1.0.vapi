@@ -136,7 +136,7 @@ namespace Cogl {
 		[CCode (cname = "cogl_offscreen_new_to_texture", has_construct_function = false, type = "CoglHandle*")]
 		public Offscreen.to_texture (Cogl.Texture handle);
 	}
-	[CCode (cheader_filename = "cogl/cogl.h")]
+	[CCode (cheader_filename = "cogl-pango/cogl-pango.h")]
 	[Compact]
 	public class PangoFontMap {
 		[CCode (has_construct_function = false, type = "PangoFontMap*")]
@@ -148,19 +148,17 @@ namespace Cogl {
 		public void set_resolution (double dpi);
 		public void set_use_mipmapping (bool value);
 	}
-	[CCode (cheader_filename = "cogl/cogl.h")]
+	[CCode (cheader_filename = "cogl-pango/cogl-pango.h")]
 	[Compact]
 	public class PangoRenderer {
 	}
-	[CCode (cheader_filename = "cogl/cogl.h")]
+	[CCode (cheader_filename = "cogl-pango/cogl-pango.h")]
 	[Compact]
 	public class PangoRendererClass {
 	}
 	[CCode (cheader_filename = "cogl/cogl.h", copy_function = "cogl_path_copy")]
 	[Compact]
 	public class Path {
-		[CCode (has_construct_function = false, type = "void")]
-		public Path ();
 		public static void arc (float center_x, float center_y, float radius_x, float radius_y, float angle_1, float angle_2);
 		public static void close ();
 		public unowned Cogl.Path copy ();
@@ -173,6 +171,7 @@ namespace Cogl {
 		public static void line (float x_1, float y_1, float x_2, float y_2);
 		public static void line_to (float x, float y);
 		public static void move_to (float x, float y);
+		public static void @new ();
 		public static void polygon ([CCode (array_length = false)] float[] coords, int num_points);
 		public static void polyline ([CCode (array_length = false)] float[] coords, int num_points);
 		public static void rectangle (float x_1, float y_1, float x_2, float y_2);
@@ -714,7 +713,7 @@ namespace Cogl {
 	[CCode (cheader_filename = "cogl/cogl.h")]
 	public static void get_projection_matrix (Cogl.Matrix matrix);
 	[CCode (cheader_filename = "cogl/cogl.h")]
-	public static void get_viewport (float[] v);
+	public static void get_viewport ([CCode (array_length = false)] float[] v);
 	[CCode (cheader_filename = "cogl/cogl.h")]
 	public static GLib.Type indices_type_get_type ();
 	[CCode (cheader_filename = "cogl/cogl.h")]
@@ -723,13 +722,13 @@ namespace Cogl {
 	public static bool is_vertex_buffer_indices (Cogl.Bitmap handle);
 	[CCode (cheader_filename = "cogl/cogl.h")]
 	public static void ortho (float left, float right, float bottom, float top, float near, float far);
-	[CCode (cheader_filename = "cogl/cogl.h")]
+	[CCode (cheader_filename = "cogl-pango/cogl-pango.h")]
 	public static void pango_ensure_glyph_cache_for_layout (Pango.Layout layout);
-	[CCode (cheader_filename = "cogl/cogl.h")]
+	[CCode (cheader_filename = "cogl-pango/cogl-pango.h")]
 	public static void pango_render_layout (Pango.Layout layout, int x, int y, Cogl.Color color, int flags);
-	[CCode (cheader_filename = "cogl/cogl.h")]
+	[CCode (cheader_filename = "cogl-pango/cogl-pango.h")]
 	public static void pango_render_layout_line (Pango.LayoutLine line, int x, int y, Cogl.Color color);
-	[CCode (cheader_filename = "cogl/cogl.h")]
+	[CCode (cheader_filename = "cogl-pango/cogl-pango.h")]
 	public static void pango_render_layout_subpixel (Pango.Layout layout, int x, int y, Cogl.Color color, int flags);
 	[CCode (cheader_filename = "cogl/cogl.h")]
 	public static void perspective (float fovy, float aspect, float z_near, float z_far);

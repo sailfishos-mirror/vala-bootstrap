@@ -2093,11 +2093,15 @@ static gboolean vala_array_type_real_compatible (ValaDataType* base, ValaDataTyp
 	gboolean _tmp70_ = FALSE;
 	ValaDataType* _tmp71_;
 	ValaDataType* _tmp72_;
-	ValaArrayType* _tmp73_;
-	ValaDataType* _tmp74_;
-	ValaDataType* _tmp75_;
-	gboolean _tmp76_ = FALSE;
-	gboolean _tmp83_;
+	gboolean _tmp82_;
+	gboolean _tmp83_ = FALSE;
+	ValaDataType* _tmp84_;
+	ValaDataType* _tmp85_;
+	ValaArrayType* _tmp86_;
+	ValaDataType* _tmp87_;
+	ValaDataType* _tmp88_;
+	gboolean _tmp89_ = FALSE;
+	gboolean _tmp96_;
 	self = (ValaArrayType*) base;
 	g_return_val_if_fail (target_type != NULL, FALSE);
 	_tmp1_ = vala_code_context_get ();
@@ -2274,29 +2278,60 @@ static gboolean vala_array_type_real_compatible (ValaDataType* base, ValaDataTyp
 	}
 	_tmp71_ = vala_array_type_get_element_type (self);
 	_tmp72_ = _tmp71_;
-	_tmp73_ = target_array_type;
-	_tmp74_ = vala_array_type_get_element_type (_tmp73_);
-	_tmp75_ = _tmp74_;
-	_tmp76_ = vala_data_type_compatible (_tmp72_, _tmp75_);
-	if (_tmp76_) {
+	if (VALA_IS_VALUE_TYPE (_tmp72_)) {
+		ValaDataType* _tmp73_;
+		ValaDataType* _tmp74_;
+		gboolean _tmp75_;
+		gboolean _tmp76_;
 		ValaArrayType* _tmp77_;
 		ValaDataType* _tmp78_;
 		ValaDataType* _tmp79_;
-		ValaDataType* _tmp80_;
-		ValaDataType* _tmp81_;
-		gboolean _tmp82_ = FALSE;
+		gboolean _tmp80_;
+		gboolean _tmp81_;
+		_tmp73_ = vala_array_type_get_element_type (self);
+		_tmp74_ = _tmp73_;
+		_tmp75_ = vala_data_type_get_nullable (_tmp74_);
+		_tmp76_ = _tmp75_;
 		_tmp77_ = target_array_type;
 		_tmp78_ = vala_array_type_get_element_type (_tmp77_);
 		_tmp79_ = _tmp78_;
-		_tmp80_ = vala_array_type_get_element_type (self);
+		_tmp80_ = vala_data_type_get_nullable (_tmp79_);
 		_tmp81_ = _tmp80_;
-		_tmp82_ = vala_data_type_compatible (_tmp79_, _tmp81_);
-		_tmp70_ = _tmp82_;
+		_tmp70_ = _tmp76_ != _tmp81_;
 	} else {
 		_tmp70_ = FALSE;
 	}
-	_tmp83_ = _tmp70_;
-	if (_tmp83_) {
+	_tmp82_ = _tmp70_;
+	if (_tmp82_) {
+		result = FALSE;
+		_vala_code_node_unref0 (target_array_type);
+		return result;
+	}
+	_tmp84_ = vala_array_type_get_element_type (self);
+	_tmp85_ = _tmp84_;
+	_tmp86_ = target_array_type;
+	_tmp87_ = vala_array_type_get_element_type (_tmp86_);
+	_tmp88_ = _tmp87_;
+	_tmp89_ = vala_data_type_compatible (_tmp85_, _tmp88_);
+	if (_tmp89_) {
+		ValaArrayType* _tmp90_;
+		ValaDataType* _tmp91_;
+		ValaDataType* _tmp92_;
+		ValaDataType* _tmp93_;
+		ValaDataType* _tmp94_;
+		gboolean _tmp95_ = FALSE;
+		_tmp90_ = target_array_type;
+		_tmp91_ = vala_array_type_get_element_type (_tmp90_);
+		_tmp92_ = _tmp91_;
+		_tmp93_ = vala_array_type_get_element_type (self);
+		_tmp94_ = _tmp93_;
+		_tmp95_ = vala_data_type_compatible (_tmp92_, _tmp94_);
+		_tmp83_ = _tmp95_;
+	} else {
+		_tmp83_ = FALSE;
+	}
+	_tmp96_ = _tmp83_;
+	if (_tmp96_) {
 		result = TRUE;
 		_vala_code_node_unref0 (target_array_type);
 		return result;

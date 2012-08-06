@@ -628,7 +628,6 @@ gchar* vala_gvariant_module_get_dbus_signature (ValaSymbol* symbol) {
 static gboolean vala_gvariant_module_get_basic_type_info (ValaGVariantModule* self, const gchar* signature, ValaGVariantModuleBasicTypeInfo* basic_type) {
 	ValaGVariantModuleBasicTypeInfo _vala_basic_type = {0};
 	gboolean result = FALSE;
-	ValaGVariantModuleBasicTypeInfo _tmp4_ = {0};
 	g_return_val_if_fail (self != NULL, FALSE);
 	g_return_val_if_fail (signature != NULL, FALSE);
 	{
@@ -661,8 +660,7 @@ static gboolean vala_gvariant_module_get_basic_type_info (ValaGVariantModule* se
 			}
 		}
 	}
-	memset (&_tmp4_, 0, sizeof (ValaGVariantModuleBasicTypeInfo));
-	_vala_basic_type = _tmp4_;
+	memset (&_vala_basic_type, 0, sizeof (ValaGVariantModuleBasicTypeInfo));
 	result = FALSE;
 	if (basic_type) {
 		*basic_type = _vala_basic_type;
@@ -3826,8 +3824,10 @@ ValaCCodeFunction* vala_gvariant_module_generate_enum_to_string_function (ValaGV
 	ValaCCodeIdentifier* _tmp21_;
 	ValaCCodeFunction* _tmp56_;
 	ValaCCodeFunction* _tmp57_;
-	ValaCCodeIdentifier* _tmp58_;
-	ValaCCodeIdentifier* _tmp59_;
+	ValaCCodeFunction* _tmp58_;
+	ValaCCodeFunction* _tmp59_;
+	ValaCCodeIdentifier* _tmp60_;
+	ValaCCodeIdentifier* _tmp61_;
 	g_return_val_if_fail (self != NULL, NULL);
 	g_return_val_if_fail (en != NULL, NULL);
 	_tmp0_ = en;
@@ -3962,10 +3962,13 @@ ValaCCodeFunction* vala_gvariant_module_generate_enum_to_string_function (ValaGV
 	}
 	_tmp56_ = vala_ccode_base_module_get_ccode ((ValaCCodeBaseModule*) self);
 	_tmp57_ = _tmp56_;
-	_tmp58_ = vala_ccode_identifier_new ("str");
+	vala_ccode_function_close (_tmp57_);
+	_tmp58_ = vala_ccode_base_module_get_ccode ((ValaCCodeBaseModule*) self);
 	_tmp59_ = _tmp58_;
-	vala_ccode_function_add_return (_tmp57_, (ValaCCodeExpression*) _tmp59_);
-	_vala_ccode_node_unref0 (_tmp59_);
+	_tmp60_ = vala_ccode_identifier_new ("str");
+	_tmp61_ = _tmp60_;
+	vala_ccode_function_add_return (_tmp59_, (ValaCCodeExpression*) _tmp61_);
+	_vala_ccode_node_unref0 (_tmp61_);
 	vala_ccode_base_module_pop_function ((ValaCCodeBaseModule*) self);
 	result = to_string_func;
 	_g_free0 (to_string_name);

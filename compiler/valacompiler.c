@@ -204,7 +204,7 @@ ValaCompiler* vala_compiler_new (void);
 ValaCompiler* vala_compiler_construct (GType object_type);
 static void _vala_array_add1 (gchar*** array, int* length, int* size, gchar* value);
 static Block1Data* block1_data_ref (Block1Data* _data1_);
-static void block1_data_unref (Block1Data* _data1_);
+static void block1_data_unref (void * _userdata_);
 static void ___lambda2_ (Block1Data* _data1_, GPid pid, gint status);
 static void ____lambda2__gchild_watch_func (GPid pid, gint status, gpointer self);
 static gint vala_compiler_main (gchar** args, int args_length1);
@@ -2029,7 +2029,9 @@ static Block1Data* block1_data_ref (Block1Data* _data1_) {
 }
 
 
-static void block1_data_unref (Block1Data* _data1_) {
+static void block1_data_unref (void * _userdata_) {
+	Block1Data* _data1_;
+	_data1_ = (Block1Data*) _userdata_;
 	if (g_atomic_int_dec_and_test (&_data1_->_ref_count_)) {
 		_g_main_loop_unref0 (_data1_->loop);
 		g_slice_free (Block1Data, _data1_);

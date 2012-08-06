@@ -21,7 +21,7 @@
  *  Michael 'Mickey' Lauer <mlauer@vanille-media.de>
  */
 
-[CCode (cheader_filename = "dbus/dbus-glib-lowlevel.h,dbus/dbus-glib.h")]
+[CCode (cheader_filename = "dbus/dbus-glib-lowlevel.h,dbus/dbus-glib.h", gir_namespace = "DBusGLib", gir_version = "1.0")]
 namespace DBus {
 	public const string SERVICE_DBUS;
 	public const string PATH_DBUS;
@@ -242,6 +242,8 @@ namespace DBus {
 	[Compact]
 	[CCode (ref_function = "dbus_g_connection_ref", unref_function = "dbus_g_connection_unref", cname = "DBusGConnection")]
 	public class Connection {
+		[CCode (cname = "dbus_g_connection_open")]
+		public Connection (string address) throws Error;
 		[CCode (cname = "dbus_g_proxy_new_for_name")]
 		public Object get_object (string name, string path, string? interface_ = null);
 		[CCode (cname="dbus_g_proxy_new_for_name_owner")]

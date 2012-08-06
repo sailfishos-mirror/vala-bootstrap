@@ -1609,6 +1609,7 @@ ValaBinaryOperator vala_binary_expression_get_operator (ValaBinaryExpression* se
 static void vala_assignment_real_emit (ValaCodeNode* base, ValaCodeGenerator* codegen);
 ValaMemberBinding vala_property_get_binding (ValaProperty* self);
 GType vala_array_length_field_get_type (void) G_GNUC_CONST;
+gboolean vala_data_type_is_real_non_null_struct_type (ValaDataType* self);
 void vala_code_node_emit (ValaCodeNode* self, ValaCodeGenerator* codegen);
 gpointer vala_target_value_ref (gpointer instance);
 void vala_target_value_unref (gpointer instance);
@@ -4272,11 +4273,11 @@ static void vala_assignment_real_emit (ValaCodeNode* base, ValaCodeGenerator* co
 	ValaPointerIndirection* _tmp8_;
 	ValaPointerIndirection* pi;
 	ValaMemberAccess* _tmp9_;
-	ValaExpression* _tmp151_;
-	ValaExpression* _tmp152_;
-	ValaCodeGenerator* _tmp153_;
-	ValaCodeGenerator* _tmp154_;
-	ValaCodeGenerator* _tmp155_;
+	ValaExpression* _tmp162_;
+	ValaExpression* _tmp163_;
+	ValaCodeGenerator* _tmp164_;
+	ValaCodeGenerator* _tmp165_;
+	ValaCodeGenerator* _tmp166_;
 	self = (ValaAssignment*) base;
 	g_return_if_fail (codegen != NULL);
 	_tmp0_ = vala_assignment_get_left (self);
@@ -4322,15 +4323,17 @@ static void vala_assignment_real_emit (ValaCodeNode* base, ValaCodeGenerator* co
 		gboolean _tmp40_ = FALSE;
 		gboolean _tmp41_ = FALSE;
 		gboolean _tmp42_ = FALSE;
-		ValaAssignmentOperator _tmp43_;
-		gboolean _tmp51_;
-		gboolean _tmp53_;
-		gboolean _tmp55_;
-		gboolean _tmp130_ = FALSE;
-		gboolean _tmp131_ = FALSE;
-		gboolean _tmp132_;
-		gboolean _tmp136_;
-		gboolean _tmp138_;
+		gboolean _tmp43_ = FALSE;
+		ValaAssignmentOperator _tmp44_;
+		gboolean _tmp52_;
+		gboolean _tmp54_;
+		gboolean _tmp56_;
+		gboolean _tmp66_;
+		gboolean _tmp141_ = FALSE;
+		gboolean _tmp142_ = FALSE;
+		gboolean _tmp143_;
+		gboolean _tmp147_;
+		gboolean _tmp149_;
 		_tmp10_ = ma;
 		_tmp11_ = vala_expression_get_symbol_reference ((ValaExpression*) _tmp10_);
 		_tmp12_ = _tmp11_;
@@ -4387,254 +4390,282 @@ static void vala_assignment_real_emit (ValaCodeNode* base, ValaCodeGenerator* co
 		}
 		_tmp39_ = _tmp26_;
 		instance = _tmp39_;
-		_tmp43_ = self->priv->_operator;
-		if (_tmp43_ == VALA_ASSIGNMENT_OPERATOR_SIMPLE) {
-			gboolean _tmp44_ = FALSE;
+		_tmp44_ = self->priv->_operator;
+		if (_tmp44_ == VALA_ASSIGNMENT_OPERATOR_SIMPLE) {
 			gboolean _tmp45_ = FALSE;
-			ValaLocalVariable* _tmp46_;
-			gboolean _tmp48_;
-			gboolean _tmp50_;
-			_tmp46_ = local;
-			if (_tmp46_ != NULL) {
+			gboolean _tmp46_ = FALSE;
+			ValaLocalVariable* _tmp47_;
+			gboolean _tmp49_;
+			gboolean _tmp51_;
+			_tmp47_ = local;
+			if (_tmp47_ != NULL) {
+				_tmp46_ = TRUE;
+			} else {
+				ValaParameter* _tmp48_;
+				_tmp48_ = param;
+				_tmp46_ = _tmp48_ != NULL;
+			}
+			_tmp49_ = _tmp46_;
+			if (_tmp49_) {
 				_tmp45_ = TRUE;
 			} else {
-				ValaParameter* _tmp47_;
-				_tmp47_ = param;
-				_tmp45_ = _tmp47_ != NULL;
+				ValaField* _tmp50_;
+				_tmp50_ = field;
+				_tmp45_ = _tmp50_ != NULL;
 			}
-			_tmp48_ = _tmp45_;
-			if (_tmp48_) {
-				_tmp44_ = TRUE;
-			} else {
-				ValaField* _tmp49_;
-				_tmp49_ = field;
-				_tmp44_ = _tmp49_ != NULL;
-			}
-			_tmp50_ = _tmp44_;
-			_tmp42_ = _tmp50_;
+			_tmp51_ = _tmp45_;
+			_tmp43_ = _tmp51_;
+		} else {
+			_tmp43_ = FALSE;
+		}
+		_tmp52_ = _tmp43_;
+		if (_tmp52_) {
+			gboolean _tmp53_ = FALSE;
+			_tmp53_ = vala_assignment_is_array_add (self);
+			_tmp42_ = !_tmp53_;
 		} else {
 			_tmp42_ = FALSE;
 		}
-		_tmp51_ = _tmp42_;
-		if (_tmp51_) {
-			gboolean _tmp52_ = FALSE;
-			_tmp52_ = vala_assignment_is_array_add (self);
-			_tmp41_ = !_tmp52_;
+		_tmp54_ = _tmp42_;
+		if (_tmp54_) {
+			ValaField* _tmp55_;
+			_tmp55_ = field;
+			_tmp41_ = !VALA_IS_ARRAY_LENGTH_FIELD (_tmp55_);
 		} else {
 			_tmp41_ = FALSE;
 		}
-		_tmp53_ = _tmp41_;
-		if (_tmp53_) {
-			ValaField* _tmp54_;
-			_tmp54_ = field;
-			_tmp40_ = !VALA_IS_ARRAY_LENGTH_FIELD (_tmp54_);
+		_tmp56_ = _tmp41_;
+		if (_tmp56_) {
+			gboolean _tmp57_ = FALSE;
+			ValaExpression* _tmp58_;
+			ValaExpression* _tmp59_;
+			ValaDataType* _tmp60_;
+			ValaDataType* _tmp61_;
+			gboolean _tmp62_ = FALSE;
+			gboolean _tmp65_;
+			_tmp58_ = vala_assignment_get_left (self);
+			_tmp59_ = _tmp58_;
+			_tmp60_ = vala_expression_get_value_type (_tmp59_);
+			_tmp61_ = _tmp60_;
+			_tmp62_ = vala_data_type_is_real_non_null_struct_type (_tmp61_);
+			if (_tmp62_) {
+				ValaExpression* _tmp63_;
+				ValaExpression* _tmp64_;
+				_tmp63_ = vala_assignment_get_right (self);
+				_tmp64_ = _tmp63_;
+				_tmp57_ = VALA_IS_OBJECT_CREATION_EXPRESSION (_tmp64_);
+			} else {
+				_tmp57_ = FALSE;
+			}
+			_tmp65_ = _tmp57_;
+			_tmp40_ = !_tmp65_;
 		} else {
 			_tmp40_ = FALSE;
 		}
-		_tmp55_ = _tmp40_;
-		if (_tmp55_) {
-			gboolean _tmp56_ = FALSE;
-			gboolean _tmp57_;
-			gboolean _tmp61_;
-			ValaExpression* _tmp66_;
-			ValaExpression* _tmp67_;
-			ValaCodeGenerator* _tmp68_;
-			ValaExpression* _tmp69_;
-			ValaExpression* _tmp70_;
-			ValaTargetValue* _tmp71_;
-			ValaTargetValue* _tmp72_;
-			ValaTargetValue* _tmp73_;
+		_tmp66_ = _tmp40_;
+		if (_tmp66_) {
+			gboolean _tmp67_ = FALSE;
+			gboolean _tmp68_;
+			gboolean _tmp72_;
+			ValaExpression* _tmp77_;
+			ValaExpression* _tmp78_;
+			ValaCodeGenerator* _tmp79_;
+			ValaExpression* _tmp80_;
+			ValaExpression* _tmp81_;
+			ValaTargetValue* _tmp82_;
+			ValaTargetValue* _tmp83_;
+			ValaTargetValue* _tmp84_;
 			ValaTargetValue* new_value;
-			ValaLocalVariable* _tmp74_;
-			ValaCodeNode* _tmp99_;
-			ValaCodeNode* _tmp100_;
-			ValaCodeGenerator* _tmp129_;
-			_tmp57_ = instance;
-			if (_tmp57_) {
-				ValaMemberAccess* _tmp58_;
-				ValaExpression* _tmp59_;
-				ValaExpression* _tmp60_;
-				_tmp58_ = ma;
-				_tmp59_ = vala_member_access_get_inner (_tmp58_);
-				_tmp60_ = _tmp59_;
-				_tmp56_ = _tmp60_ != NULL;
+			ValaLocalVariable* _tmp85_;
+			ValaCodeNode* _tmp110_;
+			ValaCodeNode* _tmp111_;
+			ValaCodeGenerator* _tmp140_;
+			_tmp68_ = instance;
+			if (_tmp68_) {
+				ValaMemberAccess* _tmp69_;
+				ValaExpression* _tmp70_;
+				ValaExpression* _tmp71_;
+				_tmp69_ = ma;
+				_tmp70_ = vala_member_access_get_inner (_tmp69_);
+				_tmp71_ = _tmp70_;
+				_tmp67_ = _tmp71_ != NULL;
 			} else {
-				_tmp56_ = FALSE;
+				_tmp67_ = FALSE;
 			}
-			_tmp61_ = _tmp56_;
-			if (_tmp61_) {
-				ValaMemberAccess* _tmp62_;
-				ValaExpression* _tmp63_;
-				ValaExpression* _tmp64_;
-				ValaCodeGenerator* _tmp65_;
-				_tmp62_ = ma;
-				_tmp63_ = vala_member_access_get_inner (_tmp62_);
-				_tmp64_ = _tmp63_;
-				_tmp65_ = codegen;
-				vala_code_node_emit ((ValaCodeNode*) _tmp64_, _tmp65_);
+			_tmp72_ = _tmp67_;
+			if (_tmp72_) {
+				ValaMemberAccess* _tmp73_;
+				ValaExpression* _tmp74_;
+				ValaExpression* _tmp75_;
+				ValaCodeGenerator* _tmp76_;
+				_tmp73_ = ma;
+				_tmp74_ = vala_member_access_get_inner (_tmp73_);
+				_tmp75_ = _tmp74_;
+				_tmp76_ = codegen;
+				vala_code_node_emit ((ValaCodeNode*) _tmp75_, _tmp76_);
 			}
-			_tmp66_ = vala_assignment_get_right (self);
-			_tmp67_ = _tmp66_;
-			_tmp68_ = codegen;
-			vala_code_node_emit ((ValaCodeNode*) _tmp67_, _tmp68_);
-			_tmp69_ = vala_assignment_get_right (self);
-			_tmp70_ = _tmp69_;
-			_tmp71_ = vala_expression_get_target_value (_tmp70_);
-			_tmp72_ = _tmp71_;
-			_tmp73_ = _vala_target_value_ref0 (_tmp72_);
-			new_value = _tmp73_;
-			_tmp74_ = local;
-			if (_tmp74_ != NULL) {
-				ValaCodeGenerator* _tmp75_;
-				ValaLocalVariable* _tmp76_;
-				ValaTargetValue* _tmp77_;
-				_tmp75_ = codegen;
-				_tmp76_ = local;
-				_tmp77_ = new_value;
-				vala_code_generator_store_local (_tmp75_, _tmp76_, _tmp77_, FALSE);
+			_tmp77_ = vala_assignment_get_right (self);
+			_tmp78_ = _tmp77_;
+			_tmp79_ = codegen;
+			vala_code_node_emit ((ValaCodeNode*) _tmp78_, _tmp79_);
+			_tmp80_ = vala_assignment_get_right (self);
+			_tmp81_ = _tmp80_;
+			_tmp82_ = vala_expression_get_target_value (_tmp81_);
+			_tmp83_ = _tmp82_;
+			_tmp84_ = _vala_target_value_ref0 (_tmp83_);
+			new_value = _tmp84_;
+			_tmp85_ = local;
+			if (_tmp85_ != NULL) {
+				ValaCodeGenerator* _tmp86_;
+				ValaLocalVariable* _tmp87_;
+				ValaTargetValue* _tmp88_;
+				_tmp86_ = codegen;
+				_tmp87_ = local;
+				_tmp88_ = new_value;
+				vala_code_generator_store_local (_tmp86_, _tmp87_, _tmp88_, FALSE);
 			} else {
-				ValaParameter* _tmp78_;
-				_tmp78_ = param;
-				if (_tmp78_ != NULL) {
-					ValaCodeGenerator* _tmp79_;
-					ValaParameter* _tmp80_;
-					ValaTargetValue* _tmp81_;
-					_tmp79_ = codegen;
-					_tmp80_ = param;
-					_tmp81_ = new_value;
-					vala_code_generator_store_parameter (_tmp79_, _tmp80_, _tmp81_);
+				ValaParameter* _tmp89_;
+				_tmp89_ = param;
+				if (_tmp89_ != NULL) {
+					ValaCodeGenerator* _tmp90_;
+					ValaParameter* _tmp91_;
+					ValaTargetValue* _tmp92_;
+					_tmp90_ = codegen;
+					_tmp91_ = param;
+					_tmp92_ = new_value;
+					vala_code_generator_store_parameter (_tmp90_, _tmp91_, _tmp92_);
 				} else {
-					ValaField* _tmp82_;
-					_tmp82_ = field;
-					if (_tmp82_ != NULL) {
-						ValaTargetValue* _tmp83_ = NULL;
-						gboolean _tmp84_ = FALSE;
-						gboolean _tmp85_;
-						gboolean _tmp89_;
-						ValaCodeGenerator* _tmp95_;
-						ValaField* _tmp96_;
-						ValaTargetValue* _tmp97_;
-						ValaTargetValue* _tmp98_;
-						_tmp85_ = instance;
-						if (_tmp85_) {
-							ValaMemberAccess* _tmp86_;
-							ValaExpression* _tmp87_;
-							ValaExpression* _tmp88_;
-							_tmp86_ = ma;
-							_tmp87_ = vala_member_access_get_inner (_tmp86_);
-							_tmp88_ = _tmp87_;
-							_tmp84_ = _tmp88_ != NULL;
+					ValaField* _tmp93_;
+					_tmp93_ = field;
+					if (_tmp93_ != NULL) {
+						ValaTargetValue* _tmp94_ = NULL;
+						gboolean _tmp95_ = FALSE;
+						gboolean _tmp96_;
+						gboolean _tmp100_;
+						ValaCodeGenerator* _tmp106_;
+						ValaField* _tmp107_;
+						ValaTargetValue* _tmp108_;
+						ValaTargetValue* _tmp109_;
+						_tmp96_ = instance;
+						if (_tmp96_) {
+							ValaMemberAccess* _tmp97_;
+							ValaExpression* _tmp98_;
+							ValaExpression* _tmp99_;
+							_tmp97_ = ma;
+							_tmp98_ = vala_member_access_get_inner (_tmp97_);
+							_tmp99_ = _tmp98_;
+							_tmp95_ = _tmp99_ != NULL;
 						} else {
-							_tmp84_ = FALSE;
+							_tmp95_ = FALSE;
 						}
-						_tmp89_ = _tmp84_;
-						if (_tmp89_) {
-							ValaMemberAccess* _tmp90_;
-							ValaExpression* _tmp91_;
-							ValaExpression* _tmp92_;
-							ValaTargetValue* _tmp93_;
-							ValaTargetValue* _tmp94_;
-							_tmp90_ = ma;
-							_tmp91_ = vala_member_access_get_inner (_tmp90_);
-							_tmp92_ = _tmp91_;
-							_tmp93_ = vala_expression_get_target_value (_tmp92_);
-							_tmp94_ = _tmp93_;
-							_tmp83_ = _tmp94_;
+						_tmp100_ = _tmp95_;
+						if (_tmp100_) {
+							ValaMemberAccess* _tmp101_;
+							ValaExpression* _tmp102_;
+							ValaExpression* _tmp103_;
+							ValaTargetValue* _tmp104_;
+							ValaTargetValue* _tmp105_;
+							_tmp101_ = ma;
+							_tmp102_ = vala_member_access_get_inner (_tmp101_);
+							_tmp103_ = _tmp102_;
+							_tmp104_ = vala_expression_get_target_value (_tmp103_);
+							_tmp105_ = _tmp104_;
+							_tmp94_ = _tmp105_;
 						} else {
-							_tmp83_ = NULL;
+							_tmp94_ = NULL;
 						}
-						_tmp95_ = codegen;
-						_tmp96_ = field;
-						_tmp97_ = _tmp83_;
-						_tmp98_ = new_value;
-						vala_code_generator_store_field (_tmp95_, _tmp96_, _tmp97_, _tmp98_);
+						_tmp106_ = codegen;
+						_tmp107_ = field;
+						_tmp108_ = _tmp94_;
+						_tmp109_ = new_value;
+						vala_code_generator_store_field (_tmp106_, _tmp107_, _tmp108_, _tmp109_);
 					}
 				}
 			}
-			_tmp99_ = vala_code_node_get_parent_node ((ValaCodeNode*) self);
-			_tmp100_ = _tmp99_;
-			if (!VALA_IS_EXPRESSION_STATEMENT (_tmp100_)) {
-				ValaLocalVariable* _tmp101_;
-				_tmp101_ = local;
-				if (_tmp101_ != NULL) {
-					ValaCodeGenerator* _tmp102_;
-					ValaLocalVariable* _tmp103_;
-					ValaTargetValue* _tmp104_ = NULL;
-					ValaTargetValue* _tmp105_;
-					_tmp102_ = codegen;
-					_tmp103_ = local;
-					_tmp104_ = vala_code_generator_load_local (_tmp102_, _tmp103_);
-					_tmp105_ = _tmp104_;
-					vala_expression_set_target_value ((ValaExpression*) self, _tmp105_);
-					_vala_target_value_unref0 (_tmp105_);
+			_tmp110_ = vala_code_node_get_parent_node ((ValaCodeNode*) self);
+			_tmp111_ = _tmp110_;
+			if (!VALA_IS_EXPRESSION_STATEMENT (_tmp111_)) {
+				ValaLocalVariable* _tmp112_;
+				_tmp112_ = local;
+				if (_tmp112_ != NULL) {
+					ValaCodeGenerator* _tmp113_;
+					ValaLocalVariable* _tmp114_;
+					ValaTargetValue* _tmp115_ = NULL;
+					ValaTargetValue* _tmp116_;
+					_tmp113_ = codegen;
+					_tmp114_ = local;
+					_tmp115_ = vala_code_generator_load_local (_tmp113_, _tmp114_);
+					_tmp116_ = _tmp115_;
+					vala_expression_set_target_value ((ValaExpression*) self, _tmp116_);
+					_vala_target_value_unref0 (_tmp116_);
 				} else {
-					ValaParameter* _tmp106_;
-					_tmp106_ = param;
-					if (_tmp106_ != NULL) {
-						ValaCodeGenerator* _tmp107_;
-						ValaParameter* _tmp108_;
-						ValaTargetValue* _tmp109_ = NULL;
-						ValaTargetValue* _tmp110_;
-						_tmp107_ = codegen;
-						_tmp108_ = param;
-						_tmp109_ = vala_code_generator_load_parameter (_tmp107_, _tmp108_);
-						_tmp110_ = _tmp109_;
-						vala_expression_set_target_value ((ValaExpression*) self, _tmp110_);
-						_vala_target_value_unref0 (_tmp110_);
+					ValaParameter* _tmp117_;
+					_tmp117_ = param;
+					if (_tmp117_ != NULL) {
+						ValaCodeGenerator* _tmp118_;
+						ValaParameter* _tmp119_;
+						ValaTargetValue* _tmp120_ = NULL;
+						ValaTargetValue* _tmp121_;
+						_tmp118_ = codegen;
+						_tmp119_ = param;
+						_tmp120_ = vala_code_generator_load_parameter (_tmp118_, _tmp119_);
+						_tmp121_ = _tmp120_;
+						vala_expression_set_target_value ((ValaExpression*) self, _tmp121_);
+						_vala_target_value_unref0 (_tmp121_);
 					} else {
-						ValaField* _tmp111_;
-						_tmp111_ = field;
-						if (_tmp111_ != NULL) {
-							ValaTargetValue* _tmp112_ = NULL;
-							gboolean _tmp113_ = FALSE;
-							gboolean _tmp114_;
-							gboolean _tmp118_;
-							ValaCodeGenerator* _tmp124_;
-							ValaField* _tmp125_;
-							ValaTargetValue* _tmp126_;
-							ValaTargetValue* _tmp127_ = NULL;
-							ValaTargetValue* _tmp128_;
-							_tmp114_ = instance;
-							if (_tmp114_) {
-								ValaMemberAccess* _tmp115_;
-								ValaExpression* _tmp116_;
-								ValaExpression* _tmp117_;
-								_tmp115_ = ma;
-								_tmp116_ = vala_member_access_get_inner (_tmp115_);
-								_tmp117_ = _tmp116_;
-								_tmp113_ = _tmp117_ != NULL;
+						ValaField* _tmp122_;
+						_tmp122_ = field;
+						if (_tmp122_ != NULL) {
+							ValaTargetValue* _tmp123_ = NULL;
+							gboolean _tmp124_ = FALSE;
+							gboolean _tmp125_;
+							gboolean _tmp129_;
+							ValaCodeGenerator* _tmp135_;
+							ValaField* _tmp136_;
+							ValaTargetValue* _tmp137_;
+							ValaTargetValue* _tmp138_ = NULL;
+							ValaTargetValue* _tmp139_;
+							_tmp125_ = instance;
+							if (_tmp125_) {
+								ValaMemberAccess* _tmp126_;
+								ValaExpression* _tmp127_;
+								ValaExpression* _tmp128_;
+								_tmp126_ = ma;
+								_tmp127_ = vala_member_access_get_inner (_tmp126_);
+								_tmp128_ = _tmp127_;
+								_tmp124_ = _tmp128_ != NULL;
 							} else {
-								_tmp113_ = FALSE;
+								_tmp124_ = FALSE;
 							}
-							_tmp118_ = _tmp113_;
-							if (_tmp118_) {
-								ValaMemberAccess* _tmp119_;
-								ValaExpression* _tmp120_;
-								ValaExpression* _tmp121_;
-								ValaTargetValue* _tmp122_;
-								ValaTargetValue* _tmp123_;
-								_tmp119_ = ma;
-								_tmp120_ = vala_member_access_get_inner (_tmp119_);
-								_tmp121_ = _tmp120_;
-								_tmp122_ = vala_expression_get_target_value (_tmp121_);
-								_tmp123_ = _tmp122_;
-								_tmp112_ = _tmp123_;
+							_tmp129_ = _tmp124_;
+							if (_tmp129_) {
+								ValaMemberAccess* _tmp130_;
+								ValaExpression* _tmp131_;
+								ValaExpression* _tmp132_;
+								ValaTargetValue* _tmp133_;
+								ValaTargetValue* _tmp134_;
+								_tmp130_ = ma;
+								_tmp131_ = vala_member_access_get_inner (_tmp130_);
+								_tmp132_ = _tmp131_;
+								_tmp133_ = vala_expression_get_target_value (_tmp132_);
+								_tmp134_ = _tmp133_;
+								_tmp123_ = _tmp134_;
 							} else {
-								_tmp112_ = NULL;
+								_tmp123_ = NULL;
 							}
-							_tmp124_ = codegen;
-							_tmp125_ = field;
-							_tmp126_ = _tmp112_;
-							_tmp127_ = vala_code_generator_load_field (_tmp124_, _tmp125_, _tmp126_);
-							_tmp128_ = _tmp127_;
-							vala_expression_set_target_value ((ValaExpression*) self, _tmp128_);
-							_vala_target_value_unref0 (_tmp128_);
+							_tmp135_ = codegen;
+							_tmp136_ = field;
+							_tmp137_ = _tmp123_;
+							_tmp138_ = vala_code_generator_load_field (_tmp135_, _tmp136_, _tmp137_);
+							_tmp139_ = _tmp138_;
+							vala_expression_set_target_value ((ValaExpression*) self, _tmp139_);
+							_vala_target_value_unref0 (_tmp139_);
 						}
 					}
 				}
 			}
-			_tmp129_ = codegen;
-			vala_code_visitor_visit_expression ((ValaCodeVisitor*) _tmp129_, (ValaExpression*) self);
+			_tmp140_ = codegen;
+			vala_code_visitor_visit_expression ((ValaCodeVisitor*) _tmp140_, (ValaExpression*) self);
 			_vala_target_value_unref0 (new_value);
 			_vala_code_node_unref0 (property);
 			_vala_code_node_unref0 (field);
@@ -4645,77 +4676,77 @@ static void vala_assignment_real_emit (ValaCodeNode* base, ValaCodeGenerator* co
 			_vala_code_node_unref0 (ma);
 			return;
 		}
-		_tmp132_ = instance;
-		if (_tmp132_) {
-			ValaMemberAccess* _tmp133_;
-			ValaExpression* _tmp134_;
-			ValaExpression* _tmp135_;
-			_tmp133_ = ma;
-			_tmp134_ = vala_member_access_get_inner (_tmp133_);
-			_tmp135_ = _tmp134_;
-			_tmp131_ = _tmp135_ != NULL;
+		_tmp143_ = instance;
+		if (_tmp143_) {
+			ValaMemberAccess* _tmp144_;
+			ValaExpression* _tmp145_;
+			ValaExpression* _tmp146_;
+			_tmp144_ = ma;
+			_tmp145_ = vala_member_access_get_inner (_tmp144_);
+			_tmp146_ = _tmp145_;
+			_tmp142_ = _tmp146_ != NULL;
 		} else {
-			_tmp131_ = FALSE;
+			_tmp142_ = FALSE;
 		}
-		_tmp136_ = _tmp131_;
-		if (_tmp136_) {
-			ValaProperty* _tmp137_;
-			_tmp137_ = property;
-			_tmp130_ = _tmp137_ != NULL;
+		_tmp147_ = _tmp142_;
+		if (_tmp147_) {
+			ValaProperty* _tmp148_;
+			_tmp148_ = property;
+			_tmp141_ = _tmp148_ != NULL;
 		} else {
-			_tmp130_ = FALSE;
+			_tmp141_ = FALSE;
 		}
-		_tmp138_ = _tmp130_;
-		if (_tmp138_) {
-			ValaMemberAccess* _tmp139_;
-			ValaExpression* _tmp140_;
-			ValaExpression* _tmp141_;
-			ValaCodeGenerator* _tmp142_;
-			_tmp139_ = ma;
-			_tmp140_ = vala_member_access_get_inner (_tmp139_);
-			_tmp141_ = _tmp140_;
-			_tmp142_ = codegen;
-			vala_code_node_emit ((ValaCodeNode*) _tmp141_, _tmp142_);
+		_tmp149_ = _tmp141_;
+		if (_tmp149_) {
+			ValaMemberAccess* _tmp150_;
+			ValaExpression* _tmp151_;
+			ValaExpression* _tmp152_;
+			ValaCodeGenerator* _tmp153_;
+			_tmp150_ = ma;
+			_tmp151_ = vala_member_access_get_inner (_tmp150_);
+			_tmp152_ = _tmp151_;
+			_tmp153_ = codegen;
+			vala_code_node_emit ((ValaCodeNode*) _tmp152_, _tmp153_);
 		} else {
-			ValaMemberAccess* _tmp143_;
-			ValaCodeGenerator* _tmp144_;
-			_tmp143_ = ma;
-			_tmp144_ = codegen;
-			vala_code_node_emit ((ValaCodeNode*) _tmp143_, _tmp144_);
+			ValaMemberAccess* _tmp154_;
+			ValaCodeGenerator* _tmp155_;
+			_tmp154_ = ma;
+			_tmp155_ = codegen;
+			vala_code_node_emit ((ValaCodeNode*) _tmp154_, _tmp155_);
 		}
 		_vala_code_node_unref0 (property);
 		_vala_code_node_unref0 (field);
 		_vala_code_node_unref0 (param);
 		_vala_code_node_unref0 (local);
 	} else {
-		ValaElementAccess* _tmp145_;
-		_tmp145_ = ea;
-		if (_tmp145_ != NULL) {
-			ValaElementAccess* _tmp146_;
-			ValaCodeGenerator* _tmp147_;
-			_tmp146_ = ea;
-			_tmp147_ = codegen;
-			vala_code_node_emit ((ValaCodeNode*) _tmp146_, _tmp147_);
+		ValaElementAccess* _tmp156_;
+		_tmp156_ = ea;
+		if (_tmp156_ != NULL) {
+			ValaElementAccess* _tmp157_;
+			ValaCodeGenerator* _tmp158_;
+			_tmp157_ = ea;
+			_tmp158_ = codegen;
+			vala_code_node_emit ((ValaCodeNode*) _tmp157_, _tmp158_);
 		} else {
-			ValaPointerIndirection* _tmp148_;
-			_tmp148_ = pi;
-			if (_tmp148_ != NULL) {
-				ValaPointerIndirection* _tmp149_;
-				ValaCodeGenerator* _tmp150_;
-				_tmp149_ = pi;
-				_tmp150_ = codegen;
-				vala_code_node_emit ((ValaCodeNode*) _tmp149_, _tmp150_);
+			ValaPointerIndirection* _tmp159_;
+			_tmp159_ = pi;
+			if (_tmp159_ != NULL) {
+				ValaPointerIndirection* _tmp160_;
+				ValaCodeGenerator* _tmp161_;
+				_tmp160_ = pi;
+				_tmp161_ = codegen;
+				vala_code_node_emit ((ValaCodeNode*) _tmp160_, _tmp161_);
 			}
 		}
 	}
-	_tmp151_ = vala_assignment_get_right (self);
-	_tmp152_ = _tmp151_;
-	_tmp153_ = codegen;
-	vala_code_node_emit ((ValaCodeNode*) _tmp152_, _tmp153_);
-	_tmp154_ = codegen;
-	vala_code_visitor_visit_assignment ((ValaCodeVisitor*) _tmp154_, self);
-	_tmp155_ = codegen;
-	vala_code_visitor_visit_expression ((ValaCodeVisitor*) _tmp155_, (ValaExpression*) self);
+	_tmp162_ = vala_assignment_get_right (self);
+	_tmp163_ = _tmp162_;
+	_tmp164_ = codegen;
+	vala_code_node_emit ((ValaCodeNode*) _tmp163_, _tmp164_);
+	_tmp165_ = codegen;
+	vala_code_visitor_visit_assignment ((ValaCodeVisitor*) _tmp165_, self);
+	_tmp166_ = codegen;
+	vala_code_visitor_visit_expression ((ValaCodeVisitor*) _tmp166_, (ValaExpression*) self);
 	_vala_code_node_unref0 (pi);
 	_vala_code_node_unref0 (ea);
 	_vala_code_node_unref0 (ma);

@@ -90,7 +90,7 @@ public abstract class Vala.CCodeStructModule : CCodeBaseModule {
 					var delegate_type = (DelegateType) f.variable_type;
 					if (delegate_type.delegate_symbol.has_target) {
 						// create field to store delegate target
-						instance_struct.add_field ("gpointer", get_delegate_target_cname (f.name));
+						instance_struct.add_field ("gpointer", get_ccode_delegate_target_name (f));
 						if (delegate_type.value_owned) {
 							instance_struct.add_field ("GDestroyNotify", get_delegate_target_destroy_notify_cname (f.name));
 						}
@@ -155,7 +155,7 @@ public abstract class Vala.CCodeStructModule : CCodeBaseModule {
 			generate_struct_declaration (st, internal_header_file);
 		}
 
-		if (context.profile == Profile.GOBJECT && !st.is_boolean_type () && !st.is_integer_type () && !st.is_floating_type ()) {
+		if (!st.is_boolean_type () && !st.is_integer_type () && !st.is_floating_type ()) {
 			if (st.is_disposable ()) {
 				begin_struct_destroy_function (st);
 			}
@@ -163,7 +163,7 @@ public abstract class Vala.CCodeStructModule : CCodeBaseModule {
 
 		st.accept_children (this);
 
-		if (context.profile == Profile.GOBJECT && !st.is_boolean_type () && !st.is_integer_type () && !st.is_floating_type ()) {
+		if (!st.is_boolean_type () && !st.is_integer_type () && !st.is_floating_type ()) {
 			if (st.is_disposable ()) {
 				add_struct_copy_function (st);
 				add_struct_destroy_function (st);
@@ -191,10 +191,17 @@ public abstract class Vala.CCodeStructModule : CCodeBaseModule {
 
 		ccode.add_declaration (get_ccode_name (st) + "*", new CCodeVariableDeclarator ("dup"));
 
-		var creation_call = new CCodeFunctionCall (new CCodeIdentifier ("g_new0"));
-		creation_call.add_argument (new CCodeConstant (get_ccode_name (st)));
-		creation_call.add_argument (new CCodeConstant ("1"));
-		ccode.add_assignment (new CCodeIdentifier ("dup"), creation_call);
+		if (context.profile == Profile.GOBJECT) {
+			var creation_call = new CCodeFunctionCall (new CCodeIdentifier ("g_new0"));
+			creation_call.add_argument (new CCodeConstant (get_ccode_name (st)));
+			creation_call.add_argument (new CCodeConstant ("1"));
+			ccode.add_assignment (new CCodeIdentifier ("dup"), creation_call);
+		} else if (context.profile == Profile.POSIX) {
+			var creation_call = new CCodeFunctionCall (new CCodeIdentifier ("calloc"));
+			creation_call.add_argument (new CCodeConstant ("1"));
+			creation_call.add_argument (new CCodeIdentifier ("sizeof (%s*)".printf (get_ccode_name (st))));
+			ccode.add_assignment (new CCodeIdentifier ("dup"), creation_call);
+		}
 
 		if (st.is_disposable ()) {
 			var copy_call = new CCodeFunctionCall (new CCodeIdentifier (get_ccode_copy_function (st)));
@@ -237,9 +244,15 @@ public abstract class Vala.CCodeStructModule : CCodeBaseModule {
 			ccode.add_expression (destroy_call);
 		}
 
-		var free_call = new CCodeFunctionCall (new CCodeIdentifier ("g_free"));
-		free_call.add_argument (new CCodeIdentifier ("self"));
-		ccode.add_expression (free_call);
+		if (context.profile == Profile.GOBJECT) {
+			var free_call = new CCodeFunctionCall (new CCodeIdentifier ("g_free"));
+			free_call.add_argument (new CCodeIdentifier ("self"));
+			ccode.add_expression (free_call);
+		} else if (context.profile == Profile.POSIX) {
+			var free_call = new CCodeFunctionCall (new CCodeIdentifier ("free"));
+			free_call.add_argument (new CCodeIdentifier ("self"));
+			ccode.add_expression (free_call);
+		}
 
 		pop_function ();
 
